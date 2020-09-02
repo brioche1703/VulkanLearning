@@ -1,0 +1,26 @@
+[
+ {
+  "directory": "/Users/kevinmeniel/dev/Kevin/VulkanLearning", 
+  "arguments": [
+   "g++", 
+   "-std=c++17", 
+   "-I/Users/kevinmeniel/dev/lib/vulkan_macos_1.2.148.1/macOS/include", 
+   "-I/usr/local/include", 
+   "-o", 
+   "a.out", 
+   "main.cpp", 
+   "-L/Users/kevinmeniel/dev/lib/vulkan_macos_1.2.148.1/macOS/lib", 
+   "-L/usr/local/lib", 
+   "-lglfw3", 
+   "-framework", 
+   "Cocoa", 
+   "-framework", 
+   "IOKit", 
+   "-framework", 
+   "CoreFoundation", 
+   "-lvulkan", 
+   "-lglfw3"
+  ], 
+  "file": "main.cpp"
+ }
+]

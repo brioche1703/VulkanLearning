@@ -1,8 +1,12 @@
-VULKAN_SDK_PATH = $HOME/dev/graphics/lib/VulkanSDK/1.2.148.1/x86_64
+ifeq ($(OS), Linux)
+	VULKAN_SDK_PATH = $(HOME)/dev/graphics/lib/VulkanSDK/1.2.148.1/x86_64
+else
+	VULKAN_SDK_PATH = $(HOME)/dev/lib/vulkan_macos_1.2.148.1/macOS
+endif
 
-CFLAGS = -std=c++17 -I$(VULKAN_SDK_PATH)/include
-LDFLAGS = -L$(VULKAN_SDK_PATH)/lib `pkg-config --static --libs glfw3` -lvulkan
 
+CFLAGS = -std=c++17 -I$(VULKAN_SDK_PATH)/include `pkg-config --cflags glfw3`
+LDFLAGS = -L$(VULKAN_SDK_PATH)/lib `pkg-config --static --libs glfw3` -lvulkan -lglfw3
 VulkanTest: main.cpp
 	g++ $(CFLAGS) -o a.out main.cpp $(LDFLAGS)
 
