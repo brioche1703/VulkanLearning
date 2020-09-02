@@ -32,4 +32,4 @@
 *.app
 
 # Clang generated file for vim
-.clang.*
+.clang/
