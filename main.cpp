@@ -104,6 +104,7 @@ class HelloTriangleApplication {
             createLogicalDevice();
             createSwapChain();
             createImageViews();
+            createGraphicsPipeline();
         }
 
         void mainLoop() {
@@ -504,6 +505,10 @@ class HelloTriangleApplication {
 
                 return actualExtent;
             }
+        }
+
+        void createGraphicsPipeline() {
+
         }
 };
 
