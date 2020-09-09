@@ -33,3 +33,6 @@
 
 # Clang generated file for vim
 .clangd/
+
+#SPV shader compiled files
+*.spv
