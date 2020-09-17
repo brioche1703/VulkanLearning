@@ -34,6 +34,8 @@
 #include <unordered_map>
 #include <chrono>
 
+#include "../include/VulkanLearning/camera/camera.hpp"
+
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
 
@@ -152,6 +154,7 @@ class HelloTriangleApplication {
         }
 
     private:
+        VulkanLearning::Camera cam;
         GLFWwindow* window;
 
         VkInstance instance;
@@ -258,6 +261,7 @@ class HelloTriangleApplication {
             while (!glfwWindowShouldClose(window)) {
                 glfwPollEvents();
                 drawFrame();
+                cam.print();
             }
 
             vkDeviceWaitIdle(device);
