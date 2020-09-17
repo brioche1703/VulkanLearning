@@ -6,11 +6,12 @@ else
 endif
 
 STB_PATH = ./libs/stb
+TINY_OBJ_LOADER_PATH = ./libs/tinyobjloader
 
-CFLAGS = -std=c++17 -I$(VULKAN_SDK_PATH)/include -I$(STB_PATH) `pkg-config --cflags glfw3`
+CFLAGS = -std=c++17 -I$(VULKAN_SDK_PATH)/include -I$(STB_PATH) -I$(TINY_OBJ_LOADER_PATH) `pkg-config --cflags glfw3`
 LDFLAGS = -L$(VULKAN_SDK_PATH)/lib `pkg-config --static --libs glfw3` -lvulkan -lglfw3
 VulkanTest: main.cpp
-	g++ $(CFLAGS) -o a.out main.cpp $(LDFLAGS)
+	g++ $(CFLAGS) -o a.out main.cpp $(LDFLAGS) 
 
 .PHONY: test clean
 
