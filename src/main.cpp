@@ -11,8 +11,8 @@
 
 #include <vulkan/vulkan_core.h>
 #include <GLFW/glfw3.h>
-#include "libs/stb/stb_image.h"
-#include "libs/tinyobjloader/tiny_obj_loader.h"
+#include "../include/external/stb/stb_image.h"
+#include "../include/external/tinyobjloader/tiny_obj_loader.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -37,8 +37,8 @@
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
 
-const std::string MODEL_PATH = "models/viking_room.obj";
-const std::string TEXTURE_PATH = "textures/viking_room.png";
+const std::string MODEL_PATH = "./src/models/viking_room.obj";
+const std::string TEXTURE_PATH = "./src/textures/viking_room.png";
 
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
@@ -847,8 +847,8 @@ class HelloTriangleApplication {
         }
 
         void createGraphicsPipeline() {
-            auto vertShaderCode = readFile("shaders/vert.spv");
-            auto fragShaderCode = readFile("shaders/frag.spv");
+            auto vertShaderCode = readFile("./src/shaders/vert.spv");
+            auto fragShaderCode = readFile("./src/shaders/frag.spv");
 
             auto vertShaderModule = createShaderModule(vertShaderCode);
             auto fragShaderModule = createShaderModule(fragShaderCode);

@@ -1,22 +1,79 @@
-UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S), Linux)
-	VULKAN_SDK_PATH = $(HOME)/dev/graphics/lib/VulkanSDK/1.2.148.1/x86_64
-else
-	VULKAN_SDK_PATH = $(HOME)/dev/lib/vulkan_macos_1.2.148.1/macOS
-endif
+CXX ?= g++
 
-STB_PATH = ./libs/stb
-TINY_OBJ_LOADER_PATH = ./libs/tinyobjloader
+# path #
+SRC_PATH = src
+BUILD_PATH = build
+BIN_PATH = $(BUILD_PATH)/bin
 
-CFLAGS = -std=c++17 -I$(VULKAN_SDK_PATH)/include -I$(STB_PATH) -I$(TINY_OBJ_LOADER_PATH) `pkg-config --cflags glfw3`
-LDFLAGS = -L$(VULKAN_SDK_PATH)/lib `pkg-config --static --libs glfw3` -lvulkan -lglfw3
-VulkanTest: main.cpp
-	g++ $(CFLAGS) -o a.out main.cpp $(LDFLAGS) 
+# executable # 
+BIN_NAME = runner
 
-.PHONY: test clean
+# extensions #
+SRC_EXT = cpp
 
-test: a.out
-	LD_LIBRARY_PATH=$(VULKAN_SDK_PATH)/lib;$(STB_PATH) VK_LAYER_PATH=$(VULKAN_SDK_PATH)/etc/vulkan/explicit_layer.d ./a.out
+# code lists #
+# Find all source files in the source directory, sorted by
+# most recently modified
+SOURCES = $(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' | sort -k 1nr | cut -f2-)
+# Set the object file names, with the source directory stripped
+# from the path, and the build path prepended in its place
+OBJECTS = $(SOURCES:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
+# Set the dependency files that will be used to add header dependencies
+DEPS = $(OBJECTS:.o=.d)
 
+# flags #
+COMPILE_FLAGS = -std=c++17 -g -O3
+INCLUDES = -I include/ -I /usr/local/include
+
+
+# Space-separated pkg-config libraries used by this project
+STB_PATH = ./include/stb
+TINY_OBJ_LOADER_PATH = ./include/tinyobjloader
+INCLUDES_EXT = -I$(STB_PATH)$(TINY_OBJ_LOADER_PATH)
+
+LIBS = `pkg-config --static --libs glfw3` -lvulkan -lglfw3
+CFLAGS = -std=c++17 $(INCLUDES_EXT) `pkg-config --cflags glfw3`
+
+.PHONY: default_target
+default_target: release
+
+.PHONY: release
+release: export CXXFLAGS := $(CXXFLAGS) $(COMPILE_FLAGS) $(CFLAGS)
+release: dirs
+	@$(MAKE) all
+
+.PHONY: dirs
+dirs:
+	@echo "Creating directories"
+	@mkdir -p $(dir $(OBJECTS))
+	@mkdir -p $(BIN_PATH)
+
+.PHONY: clean
 clean:
-	rm -f a.out
+	@echo "Deleting $(BIN_NAME) symlink"
+	@$(RM) $(BIN_NAME)
+	@echo "Deleting directories"
+	@$(RM) -r $(BUILD_PATH)
+	@$(RM) -r $(BIN_PATH)
+
+# checks the executable and symlinks to the output
+.PHONY: all
+all: $(BIN_PATH)/$(BIN_NAME)
+	@echo "Making symlink: $(BIN_NAME) -> $<"
+	@$(RM) $(BIN_NAME)
+	@ln -s $(BIN_PATH)/$(BIN_NAME) $(BIN_NAME)
+
+# Creation of the executable
+$(BIN_PATH)/$(BIN_NAME): $(OBJECTS)
+	@echo "Linking: $@"
+	$(CXX) $(OBJECTS) -o $@ ${LIBS}
+
+# Add dependency files, if they exist
+-include $(DEPS)
+
+# Source file rules
+# After the first compilation they will be joined with the rules from the
+# dependency files to provide header dependencies
+$(BUILD_PATH)/%.o: $(SRC_PATH)/%.$(SRC_EXT)
+	@echo "Compiling: $< -> $@"
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -MP -MMD -c $< -o $@

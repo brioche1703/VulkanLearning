@@ -36,3 +36,7 @@
 
 #SPV shader compiled files
 *.spv
+
+# Build
+build/
+runner
