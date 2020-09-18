@@ -35,6 +35,8 @@
 #include <chrono>
 
 #include "../include/VulkanLearning/camera/camera.hpp"
+#include "../include/VulkanLearning/misc/FpsCounter.hpp"
+
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
@@ -132,17 +134,27 @@ namespace std {
     template<> struct hash<Vertex> {
         size_t operator()(Vertex const& vertex) const {
             return ((hash<glm::vec3>()(vertex.pos) ^
-                   (hash<glm::vec3>()(vertex.color) << 1 )) >> 1) ^
-                   (hash<glm::vec2>()(vertex.texCoord) << 1);
+                        (hash<glm::vec3>()(vertex.color) << 1 )) >> 1) ^
+                (hash<glm::vec2>()(vertex.texCoord) << 1);
         }
     };
 }
+
+struct CoordinatesUniformBufferObject {
+    alignas(16) glm::mat4 model;
+    alignas(16) glm::mat4 view;
+    alignas(16) glm::mat4 proj;
+};
 
 struct UniformBufferObject {
     alignas(16) glm::mat4 model;
     alignas(16) glm::mat4 view;
     alignas(16) glm::mat4 proj;
 };
+
+VulkanLearning::Camera cam(glm::vec3(0.0f, 0.0f, 5.0f));
+static bool captureMouse = true;
+static VulkanLearning::FpsCounter fpsCounter;
 
 class HelloTriangleApplication {
     public:
@@ -154,7 +166,6 @@ class HelloTriangleApplication {
         }
 
     private:
-        VulkanLearning::Camera cam;
         GLFWwindow* window;
 
         VkInstance instance;
@@ -223,6 +234,12 @@ class HelloTriangleApplication {
             window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
             glfwSetWindowUserPointer(window, this);
             glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
+
+            glfwSetKeyCallback(window, keyboard_callback);
+            glfwSetScrollCallback(window, scroll_callback);
+            glfwSetCursorPosCallback(window, mouse_callback);
+
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         }
 
         static void framebufferResizeCallback(GLFWwindow* window, int width, int height) {
@@ -260,8 +277,9 @@ class HelloTriangleApplication {
         void mainLoop() {
             while (!glfwWindowShouldClose(window)) {
                 glfwPollEvents();
+                processKeyboardInput();
+                fpsCounter.update();
                 drawFrame();
-                cam.print();
             }
 
             vkDeviceWaitIdle(device);
@@ -287,7 +305,7 @@ class HelloTriangleApplication {
 
             imagesInFlight[imageIndex] = inFlightFences[currentFrame];
 
-            updateUniformBuffer(imageIndex);
+            updateCamera(imageIndex);
 
             VkSubmitInfo submitInfo{};
             submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -1344,7 +1362,7 @@ class HelloTriangleApplication {
             allocInfo.pSetLayouts = layouts.data();
 
             descriptorSets.resize(swapChainImages.size());
-            
+
             if (vkAllocateDescriptorSets(device, &allocInfo, descriptorSets.data()) != VK_SUCCESS) {
                 throw std::runtime_error("Descriptor set allocation failed!");
             }
@@ -1497,16 +1515,29 @@ class HelloTriangleApplication {
             vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
         }
 
+        void updateCamera(uint32_t currentImage) {
+            CoordinatesUniformBufferObject ubo{};
+
+            ubo.model = glm::mat4(1.0f);
+            ubo.model = glm::rotate(ubo.model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+            ubo.model = glm::rotate(ubo.model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+            ubo.view = cam.getViewMatrix();
+
+            ubo.proj = glm::perspective(glm::radians(cam.getZoom()), swapChainExtent.width / (float) swapChainExtent.height, 0.1f,  100.0f);
+            ubo.proj[1][1] *= -1;
+
+            void* data;
+            vkMapMemory(device, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
+            memcpy(data, &ubo, sizeof(ubo));
+            vkUnmapMemory(device, uniformBuffersMemory[currentImage]);
+        }
+
         void updateUniformBuffer(uint32_t currentImage) {
-            static auto startTime = std::chrono::high_resolution_clock::now();
-
-            auto currentTime = std::chrono::high_resolution_clock::now();
-            /* float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count(); */
-            float time = 1;
-
             UniformBufferObject ubo{};
-            ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-            ubo.view = glm::lookAt(glm::vec3(-2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+            ubo.model = glm::mat4(1.0f);
+            ubo.view = glm::mat4(1.0f);
+            ubo.view = glm::translate(ubo.view, glm::vec3(2.0f, 2.0f, 2.0f));
             ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float) swapChainExtent.height, 0.1f,  10.0f);
             ubo.proj[1][1] *= -1;
 
@@ -1535,7 +1566,7 @@ class HelloTriangleApplication {
             if (vkCreateImage(device, &imageInfo, nullptr, &image) != VK_SUCCESS) {
                 throw std::runtime_error("Image creation failed!");
             }
-    
+
             VkMemoryRequirements memRequirements;
             vkGetImageMemoryRequirements(device, image, &memRequirements);
 
@@ -1722,6 +1753,54 @@ class HelloTriangleApplication {
                     0, 0, nullptr, 0, nullptr, 1, &barrier);
 
             endSingleTimeCommands(commandBuffer);
+        }
+
+        static void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+            if (key == GLFW_KEY_ESCAPE) {
+                if (action == GLFW_PRESS)
+                    glfwSetWindowShouldClose(window, GLFW_TRUE);
+            }
+            if (key == GLFW_KEY_M) {
+                if (action == GLFW_PRESS) {
+                    captureMouse = !captureMouse;
+                    if (captureMouse) {
+                        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                    } else {
+                        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                    }
+                }
+            }
+        }
+
+        static void scroll_callback(GLFWwindow* window, double xOffset, double yOffset) {
+            cam.processZoom(yOffset);
+        }
+
+        static void mouse_callback(GLFWwindow* window, double xPos, double yPos) {
+            cam.processMouse(xPos, yPos, captureMouse);
+        }
+
+        void processKeyboardInput() {
+
+            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+                cam.processMovement(VulkanLearning::UPWARD, fpsCounter.getDeltaTime());
+            } else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+                cam.processMovement(VulkanLearning::FORWARD, fpsCounter.getDeltaTime());
+            }
+
+            if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+                cam.processMovement(VulkanLearning::DOWNWARD, fpsCounter.getDeltaTime());
+            } else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+                cam.processMovement(VulkanLearning::BACKWARD, fpsCounter.getDeltaTime());
+            }
+            
+            if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+                cam.processMovement(VulkanLearning::LEFT, fpsCounter.getDeltaTime());
+            }
+
+            if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+                cam.processMovement(VulkanLearning::RIGHT, fpsCounter.getDeltaTime());
+            }
         }
 };
 

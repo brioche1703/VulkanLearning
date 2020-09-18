@@ -12,9 +12,7 @@ namespace VulkanLearning {
         FORWARD,
         BACKWARD,
         LEFT,
-        RIGHT,
-        UPWARD,
-        DOWNWARD
+        RIGHT
     };
 
     const float YAW             = -90.0f;
@@ -39,10 +37,9 @@ namespace VulkanLearning {
             float m_MouseSensitivity;
             float m_Zoom;
 
-            bool m_CaptureMouse = true;
-            bool m_FirstMouse = true;
-            float m_LastMouseX;
-            float m_LastMouseY;
+            bool firstMouse = false;
+            float lastMouseX;
+            float lastMouseY;
 
         public:
             Camera();
@@ -57,16 +54,14 @@ namespace VulkanLearning {
             glm::mat4 getViewMatrix();
             float getZoom();
 
-            void processZoom(double yOffset);
             void processMovement(Camera_Movement direction, float deltaTime);
-            void processMouse(double xPos, double yPos, bool captureMouse);
-            void toogleCaptureMouse(bool value);
-
+            void processMouseMovement(double xOffset, double yOffset, bool constrainPitch = true);
+            void processZoom(double yOffset);
+            void processMouse(double xPos, double yPos);
             void printPosition();
             void print();
 
         private:
             void updateCameraVectors();
-            void processMouseMovement(double xOffset, double yOffset, bool constrainPitch = true);
     };
 }

@@ -21,8 +21,8 @@ OBJECTS = $(SOURCES:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
 # Set the dependency files that will be used to add header dependencies
 DEPS = $(OBJECTS:.o=.d)
 
-# flags #
-COMPILE_FLAGS = -std=c++17 -g -O3
+# flags 
+COMPILE_FLAGS = -std=c++17 -g
 INCLUDES = -I include/ -I /usr/local/include
 
 
