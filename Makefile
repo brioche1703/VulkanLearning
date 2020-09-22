@@ -29,7 +29,8 @@ INCLUDES = -I include/ -I /usr/local/include
 # Space-separated pkg-config libraries used by this project
 STB_PATH = ./include/stb
 TINY_OBJ_LOADER_PATH = ./include/tinyobjloader
-INCLUDES_EXT = -I$(STB_PATH)$(TINY_OBJ_LOADER_PATH)
+IMGUI_PATH = ./src/external/imgui
+INCLUDES_EXT = -I$(STB_PATH)$(TINY_OBJ_LOADER_PATH)$(IMGUI_PATH)
 
 LIBS = `pkg-config --static --libs glfw3` -lvulkan -lglfw3
 CFLAGS = -std=c++17 $(INCLUDES_EXT) `pkg-config --cflags glfw3`
