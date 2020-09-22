@@ -30,7 +30,7 @@ INCLUDES = -I include/ -I /usr/local/include
 STB_PATH = ./include/stb
 TINY_OBJ_LOADER_PATH = ./include/tinyobjloader
 IMGUI_PATH = ./src/external/imgui
-INCLUDES_EXT = -I$(STB_PATH)$(TINY_OBJ_LOADER_PATH)$(IMGUI_PATH)
+INCLUDES_EXT = -I$(STB_PATH)$(TINY_OBJ_LOADER_PATH)$(IMGUI_PATH)$(MISC_PATH)
 
 LIBS = `pkg-config --static --libs glfw3` -lvulkan -lglfw3
 CFLAGS = -std=c++17 $(INCLUDES_EXT) `pkg-config --cflags glfw3`
