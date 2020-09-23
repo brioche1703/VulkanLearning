@@ -37,6 +37,7 @@
 #include "../include/VulkanLearning/camera/camera.hpp"
 #include "../include/VulkanLearning/misc/FpsCounter.hpp"
 #include "../include/VulkanLearning/misc/VulkanDebug.hpp"
+#include "../include/VulkanLearning/base/VulkanDevice.hpp"
 
 
 const uint32_t WIDTH = 800;
@@ -155,10 +156,12 @@ class HelloTriangleApplication {
 
         VkInstance instance;
         VulkanLearning::VulkanDebug m_debug;
+        VulkanLearning::VulkanDevice m_device;
         VkSurfaceKHR surface;
 
         VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
         VkDevice device;
+        
 
         VkQueue graphicsQueue;
         VkQueue presentQueue;
@@ -241,7 +244,8 @@ class HelloTriangleApplication {
             createInstance();
             m_debug.setup(instance, enableValidationLayers);
             createSurface();
-            pickPhysicalDevice();
+            m_device.pickPhysicalDevice(instance, surface, deviceExtensions);
+            /* pickPhysicalDevice(); */
             createLogicalDevice();
             createSwapChain();
             createImageViews();
