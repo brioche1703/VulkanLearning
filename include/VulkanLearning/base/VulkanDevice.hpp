@@ -31,21 +31,35 @@ namespace VulkanLearning {
             VkPhysicalDevice m_physicalDevice;
             VkDevice m_logicalDevice;
 
-            std::vector<const char*> m_deviceExtensions; 
+            VkQueue m_graphicsQueue;
+            VkQueue m_presentQueue;
 
+            std::vector<const char*> m_deviceExtensions; 
             VkSampleCountFlagBits m_msaaSamples;
 
         public:
             VulkanDevice();
             ~VulkanDevice();
 
+            VkPhysicalDevice getPhysicalDevice();
+            VkDevice getLogicalDevice();
+            VkQueue getGraphicsQueue();
+            VkQueue getPresentQueue();
+            VkSampleCountFlagBits getMsaaSamples();
+
             void pickPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const std::vector<const char*> deviceExtensions);
+            void createLogicalDevice(VkSurfaceKHR surface, bool enableValidationLayers, 
+                    const std::vector<const char*> validationLayers);
+
+            SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface); 
+            SwapChainSupportDetails querySwapChainSupport(VkSurfaceKHR surface); 
+
+        private:
             bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, const std::vector<const char*> deviceExtensions);
             VkSampleCountFlagBits getMaxUsableSampleCount(); 
             bool checkDeviceExtensionSupport(VkPhysicalDevice device, const std::vector<const char*> deviceExtensions);
 
             QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface);
-            SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface); 
 
     };
 }
