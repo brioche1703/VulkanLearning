@@ -9,10 +9,11 @@ namespace VulkanLearning {
     class VulkanDebug {
         private:
             VkDebugUtilsMessengerEXT m_debugMessenger;
-            bool m_enableValidationLayers; 
 
         public:
-            VulkanDebug(bool enableValidationLayers = false);
+            VulkanDebug();
+            VulkanDebug(VkInstance instance, bool enableValidationLayers);
+
             ~VulkanDebug();
 
             void setup(VkInstance instance, bool enableValidationLayers);

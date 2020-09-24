@@ -39,6 +39,10 @@ namespace VulkanLearning {
 
         public:
             VulkanDevice();
+            VulkanDevice(VkInstance instance, VkSurfaceKHR surface,
+                    const std::vector<const char*> deviceExtensions,
+                    bool enableValidationLayers,
+                    const std::vector<const char*> validationLayers);
             ~VulkanDevice();
 
             VkPhysicalDevice getPhysicalDevice();

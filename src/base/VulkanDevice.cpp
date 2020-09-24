@@ -11,6 +11,14 @@ namespace VulkanLearning {
         m_deviceExtensions = deviceExtensions;
     }
 
+    VulkanDevice::VulkanDevice(VkInstance instance, VkSurfaceKHR surface,
+            const std::vector<const char*> deviceExtensions,
+            bool enableValidationLayers,
+            const std::vector<const char*> validationLayers) {
+        pickPhysicalDevice(instance, surface, deviceExtensions);
+        createLogicalDevice(surface, enableValidationLayers, validationLayers);
+    }
+
     VulkanDevice::~VulkanDevice() {}        
 
     VkPhysicalDevice VulkanDevice::getPhysicalDevice() { return m_physicalDevice; }

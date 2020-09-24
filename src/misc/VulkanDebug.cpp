@@ -4,15 +4,16 @@
 
 namespace VulkanLearning {
 
-    VulkanDebug::VulkanDebug(bool enableValidationLayers) : 
-        m_enableValidationLayers(enableValidationLayers) {
-        }
+    VulkanDebug::VulkanDebug() {}
+
+    VulkanDebug::VulkanDebug(VkInstance instance, bool enableValidationLayers) {
+        setup(instance, enableValidationLayers);
+    }
 
     VulkanDebug::~VulkanDebug() {}
 
     void VulkanDebug::setup(VkInstance instance, bool enableValidationLayers) {
-        m_enableValidationLayers = enableValidationLayers;
-        if (!m_enableValidationLayers) return;
+        if (!enableValidationLayers) return;
 
         VkDebugUtilsMessengerCreateInfoEXT createInfo;
         populate(createInfo);
