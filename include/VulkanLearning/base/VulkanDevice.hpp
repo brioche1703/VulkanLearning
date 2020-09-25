@@ -55,6 +55,7 @@ namespace VulkanLearning {
             VkQueue getPresentQueue();
             VkSampleCountFlagBits getMsaaSamples();
             QueueFamilyIndices getQueueFamilyIndices();
+            
 
             void pickPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const std::vector<const char*> deviceExtensions);
             void createLogicalDevice(VkSurfaceKHR surface, bool enableValidationLayers, 
@@ -63,6 +64,10 @@ namespace VulkanLearning {
             SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface); 
             SwapChainSupportDetails querySwapChainSupport(VkSurfaceKHR surface); 
             QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface);
+
+            VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, 
+                    VkImageTiling tiling, VkFormatFeatureFlags features);
+            VkFormat findDepthFormat();
 
         private:
             bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, const std::vector<const char*> deviceExtensions);
