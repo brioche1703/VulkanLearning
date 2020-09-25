@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vulkan/vulkan.h>
 
 #include <iostream>
@@ -37,6 +39,8 @@ namespace VulkanLearning {
             std::vector<const char*> m_deviceExtensions; 
             VkSampleCountFlagBits m_msaaSamples;
 
+            QueueFamilyIndices m_queueFamilyIndices;
+
         public:
             VulkanDevice();
             VulkanDevice(VkInstance instance, VkSurfaceKHR surface,
@@ -50,6 +54,7 @@ namespace VulkanLearning {
             VkQueue getGraphicsQueue();
             VkQueue getPresentQueue();
             VkSampleCountFlagBits getMsaaSamples();
+            QueueFamilyIndices getQueueFamilyIndices();
 
             void pickPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const std::vector<const char*> deviceExtensions);
             void createLogicalDevice(VkSurfaceKHR surface, bool enableValidationLayers, 
@@ -57,13 +62,12 @@ namespace VulkanLearning {
 
             SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface); 
             SwapChainSupportDetails querySwapChainSupport(VkSurfaceKHR surface); 
+            QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface);
 
         private:
             bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, const std::vector<const char*> deviceExtensions);
             VkSampleCountFlagBits getMaxUsableSampleCount(); 
             bool checkDeviceExtensionSupport(VkPhysicalDevice device, const std::vector<const char*> deviceExtensions);
-
-            QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface);
 
     };
 }

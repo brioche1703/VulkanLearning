@@ -22,13 +22,11 @@ namespace VulkanLearning {
     VulkanDevice::~VulkanDevice() {}        
 
     VkPhysicalDevice VulkanDevice::getPhysicalDevice() { return m_physicalDevice; }
-
     VkDevice VulkanDevice::getLogicalDevice() { return m_logicalDevice; }
-
     VkQueue VulkanDevice::getGraphicsQueue() { return m_graphicsQueue; }
     VkQueue VulkanDevice::getPresentQueue() { return m_presentQueue; }
-
     VkSampleCountFlagBits VulkanDevice::getMsaaSamples() { return m_msaaSamples; }
+    QueueFamilyIndices VulkanDevice::getQueueFamilyIndices() { return m_queueFamilyIndices; }
 
     void VulkanDevice::pickPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const std::vector<const char*> deviceExtensions) {
         uint32_t deviceCount = 0;
@@ -56,10 +54,8 @@ namespace VulkanLearning {
 
     void VulkanDevice::createLogicalDevice(VkSurfaceKHR surface, bool enableValidationLayers, 
             const std::vector<const char*> validationLayers) {
-        QueueFamilyIndices indices = findQueueFamilies(m_physicalDevice, surface);
-
         std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-        std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
+        std::set<uint32_t> uniqueQueueFamilies = {m_queueFamilyIndices.graphicsFamily.value(), m_queueFamilyIndices.presentFamily.value()};
 
         float queuePriority = 1.0f;
         for (uint32_t queueFamily : uniqueQueueFamilies) {
@@ -97,8 +93,8 @@ namespace VulkanLearning {
             throw std::runtime_error("failed to create logical device!");
         }
 
-        vkGetDeviceQueue(m_logicalDevice, indices.graphicsFamily.value(), 0, &m_graphicsQueue);
-        vkGetDeviceQueue(m_logicalDevice, indices.presentFamily.value(), 0, &m_presentQueue);
+        vkGetDeviceQueue(m_logicalDevice, m_queueFamilyIndices.graphicsFamily.value(), 0, &m_graphicsQueue);
+        vkGetDeviceQueue(m_logicalDevice, m_queueFamilyIndices.presentFamily.value(), 0, &m_presentQueue);
     } 
 
 
@@ -120,7 +116,7 @@ namespace VulkanLearning {
     }
 
     bool VulkanDevice::isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, const std::vector<const char*> deviceExtensions) {
-        QueueFamilyIndices indices = findQueueFamilies(device, surface);
+        m_queueFamilyIndices = findQueueFamilies(device, surface);
 
         bool extensionsSupported = checkDeviceExtensionSupport(device, deviceExtensions);
 
@@ -134,7 +130,7 @@ namespace VulkanLearning {
         VkPhysicalDeviceFeatures supportedFeatures;
         vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
 
-        return indices.isComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;
+        return m_queueFamilyIndices.isComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;
     }
 
     QueueFamilyIndices VulkanDevice::findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface) {
@@ -168,6 +164,7 @@ namespace VulkanLearning {
 
         return indices;
     }
+
 
     SwapChainSupportDetails VulkanDevice::querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface) {
         SwapChainSupportDetails details;
@@ -214,8 +211,6 @@ namespace VulkanLearning {
 
         return details;
     }
-
-
 
     bool VulkanDevice::checkDeviceExtensionSupport(VkPhysicalDevice device, const std::vector<const char*> deviceExtensions) {
         uint32_t extensionCount;
