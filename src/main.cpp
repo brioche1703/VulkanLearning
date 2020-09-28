@@ -1,5 +1,3 @@
-#include <unordered_map>
-#include <cmath>
 #include <functional>
 #define GLFW_INCLUDE_VULKAN
 #define GLM_FORCE_RADIANS
@@ -42,6 +40,8 @@
 #include "../include/VulkanLearning/base/VulkanSwapChain.hpp"
 #include "../include/VulkanLearning/base/VulkanSurface.hpp"
 #include "../include/VulkanLearning/base/VulkanRenderPass.hpp"
+#include "../include/VulkanLearning/misc/Inputs.hpp"
+#include "../include/VulkanLearning/window/Window.hpp"
 
 const std::vector<const char*> deviceExtensions = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME
@@ -130,21 +130,23 @@ namespace VulkanLearning {
     const bool enableValidationLayers = true;
 #endif
 
-    VulkanLearning::Camera cam(glm::vec3(0.0f, 0.0f, 5.0f));
     static bool captureMouse = true;
-    static VulkanLearning::FpsCounter fpsCounter;
 
     class HelloTriangleApplication {
         public:
             void run() {
                 initWindow();
+                initCore();
                 initVulkan();
                 mainLoop();
                 cleanup();
             }
 
         private:
-            GLFWwindow* window;
+            Window* m_window;
+            Camera* m_camera;
+            FpsCounter* m_fpsCounter;
+            Inputs* m_input;
 
             VulkanInstance *m_instance;
             VulkanDebug* m_debug = new VulkanDebug();
@@ -199,25 +201,20 @@ namespace VulkanLearning {
             VkImageView colorImageView;
 
             void initWindow() {
-                glfwInit();
-
-                glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-                glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-
-                window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
-                glfwSetWindowUserPointer(window, this);
-                glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
-
-                glfwSetKeyCallback(window, keyboard_callback);
-                glfwSetScrollCallback(window, scroll_callback);
-                glfwSetCursorPosCallback(window, mouse_callback);
-
-                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                m_window = new Window("Vulkan", WIDTH, HEIGHT);
+                m_window->init();
             }
 
-            static void framebufferResizeCallback(GLFWwindow* window, int width, int height) {
-                auto app = reinterpret_cast<HelloTriangleApplication*>(glfwGetWindowUserPointer(window));
-                app->framebufferResized = true;
+            void initCore() {
+                m_camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f));
+                m_fpsCounter = new FpsCounter();
+                m_input = new Inputs(m_window->getWindow(), m_camera, m_fpsCounter);
+
+                glfwSetKeyCallback(m_window->getWindow() , m_input->keyboard_callback);
+                glfwSetScrollCallback(m_window->getWindow() , m_input->scroll_callback);
+                glfwSetCursorPosCallback(m_window->getWindow() , m_input->mouse_callback);
+
+                glfwSetInputMode(m_window->getWindow() , GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             }
 
             void initVulkan() {
@@ -227,12 +224,15 @@ namespace VulkanLearning {
                 createDevice();
                 createSwapChain();
                 createRenderPass();
+
                 createDescriptorSetLayout();
                 createGraphicsPipeline();
                 createCommandPool();
                 createColorResources();
                 createDepthResources();
+
                 createFramebuffers();
+
                 createTextureImage();
                 createTextureImageView();
                 createTextureSampler();
@@ -247,10 +247,10 @@ namespace VulkanLearning {
             }
 
             void mainLoop() {
-                while (!glfwWindowShouldClose(window)) {
+                while (!glfwWindowShouldClose(m_window->getWindow() )) {
                     glfwPollEvents();
-                    processKeyboardInput();
-                    fpsCounter.update();
+                    m_input->processKeyboardInput();
+                    m_fpsCounter->update();
                     drawFrame();
                 }
 
@@ -356,19 +356,19 @@ namespace VulkanLearning {
                 vkDestroySurfaceKHR(m_instance->getInstance(), m_surface->getSurface(), nullptr);
                 vkDestroyInstance(m_instance->getInstance(), nullptr);
 
-                glfwDestroyWindow(window);
+                glfwDestroyWindow(m_window->getWindow() );
 
                 glfwTerminate();
             }
 
             void createSurface() {
-                m_surface = new VulkanSurface(window, m_instance->getInstance());
+                m_surface = new VulkanSurface(m_window->getWindow() , m_instance->getInstance());
             }
 
             void recreateSwapChain() {
                 int width = 0, height = 0;
                 while (width == 0 || height == 0) {
-                    glfwGetFramebufferSize(window, &width, &height);
+                    glfwGetFramebufferSize(m_window->getWindow() , &width, &height);
                     glfwWaitEvents();
                 }
 
@@ -376,7 +376,7 @@ namespace VulkanLearning {
 
                 cleanupSwapChain();
 
-                m_swapChain->create(window, *m_device, m_surface->getSurface());
+                m_swapChain->create(m_window->getWindow() , *m_device, m_surface->getSurface());
 
                 createRenderPass();
                 createGraphicsPipeline();
@@ -441,7 +441,7 @@ namespace VulkanLearning {
             }
 
             void  createSwapChain() {
-                m_swapChain = new VulkanSwapChain(window, *m_device, m_surface->getSurface());
+                m_swapChain = new VulkanSwapChain(m_window->getWindow() , *m_device, m_surface->getSurface());
             }
 
             void createRenderPass() {
@@ -1099,9 +1099,9 @@ namespace VulkanLearning {
                 ubo.model = glm::rotate(ubo.model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
                 ubo.model = glm::rotate(ubo.model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
-                ubo.view = cam.getViewMatrix();
+                ubo.view = m_camera->getViewMatrix();
 
-                ubo.proj = glm::perspective(glm::radians(cam.getZoom()), m_swapChain->getExtent().width / (float) m_swapChain->getExtent().height, 0.1f,  100.0f);
+                ubo.proj = glm::perspective(glm::radians(m_camera->getZoom()), m_swapChain->getExtent().width / (float) m_swapChain->getExtent().height, 0.1f,  100.0f);
                 ubo.proj[1][1] *= -1;
 
                 void* data;
@@ -1309,56 +1309,7 @@ namespace VulkanLearning {
 
                 endSingleTimeCommands(commandBuffer);
             }
-
-            static void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-                if (key == GLFW_KEY_ESCAPE) {
-                    if (action == GLFW_PRESS)
-                        glfwSetWindowShouldClose(window, GLFW_TRUE);
-                }
-                if (key == GLFW_KEY_M) {
-                    if (action == GLFW_PRESS) {
-                        captureMouse = !captureMouse;
-                        if (captureMouse) {
-                            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-                        } else {
-                            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-                        }
-                    }
-                }
-            }
-
-            static void scroll_callback(GLFWwindow* window, double xOffset, double yOffset) {
-                cam.processZoom(yOffset);
-            }
-
-            static void mouse_callback(GLFWwindow* window, double xPos, double yPos) {
-                cam.processMouse(xPos, yPos, captureMouse);
-            }
-
-            void processKeyboardInput() {
-
-                if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-                    cam.processMovement(VulkanLearning::UPWARD, fpsCounter.getDeltaTime());
-                } else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-                    cam.processMovement(VulkanLearning::FORWARD, fpsCounter.getDeltaTime());
-                }
-
-                if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-                    cam.processMovement(VulkanLearning::DOWNWARD, fpsCounter.getDeltaTime());
-                } else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-                    cam.processMovement(VulkanLearning::BACKWARD, fpsCounter.getDeltaTime());
-                }
-
-                if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-                    cam.processMovement(VulkanLearning::LEFT, fpsCounter.getDeltaTime());
-                }
-
-                if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-                    cam.processMovement(VulkanLearning::RIGHT, fpsCounter.getDeltaTime());
-                }
-            }
     };
-
 }
 
 int main() {

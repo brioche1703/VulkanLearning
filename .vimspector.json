@@ -1,0 +1,14 @@
+{
+  "configurations": {
+    "Launch": {
+      "adapter": "vscode-cpptools",
+      "configuration": {
+        "request": "launch",
+        "program": "build/bin/runner",
+        "cwd": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "externalConsole": true,
+        "MIMode": "gdb"
+      }
+    }
+  }
+}
