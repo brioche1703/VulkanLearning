@@ -44,6 +44,7 @@
 #include "../include/VulkanLearning/window/Window.hpp"
 #include "../include/VulkanLearning/base/VulkanDescriptorSetLayout.hpp"
 #include "../include/VulkanLearning/base/VulkanCommandPool.hpp"
+#include "../include/VulkanLearning/base/VulkanShaderModule.hpp"
 
 const std::vector<const char*> deviceExtensions = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME
@@ -230,7 +231,9 @@ namespace VulkanLearning {
                 createDescriptorSetLayout();
 
                 createGraphicsPipeline();
+
                 createCommandPool();
+
                 createColorResources();
                 createDepthResources();
 
@@ -452,22 +455,19 @@ namespace VulkanLearning {
             }
 
             void createGraphicsPipeline() {
-                auto vertShaderCode = readFile("./src/shaders/vert.spv");
-                auto fragShaderCode = readFile("./src/shaders/frag.spv");
-
-                auto vertShaderModule = createShaderModule(vertShaderCode);
-                auto fragShaderModule = createShaderModule(fragShaderCode);
+                VulkanShaderModule vertShaderModule = VulkanShaderModule("./src/shaders/vert.spv", m_device);
+                VulkanShaderModule fragShaderModule = VulkanShaderModule("./src/shaders/frag.spv", m_device);
 
                 VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
                 vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
                 vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-                vertShaderStageInfo.module = vertShaderModule;
+                vertShaderStageInfo.module = vertShaderModule.getModule();
                 vertShaderStageInfo.pName = "main";
 
                 VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
                 fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
                 fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-                fragShaderStageInfo.module = fragShaderModule;
+                fragShaderStageInfo.module = fragShaderModule.getModule();
                 fragShaderStageInfo.pName = "main";
 
                 VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
@@ -585,8 +585,8 @@ namespace VulkanLearning {
                     throw std::runtime_error("Graphics pipeline creation failed!");
                 }
 
-                vkDestroyShaderModule(m_device->getLogicalDevice(), vertShaderModule, nullptr);
-                vkDestroyShaderModule(m_device->getLogicalDevice(), fragShaderModule, nullptr);
+                vkDestroyShaderModule(m_device->getLogicalDevice(), vertShaderModule.getModule(), nullptr);
+                vkDestroyShaderModule(m_device->getLogicalDevice(), fragShaderModule.getModule(), nullptr);
             }
 
             void createFramebuffers() {
