@@ -42,6 +42,8 @@
 #include "../include/VulkanLearning/base/VulkanRenderPass.hpp"
 #include "../include/VulkanLearning/misc/Inputs.hpp"
 #include "../include/VulkanLearning/window/Window.hpp"
+#include "../include/VulkanLearning/base/VulkanDescriptorSetLayout.hpp"
+#include "../include/VulkanLearning/base/VulkanCommandPool.hpp"
 
 const std::vector<const char*> deviceExtensions = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME
@@ -157,14 +159,15 @@ namespace VulkanLearning {
 
             VulkanRenderPass* m_renderPass;
 
-            VkDescriptorSetLayout descriptorSetLayout;
+            VulkanDescriptorSetLayout* m_descriptorSetLayout;
+
             VkDescriptorPool descriptorPool;
             std::vector<VkDescriptorSet> descriptorSets;
             VkPipelineLayout pipelineLayout;
 
             VkPipeline graphicsPipeline;
 
-            VkCommandPool commandPool;
+            VulkanCommandPool* m_commandPool;
 
             std::vector<Vertex> vertices;
             std::vector<uint32_t> indices;
@@ -224,8 +227,8 @@ namespace VulkanLearning {
                 createDevice();
                 createSwapChain();
                 createRenderPass();
-
                 createDescriptorSetLayout();
+
                 createGraphicsPipeline();
                 createCommandPool();
                 createColorResources();
@@ -332,7 +335,7 @@ namespace VulkanLearning {
                 vkDestroyImage(m_device->getLogicalDevice(), textureImage, nullptr);
                 vkFreeMemory(m_device->getLogicalDevice(), textureImageMemory, nullptr);
 
-                vkDestroyDescriptorSetLayout(m_device->getLogicalDevice(), descriptorSetLayout, nullptr);
+                vkDestroyDescriptorSetLayout(m_device->getLogicalDevice(), m_descriptorSetLayout->getDescriptorSetLayout(), nullptr);
 
                 vkDestroyBuffer(m_device->getLogicalDevice(), vertexBuffer, nullptr);
                 vkFreeMemory(m_device->getLogicalDevice(), vertexBufferMemory, nullptr);
@@ -345,7 +348,7 @@ namespace VulkanLearning {
                     vkDestroyFence(m_device->getLogicalDevice(), inFlightFences[i], nullptr); 
                 }
 
-                vkDestroyCommandPool(m_device->getLogicalDevice(), commandPool, nullptr);
+                vkDestroyCommandPool(m_device->getLogicalDevice(), m_commandPool->getCommandPool(), nullptr);
 
                 vkDestroyDevice(m_device->getLogicalDevice(), nullptr);
 
@@ -404,7 +407,7 @@ namespace VulkanLearning {
                     vkDestroyFramebuffer(m_device->getLogicalDevice(), framebuffer, nullptr);
                 }
 
-                vkFreeCommandBuffers(m_device->getLogicalDevice(), commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+                vkFreeCommandBuffers(m_device->getLogicalDevice(), m_commandPool->getCommandPool(), static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
 
                 vkDestroyPipeline(m_device->getLogicalDevice(), graphicsPipeline, nullptr);
                 vkDestroyPipelineLayout(m_device->getLogicalDevice(), pipelineLayout, nullptr);
@@ -556,7 +559,7 @@ namespace VulkanLearning {
                 VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
                 pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
                 pipelineLayoutInfo.setLayoutCount = 1;
-                pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;
+                pipelineLayoutInfo.pSetLayouts = m_descriptorSetLayout->getDescriptorSetLayoutPointer();
 
                 if (vkCreatePipelineLayout(m_device->getLogicalDevice(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
                     throw std::runtime_error("Pipeline layout creation failed!");
@@ -597,16 +600,7 @@ namespace VulkanLearning {
             }
 
             void createCommandPool() {
-                QueueFamilyIndices queueFamilyIndicies = m_device->getQueueFamilyIndices();
-
-                VkCommandPoolCreateInfo poolInfo{};
-                poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-                poolInfo.queueFamilyIndex = queueFamilyIndicies.graphicsFamily.value();
-                poolInfo.flags = 0; 
-
-                if (vkCreateCommandPool(m_device->getLogicalDevice(), &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
-                    throw std::runtime_error("One command pool creation failed!");
-                }
+                m_commandPool = new VulkanCommandPool(m_device);
             }
 
             void createDepthResources() {
@@ -797,7 +791,7 @@ namespace VulkanLearning {
 
                 VkCommandBufferAllocateInfo allocInfo{};
                 allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-                allocInfo.commandPool = commandPool;
+                allocInfo.commandPool = m_commandPool->getCommandPool();
                 allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
                 allocInfo.commandBufferCount = (uint32_t) commandBuffers.size();
 
@@ -872,30 +866,7 @@ namespace VulkanLearning {
             }
 
             void createDescriptorSetLayout() {
-                VkDescriptorSetLayoutBinding uboLayoutBinding{};
-                uboLayoutBinding.binding = 0;
-                uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                uboLayoutBinding.descriptorCount = 1;
-                uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-                uboLayoutBinding.pImmutableSamplers = nullptr;
-
-                VkDescriptorSetLayoutBinding samplerLayoutBinding{};
-                samplerLayoutBinding.binding = 1;
-                samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                samplerLayoutBinding.descriptorCount = 1;
-                samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-                samplerLayoutBinding.pImmutableSamplers = nullptr;
-
-                std::array<VkDescriptorSetLayoutBinding, 2> bindings = {uboLayoutBinding, samplerLayoutBinding};
-
-                VkDescriptorSetLayoutCreateInfo layoutInfo{};
-                layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-                layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
-                layoutInfo.pBindings = bindings.data();
-
-                if (vkCreateDescriptorSetLayout(m_device->getLogicalDevice(), &layoutInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS) {
-                    throw std::runtime_error("Set layout descriptor creation failed!");
-                }
+                m_descriptorSetLayout = new VulkanDescriptorSetLayout(m_device);
             }
 
             void createUniformBuffers() {
@@ -931,7 +902,7 @@ namespace VulkanLearning {
             }
 
             void createDescriptorSets() {
-                std::vector<VkDescriptorSetLayout> layouts(m_swapChain->getImages().size(), descriptorSetLayout);
+                std::vector<VkDescriptorSetLayout> layouts(m_swapChain->getImages().size(), m_descriptorSetLayout->getDescriptorSetLayout());
                 VkDescriptorSetAllocateInfo allocInfo{};
                 allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
                 allocInfo.descriptorPool = descriptorPool;
@@ -1063,7 +1034,7 @@ namespace VulkanLearning {
 
                 allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
                 allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-                allocInfo.commandPool = commandPool;
+                allocInfo.commandPool = m_commandPool->getCommandPool();
                 allocInfo.commandBufferCount = 1;
 
                 VkCommandBuffer commandBuffer;
@@ -1089,7 +1060,7 @@ namespace VulkanLearning {
                 vkQueueSubmit(m_device->getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
                 vkQueueWaitIdle(m_device->getGraphicsQueue());
 
-                vkFreeCommandBuffers(m_device->getLogicalDevice(), commandPool, 1, &commandBuffer);
+                vkFreeCommandBuffers(m_device->getLogicalDevice(), m_commandPool->getCommandPool(), 1, &commandBuffer);
             }
 
             void updateCamera(uint32_t currentImage) {
