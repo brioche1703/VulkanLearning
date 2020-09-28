@@ -68,6 +68,7 @@ namespace VulkanLearning {
             VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, 
                     VkImageTiling tiling, VkFormatFeatureFlags features);
             VkFormat findDepthFormat();
+            uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
         private:
             bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, const std::vector<const char*> deviceExtensions);

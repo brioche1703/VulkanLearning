@@ -45,6 +45,7 @@
 #include "../include/VulkanLearning/base/VulkanDescriptorSetLayout.hpp"
 #include "../include/VulkanLearning/base/VulkanCommandPool.hpp"
 #include "../include/VulkanLearning/base/VulkanShaderModule.hpp"
+#include "../include/VulkanLearning/base/VulkanBuffer.hpp"
 
 const std::vector<const char*> deviceExtensions = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME
@@ -172,12 +173,10 @@ namespace VulkanLearning {
 
             std::vector<Vertex> vertices;
             std::vector<uint32_t> indices;
-            VkBuffer vertexBuffer;
-            VkDeviceMemory vertexBufferMemory;
-            VkBuffer indexBuffer;
-            VkDeviceMemory indexBufferMemory;
-            std::vector<VkBuffer> uniformBuffers;
-            std::vector<VkDeviceMemory> uniformBuffersMemory;
+            VulkanBuffer* m_vertexBuffer;
+            VulkanBuffer* m_indexBuffer;
+
+            std::vector<VulkanBuffer*> m_uniformBuffers;
 
             std::vector<VkCommandBuffer> commandBuffers;
 
@@ -242,9 +241,12 @@ namespace VulkanLearning {
                 createTextureImage();
                 createTextureImageView();
                 createTextureSampler();
+
                 loadModel();
+
                 createVertexBuffer();
                 createIndexBuffer();
+
                 createUniformBuffers();
                 createDescriptorPool();
                 createDescriptorSets();
@@ -340,10 +342,10 @@ namespace VulkanLearning {
 
                 vkDestroyDescriptorSetLayout(m_device->getLogicalDevice(), m_descriptorSetLayout->getDescriptorSetLayout(), nullptr);
 
-                vkDestroyBuffer(m_device->getLogicalDevice(), vertexBuffer, nullptr);
-                vkFreeMemory(m_device->getLogicalDevice(), vertexBufferMemory, nullptr);
-                vkDestroyBuffer(m_device->getLogicalDevice(), indexBuffer, nullptr);
-                vkFreeMemory(m_device->getLogicalDevice(), indexBufferMemory, nullptr);
+                vkDestroyBuffer(m_device->getLogicalDevice(), m_vertexBuffer->getBuffer(), nullptr);
+                vkFreeMemory(m_device->getLogicalDevice(), m_vertexBuffer->getBufferMemory(), nullptr);
+                vkDestroyBuffer(m_device->getLogicalDevice(), m_indexBuffer->getBuffer(), nullptr);
+                vkFreeMemory(m_device->getLogicalDevice(), m_indexBuffer->getBufferMemory(), nullptr);
 
                 for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
                     vkDestroySemaphore(m_device->getLogicalDevice(), imageAvailableSemaphores[i], nullptr);
@@ -423,8 +425,8 @@ namespace VulkanLearning {
                 vkDestroySwapchainKHR(m_device->getLogicalDevice(), m_swapChain->getSwapChain(), nullptr);
 
                 for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
-                    vkDestroyBuffer(m_device->getLogicalDevice(), uniformBuffers[i], nullptr);
-                    vkFreeMemory(m_device->getLogicalDevice(), uniformBuffersMemory[i], nullptr);
+                    vkDestroyBuffer(m_device->getLogicalDevice(), m_uniformBuffers[i]->getBuffer(), nullptr);
+                    vkFreeMemory(m_device->getLogicalDevice(), m_uniformBuffers[i]->getBufferMemory(), nullptr);
                 }
 
                 vkDestroyDescriptorPool(m_device->getLogicalDevice(), descriptorPool, nullptr);
@@ -747,43 +749,28 @@ namespace VulkanLearning {
             }
 
             void createVertexBuffer() {
-                VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
-                VkBuffer stagingBuffer;
-                VkDeviceMemory stagingBufferMemory;
-
-                createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-
-                void* data;
-                vkMapMemory(m_device->getLogicalDevice(), stagingBufferMemory, 0, bufferSize, 0, &data);
-                memcpy(data, vertices.data(), (size_t) bufferSize);
-                vkUnmapMemory(m_device->getLogicalDevice(), stagingBufferMemory);
-
-                createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
-
-                copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
-
-                vkDestroyBuffer(m_device->getLogicalDevice(), stagingBuffer, nullptr);
-                vkFreeMemory(m_device->getLogicalDevice(), stagingBufferMemory, nullptr);
+                m_vertexBuffer = new VulkanBuffer(m_device, m_commandPool);
+                m_vertexBuffer->createWithStagingBuffer(vertices, 
+                        VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
+                        VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
             }
 
             void createIndexBuffer() {
-                VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
-                VkBuffer stagingBuffer;
-                VkDeviceMemory stagingBufferMemory;
+                m_indexBuffer = new VulkanBuffer(m_device, m_commandPool);
+                m_indexBuffer->createWithStagingBuffer(indices, 
+                        VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
+                        VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+            }
 
-                createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+            void createUniformBuffers() {
+                VkDeviceSize bufferSize = sizeof(UniformBufferObject);
 
-                void* data;
-                vkMapMemory(m_device->getLogicalDevice(), stagingBufferMemory, 0, bufferSize, 0, &data);
-                memcpy(data, indices.data(), (size_t) bufferSize);
-                vkUnmapMemory(m_device->getLogicalDevice(), stagingBufferMemory);
+                m_uniformBuffers.resize(m_swapChain->getImages().size());
 
-                createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
-
-                copyBuffer(stagingBuffer, indexBuffer, bufferSize);
-
-                vkDestroyBuffer(m_device->getLogicalDevice(), stagingBuffer, nullptr);
-                vkFreeMemory(m_device->getLogicalDevice(), stagingBufferMemory, nullptr);
+                for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
+                    m_uniformBuffers[i] = new VulkanBuffer(m_device, m_commandPool);
+                    m_uniformBuffers[i]->createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, *m_uniformBuffers[i]->getBufferPointer(), *m_uniformBuffers[i]->getBufferMemoryPointer());
+                }
             }
 
             void createCommandBuffers() {
@@ -827,10 +814,10 @@ namespace VulkanLearning {
 
                     vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 
-                    VkBuffer vertexBuffers[] = {vertexBuffer};
+                    VkBuffer vertexBuffers[] = {m_vertexBuffer->getBuffer()};
                     VkDeviceSize offsets[] = {0};
                     vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
-                    vkCmdBindIndexBuffer(commandBuffers[i], indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+                    vkCmdBindIndexBuffer(commandBuffers[i], m_indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
                     vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[i], 0, nullptr);
 
                     vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
@@ -867,17 +854,6 @@ namespace VulkanLearning {
 
             void createDescriptorSetLayout() {
                 m_descriptorSetLayout = new VulkanDescriptorSetLayout(m_device);
-            }
-
-            void createUniformBuffers() {
-                VkDeviceSize bufferSize = sizeof(UniformBufferObject);
-
-                uniformBuffers.resize(m_swapChain->getImages().size());
-                uniformBuffersMemory.resize(m_swapChain->getImages().size());
-
-                for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
-                    createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffers[i], uniformBuffersMemory[i]);
-                }
             }
 
             void createDescriptorPool() {
@@ -917,7 +893,7 @@ namespace VulkanLearning {
 
                 for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
                     VkDescriptorBufferInfo bufferInfo{};
-                    bufferInfo.buffer = uniformBuffers[i];
+                    bufferInfo.buffer = m_uniformBuffers[i]->getBuffer();
                     bufferInfo.offset = 0;
                     bufferInfo.range = sizeof(UniformBufferObject);
 
@@ -980,19 +956,6 @@ namespace VulkanLearning {
                 return buffer;
             }
 
-            uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
-                VkPhysicalDeviceMemoryProperties memProperties;
-                vkGetPhysicalDeviceMemoryProperties(m_device->getPhysicalDevice(), &memProperties);
-
-                for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
-                    if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
-                        return i;
-                    }
-                }
-
-                throw std::runtime_error("No memory type is available for the buffer!");
-            }
-
             void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
                 VkBufferCreateInfo bufferInfo{};
                 bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -1010,7 +973,7 @@ namespace VulkanLearning {
                 VkMemoryAllocateInfo allocInfo{};
                 allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
                 allocInfo.allocationSize = memRequirements.size;
-                allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
+                allocInfo.memoryTypeIndex = m_device->findMemoryType(memRequirements.memoryTypeBits, properties);
 
                 if (vkAllocateMemory(m_device->getLogicalDevice(), &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
                     throw std::runtime_error("Memory allocation failed!");
@@ -1076,9 +1039,9 @@ namespace VulkanLearning {
                 ubo.proj[1][1] *= -1;
 
                 void* data;
-                vkMapMemory(m_device->getLogicalDevice(), uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
+                vkMapMemory(m_device->getLogicalDevice(), m_uniformBuffers[currentImage]->getBufferMemory(), 0, sizeof(ubo), 0, &data);
                 memcpy(data, &ubo, sizeof(ubo));
-                vkUnmapMemory(m_device->getLogicalDevice(), uniformBuffersMemory[currentImage]);
+                vkUnmapMemory(m_device->getLogicalDevice(), m_uniformBuffers[currentImage]->getBufferMemory());
             }
 
             void updateUniformBuffer(uint32_t currentImage) {
@@ -1090,9 +1053,9 @@ namespace VulkanLearning {
                 ubo.proj[1][1] *= -1;
 
                 void* data;
-                vkMapMemory(m_device->getLogicalDevice(), uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
+                vkMapMemory(m_device->getLogicalDevice(), m_uniformBuffers[currentImage]->getBufferMemory(), 0, sizeof(ubo), 0, &data);
                 memcpy(data, &ubo, sizeof(ubo));
-                vkUnmapMemory(m_device->getLogicalDevice(), uniformBuffersMemory[currentImage]);
+                vkUnmapMemory(m_device->getLogicalDevice(), m_uniformBuffers[currentImage]->getBufferMemory());
             }
 
             void createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory &imageMemory) {
@@ -1121,7 +1084,7 @@ namespace VulkanLearning {
                 VkMemoryAllocateInfo allocInfo{};
                 allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
                 allocInfo.allocationSize = memRequirements.size;
-                allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+                allocInfo.memoryTypeIndex = m_device->findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
                 if (vkAllocateMemory(m_device->getLogicalDevice(), &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) {
                     throw std::runtime_error("Memory allocation for an image failed!");
