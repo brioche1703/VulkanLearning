@@ -46,6 +46,8 @@
 #include "../include/VulkanLearning/base/VulkanCommandPool.hpp"
 #include "../include/VulkanLearning/base/VulkanShaderModule.hpp"
 #include "../include/VulkanLearning/base/VulkanBuffer.hpp"
+#include "../include/VulkanLearning/base/VulkanDescriptorPool.hpp"
+#include "../include/VulkanLearning/base/VulkanDescriptorSets.hpp"
 
 const std::vector<const char*> deviceExtensions = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME
@@ -162,9 +164,10 @@ namespace VulkanLearning {
             VulkanRenderPass* m_renderPass;
 
             VulkanDescriptorSetLayout* m_descriptorSetLayout;
+            VulkanDescriptorPool* m_descriptorPool;
 
-            VkDescriptorPool descriptorPool;
-            std::vector<VkDescriptorSet> descriptorSets;
+            VulkanDescriptorSets* m_descriptorSets;
+
             VkPipelineLayout pipelineLayout;
 
             VkPipeline graphicsPipeline;
@@ -250,6 +253,7 @@ namespace VulkanLearning {
                 createUniformBuffers();
                 createDescriptorPool();
                 createDescriptorSets();
+
                 createCommandBuffers();
                 createSyncObjects();
             }
@@ -429,7 +433,7 @@ namespace VulkanLearning {
                     vkFreeMemory(m_device->getLogicalDevice(), m_uniformBuffers[i]->getBufferMemory(), nullptr);
                 }
 
-                vkDestroyDescriptorPool(m_device->getLogicalDevice(), descriptorPool, nullptr);
+                vkDestroyDescriptorPool(m_device->getLogicalDevice(), m_descriptorPool->getDescriptorPool(), nullptr);
             }
 
             void  createInstance() {
@@ -818,7 +822,7 @@ namespace VulkanLearning {
                     VkDeviceSize offsets[] = {0};
                     vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
                     vkCmdBindIndexBuffer(commandBuffers[i], m_indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
-                    vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[i], 0, nullptr);
+                    vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &m_descriptorSets->getDescriptorSets()[i], 0, nullptr);
 
                     vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
                     vkCmdEndRenderPass(commandBuffers[i]);
@@ -857,71 +861,14 @@ namespace VulkanLearning {
             }
 
             void createDescriptorPool() {
-                std::array<VkDescriptorPoolSize, 2> poolSizes{};
-
-                poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                poolSizes[0].descriptorCount = static_cast<uint32_t>(m_swapChain->getImages().size());
-                poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                poolSizes[1].descriptorCount = static_cast<uint32_t>(m_swapChain->getImages().size());
-
-
-                VkDescriptorPoolCreateInfo poolInfo{};
-                poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-                poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
-                poolInfo.pPoolSizes = poolSizes.data();
-                poolInfo.maxSets = static_cast<uint32_t>(m_swapChain->getImages().size());
-                poolInfo.flags = 0;
-
-                if (vkCreateDescriptorPool(m_device->getLogicalDevice(), &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS) {
-                    throw std::runtime_error("Descriptor pool creation failed!");
-                }
+                m_descriptorPool = new VulkanDescriptorPool(m_device, m_swapChain);
             }
 
             void createDescriptorSets() {
-                std::vector<VkDescriptorSetLayout> layouts(m_swapChain->getImages().size(), m_descriptorSetLayout->getDescriptorSetLayout());
-                VkDescriptorSetAllocateInfo allocInfo{};
-                allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-                allocInfo.descriptorPool = descriptorPool;
-                allocInfo.descriptorSetCount = static_cast<uint32_t>(m_swapChain->getImages().size());
-                allocInfo.pSetLayouts = layouts.data();
-
-                descriptorSets.resize(m_swapChain->getImages().size());
-
-                if (vkAllocateDescriptorSets(m_device->getLogicalDevice(), &allocInfo, descriptorSets.data()) != VK_SUCCESS) {
-                    throw std::runtime_error("Descriptor set allocation failed!");
-                }
-
-                for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
-                    VkDescriptorBufferInfo bufferInfo{};
-                    bufferInfo.buffer = m_uniformBuffers[i]->getBuffer();
-                    bufferInfo.offset = 0;
-                    bufferInfo.range = sizeof(UniformBufferObject);
-
-                    VkDescriptorImageInfo imageInfo{};
-                    imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                    imageInfo.imageView = textureImageView;
-                    imageInfo.sampler = textureSampler;
-
-                    std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
-
-                    descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                    descriptorWrites[0].dstSet = descriptorSets[i];
-                    descriptorWrites[0].dstBinding = 0;
-                    descriptorWrites[0].dstArrayElement = 0;
-                    descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                    descriptorWrites[0].descriptorCount = 1;
-                    descriptorWrites[0].pBufferInfo = &bufferInfo;
-
-                    descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                    descriptorWrites[1].dstSet = descriptorSets[i];
-                    descriptorWrites[1].dstBinding = 1;
-                    descriptorWrites[1].dstArrayElement = 0;
-                    descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                    descriptorWrites[1].descriptorCount = 1;
-                    descriptorWrites[1].pImageInfo = &imageInfo;
-
-                    vkUpdateDescriptorSets(m_device->getLogicalDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
-                }
+                m_descriptorSets = new VulkanDescriptorSets(m_device, m_swapChain,
+                        m_descriptorSetLayout, m_descriptorPool,
+                        m_uniformBuffers, sizeof(UniformBufferObject),
+                        textureImageView, textureSampler);
             }
 
             VkShaderModule createShaderModule(const std::vector<char>& code) {
@@ -936,24 +883,6 @@ namespace VulkanLearning {
                 }
 
                 return shaderModule;
-            }
-
-            static std::vector<char> readFile(const std::string& filename) {
-                std::ifstream file(filename, std::ios::ate | std::ios::binary);
-
-                if (!file.is_open()) {
-                    throw std::runtime_error(std::string {"File "} + filename + " opening failed!");
-                }
-
-                size_t fileSize = (size_t) file.tellg();
-                std::vector<char> buffer(fileSize);
-
-                file.seekg(0);
-                file.read(buffer.data(), fileSize);
-
-                file.close();
-
-                return buffer;
             }
 
             void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
@@ -980,16 +909,6 @@ namespace VulkanLearning {
                 }
 
                 vkBindBufferMemory(m_device->getLogicalDevice(), buffer, bufferMemory, 0);
-            }
-
-            void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
-                VkCommandBuffer commandBuffer = beginSingleTimeCommands();
-
-                VkBufferCopy copyRegion{};
-                copyRegion.size = size;
-                vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
-
-                endSingleTimeCommands(commandBuffer);
             }
 
             VkCommandBuffer beginSingleTimeCommands() {
@@ -1156,10 +1075,6 @@ namespace VulkanLearning {
                 vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
                 endSingleTimeCommands(commandBuffer);
-            }
-
-            bool hasStencilComponent(VkFormat format) {
-                return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
             }
 
             void generateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels) {
