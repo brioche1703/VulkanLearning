@@ -48,9 +48,11 @@
 #include "../include/VulkanLearning/base/VulkanBuffer.hpp"
 #include "../include/VulkanLearning/base/VulkanDescriptorPool.hpp"
 #include "../include/VulkanLearning/base/VulkanDescriptorSets.hpp"
+#include "../include/VulkanLearning/base/VulkanCommandBuffers.hpp"
+
 
 const std::vector<const char*> deviceExtensions = {
-    VK_KHR_SWAPCHAIN_EXTENSION_NAME
+    VK_KHR_SWAPCHAIN_EXTENSION_NAME,
 };
 
 struct Vertex {
@@ -127,7 +129,8 @@ namespace VulkanLearning {
     const int MAX_FRAMES_IN_FLIGHT = 2;
 
     const std::vector<const char*> validationLayers = {
-        "VK_LAYER_KHRONOS_validation"
+        "VK_LAYER_KHRONOS_validation",
+        "VK_LAYER_MESA_overlay"
     };
 
 #ifdef NDEBUG
@@ -181,7 +184,7 @@ namespace VulkanLearning {
 
             std::vector<VulkanBuffer*> m_uniformBuffers;
 
-            std::vector<VkCommandBuffer> commandBuffers;
+            VulkanCommandBuffers* m_commandBuffers;
 
             std::vector<VkSemaphore> imageAvailableSemaphores;
             std::vector<VkSemaphore> renderFinishedSemaphores;
@@ -300,7 +303,7 @@ namespace VulkanLearning {
                 submitInfo.pWaitSemaphores = waitSemaphore;
                 submitInfo.pWaitDstStageMask = waitStages;
                 submitInfo.commandBufferCount = 1;
-                submitInfo.pCommandBuffers = &commandBuffers[imageIndex];
+                submitInfo.pCommandBuffers = m_commandBuffers->getCommandBufferPointer(imageIndex);
 
                 VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
                 submitInfo.signalSemaphoreCount = 1;
@@ -416,7 +419,7 @@ namespace VulkanLearning {
                     vkDestroyFramebuffer(m_device->getLogicalDevice(), framebuffer, nullptr);
                 }
 
-                vkFreeCommandBuffers(m_device->getLogicalDevice(), m_commandPool->getCommandPool(), static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+                vkFreeCommandBuffers(m_device->getLogicalDevice(), m_commandPool->getCommandPool(), static_cast<uint32_t>(m_commandBuffers->getCommandBuffers().size()), m_commandBuffers->getCommandBuffers().data());
 
                 vkDestroyPipeline(m_device->getLogicalDevice(), graphicsPipeline, nullptr);
                 vkDestroyPipelineLayout(m_device->getLogicalDevice(), pipelineLayout, nullptr);
@@ -778,59 +781,10 @@ namespace VulkanLearning {
             }
 
             void createCommandBuffers() {
-                commandBuffers.resize(m_swapChain->getFramebuffers().size());
-
-                VkCommandBufferAllocateInfo allocInfo{};
-                allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-                allocInfo.commandPool = m_commandPool->getCommandPool();
-                allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-                allocInfo.commandBufferCount = (uint32_t) commandBuffers.size();
-
-                if (vkAllocateCommandBuffers(m_device->getLogicalDevice(), &allocInfo, commandBuffers.data()) != VK_SUCCESS) {
-                    throw std::runtime_error("Command buffers allocation failed!");
-                }
-
-                std::array<VkClearValue, 2> clearValues{};
-                clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
-                clearValues[1].depthStencil = {1.0f, 0};
-
-                for (size_t i = 0; i < commandBuffers.size(); i++) {
-                    VkCommandBufferBeginInfo beginInfo{};
-                    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-                    beginInfo.flags = 0;
-                    beginInfo.pInheritanceInfo = nullptr;
-
-                    if (vkBeginCommandBuffer(commandBuffers[i], &beginInfo) != VK_SUCCESS) {
-                        throw std::runtime_error("Begin recording of a command buffer failed!");
-                    }
-
-                    VkRenderPassBeginInfo renderPassInfo{};
-                    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-                    renderPassInfo.renderPass = m_renderPass->getRenderPass(); 
-                    renderPassInfo.framebuffer = m_swapChain->getFramebuffers()[i];
-                    renderPassInfo.renderArea.offset = {0, 0};
-                    renderPassInfo.renderArea.extent = m_swapChain->getExtent();
-
-                    renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-                    renderPassInfo.pClearValues = clearValues.data();
-
-                    vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-                    vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
-
-                    VkBuffer vertexBuffers[] = {m_vertexBuffer->getBuffer()};
-                    VkDeviceSize offsets[] = {0};
-                    vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
-                    vkCmdBindIndexBuffer(commandBuffers[i], m_indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
-                    vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &m_descriptorSets->getDescriptorSets()[i], 0, nullptr);
-
-                    vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
-                    vkCmdEndRenderPass(commandBuffers[i]);
-
-                    if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS) {
-                        throw std::runtime_error("Recording of a command buffer failed!");
-                    }
-                }
+                m_commandBuffers = new VulkanCommandBuffers(m_device, m_swapChain,
+                        m_commandPool, m_renderPass, m_vertexBuffer,
+                        m_indexBuffer, static_cast<uint32_t>(indices.size()), graphicsPipeline,
+                        pipelineLayout, m_descriptorSets);
             }
 
             void createSyncObjects() {
