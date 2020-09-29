@@ -49,6 +49,7 @@
 #include "../include/VulkanLearning/base/VulkanDescriptorPool.hpp"
 #include "../include/VulkanLearning/base/VulkanDescriptorSets.hpp"
 #include "../include/VulkanLearning/base/VulkanCommandBuffers.hpp"
+#include "../include/VulkanLearning/base/VulkanSyncObjects.hpp"
 
 
 const std::vector<const char*> deviceExtensions = {
@@ -186,10 +187,8 @@ namespace VulkanLearning {
 
             VulkanCommandBuffers* m_commandBuffers;
 
-            std::vector<VkSemaphore> imageAvailableSemaphores;
-            std::vector<VkSemaphore> renderFinishedSemaphores;
-            std::vector<VkFence> inFlightFences;
-            std::vector<VkFence> imagesInFlight;
+            VulkanSyncObjects* m_syncObjects;
+
             size_t currentFrame = 0;
 
             bool framebufferResized = false;
@@ -247,16 +246,13 @@ namespace VulkanLearning {
                 createTextureImage();
                 createTextureImageView();
                 createTextureSampler();
-
                 loadModel();
 
                 createVertexBuffer();
                 createIndexBuffer();
-
                 createUniformBuffers();
                 createDescriptorPool();
                 createDescriptorSets();
-
                 createCommandBuffers();
                 createSyncObjects();
             }
@@ -273,11 +269,11 @@ namespace VulkanLearning {
             }
 
             void drawFrame() {
-                vkWaitForFences(m_device->getLogicalDevice(), 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
+                vkWaitForFences(m_device->getLogicalDevice(), 1, &m_syncObjects->getInFlightFences()[currentFrame], VK_TRUE, UINT64_MAX);
 
                 uint32_t imageIndex;
 
-                VkResult result = vkAcquireNextImageKHR(m_device->getLogicalDevice(), m_swapChain->getSwapChain(), UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+                VkResult result = vkAcquireNextImageKHR(m_device->getLogicalDevice(), m_swapChain->getSwapChain(), UINT64_MAX, m_syncObjects->getImageAvailableSemaphores()[currentFrame], VK_NULL_HANDLE, &imageIndex);
 
                 if (result == VK_ERROR_OUT_OF_DATE_KHR) {
                     recreateSwapChain();
@@ -286,18 +282,18 @@ namespace VulkanLearning {
                     throw std::runtime_error("Presentation of one image of the swap chain failed!");
                 }
 
-                if (imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
-                    vkWaitForFences(m_device->getLogicalDevice(), 1, &imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
+                if (m_syncObjects->getImagesInFlight()[imageIndex] != VK_NULL_HANDLE) {
+                    vkWaitForFences(m_device->getLogicalDevice(), 1, &m_syncObjects->getImagesInFlight()[imageIndex], VK_TRUE, UINT64_MAX);
                 }
 
-                imagesInFlight[imageIndex] = inFlightFences[currentFrame];
+                m_syncObjects->getImagesInFlight()[imageIndex] = m_syncObjects->getInFlightFences()[currentFrame];
 
                 updateCamera(imageIndex);
 
                 VkSubmitInfo submitInfo{};
                 submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-                VkSemaphore waitSemaphore[] = {imageAvailableSemaphores[currentFrame]};
+                VkSemaphore waitSemaphore[] = {m_syncObjects->getImageAvailableSemaphores()[currentFrame]};
                 VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
                 submitInfo.waitSemaphoreCount = 1;
                 submitInfo.pWaitSemaphores = waitSemaphore;
@@ -305,13 +301,13 @@ namespace VulkanLearning {
                 submitInfo.commandBufferCount = 1;
                 submitInfo.pCommandBuffers = m_commandBuffers->getCommandBufferPointer(imageIndex);
 
-                VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
+                VkSemaphore signalSemaphores[] = {m_syncObjects->getRenderFinishedSemaphores()[currentFrame]};
                 submitInfo.signalSemaphoreCount = 1;
                 submitInfo.pSignalSemaphores = signalSemaphores;
 
-                vkResetFences(m_device->getLogicalDevice(), 1, &inFlightFences[currentFrame]);
+                vkResetFences(m_device->getLogicalDevice(), 1, &m_syncObjects->getInFlightFences()[currentFrame]);
 
-                if (vkQueueSubmit(m_device->getGraphicsQueue(), 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS) {
+                if (vkQueueSubmit(m_device->getGraphicsQueue(), 1, &submitInfo, m_syncObjects->getInFlightFences()[currentFrame]) != VK_SUCCESS) {
                     throw std::runtime_error("Command buffer sending failed!");
                 }
 
@@ -355,9 +351,9 @@ namespace VulkanLearning {
                 vkFreeMemory(m_device->getLogicalDevice(), m_indexBuffer->getBufferMemory(), nullptr);
 
                 for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-                    vkDestroySemaphore(m_device->getLogicalDevice(), imageAvailableSemaphores[i], nullptr);
-                    vkDestroySemaphore(m_device->getLogicalDevice(), renderFinishedSemaphores[i], nullptr);
-                    vkDestroyFence(m_device->getLogicalDevice(), inFlightFences[i], nullptr); 
+                    vkDestroySemaphore(m_device->getLogicalDevice(), m_syncObjects->getImageAvailableSemaphores()[i], nullptr);
+                    vkDestroySemaphore(m_device->getLogicalDevice(), m_syncObjects->getRenderFinishedSemaphores()[i], nullptr);
+                    vkDestroyFence(m_device->getLogicalDevice(), m_syncObjects->getInFlightFences()[i], nullptr); 
                 }
 
                 vkDestroyCommandPool(m_device->getLogicalDevice(), m_commandPool->getCommandPool(), nullptr);
@@ -788,26 +784,8 @@ namespace VulkanLearning {
             }
 
             void createSyncObjects() {
-                imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-                renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-                inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
-                imagesInFlight.resize(m_swapChain->getImages().size(), VK_NULL_HANDLE);
-
-                VkSemaphoreCreateInfo semaphoreInfo{};
-                semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-
-                VkFenceCreateInfo fenceInfo{};
-                fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-                fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-
-
-                for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-                    if (vkCreateSemaphore(m_device->getLogicalDevice(), &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS 
-                            || vkCreateSemaphore(m_device->getLogicalDevice(), &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS
-                            || vkCreateFence(m_device->getLogicalDevice(), &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS) {
-                        throw std::runtime_error("Synchronisation objects creation for a frame failed!");
-                    }
-                }
+                m_syncObjects = new VulkanSyncObjects(m_device, m_swapChain, 
+                        MAX_FRAMES_IN_FLIGHT);
             }
 
             void createDescriptorSetLayout() {
