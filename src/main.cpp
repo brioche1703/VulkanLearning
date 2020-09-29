@@ -50,11 +50,7 @@
 #include "../include/VulkanLearning/base/VulkanDescriptorSets.hpp"
 #include "../include/VulkanLearning/base/VulkanCommandBuffers.hpp"
 #include "../include/VulkanLearning/base/VulkanSyncObjects.hpp"
-
-
-const std::vector<const char*> deviceExtensions = {
-    VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-};
+#include "../include/VulkanLearning/base/VulkanImageResource.hpp"
 
 struct Vertex {
     glm::vec3 pos;
@@ -131,7 +127,7 @@ namespace VulkanLearning {
 
     const std::vector<const char*> validationLayers = {
         "VK_LAYER_KHRONOS_validation",
-        "VK_LAYER_MESA_overlay"
+        "VK_LAYER_MESA_overlay",
     };
 
 #ifdef NDEBUG
@@ -194,19 +190,15 @@ namespace VulkanLearning {
             bool framebufferResized = false;
 
             uint32_t mipLevels;
+
             VkImage textureImage;
             VkDeviceMemory textureImageMemory;
             VkImageView textureImageView;
 
             VkSampler textureSampler;
 
-            VkImage depthImage;
-            VkDeviceMemory depthImageMemory;
-            VkImageView depthImageView;
-
-            VkImage colorImage;
-            VkDeviceMemory colorImageMemory;
-            VkImageView colorImageView;
+            VulkanImageResource* m_colorImageResource;
+            VulkanImageResource* m_depthImageResource;
 
             void initWindow() {
                 m_window = new Window("Vulkan", WIDTH, HEIGHT);
@@ -237,8 +229,8 @@ namespace VulkanLearning {
                 createGraphicsPipeline();
 
                 createCommandPool();
-
                 createColorResources();
+
                 createDepthResources();
 
                 createFramebuffers();
@@ -403,13 +395,13 @@ namespace VulkanLearning {
             }
 
             void cleanupSwapChain() {
-                vkDestroyImageView(m_device->getLogicalDevice(), colorImageView, nullptr);
-                vkDestroyImage(m_device->getLogicalDevice(), colorImage, nullptr);
-                vkFreeMemory(m_device->getLogicalDevice(), colorImageMemory, nullptr);
+                vkDestroyImageView(m_device->getLogicalDevice(), m_colorImageResource->getImageView(), nullptr);
+                vkDestroyImage(m_device->getLogicalDevice(), m_colorImageResource->getImage(), nullptr);
+                vkFreeMemory(m_device->getLogicalDevice(), m_colorImageResource->getDeviceMemory(), nullptr);
 
-                vkDestroyImageView(m_device->getLogicalDevice(), depthImageView, nullptr);
-                vkDestroyImage(m_device->getLogicalDevice(), depthImage, nullptr);
-                vkFreeMemory(m_device->getLogicalDevice(), depthImageMemory, nullptr);
+                vkDestroyImageView(m_device->getLogicalDevice(), m_depthImageResource->getImageView(), nullptr);
+                vkDestroyImage(m_device->getLogicalDevice(), m_depthImageResource->getImage(), nullptr);
+                vkFreeMemory(m_device->getLogicalDevice(), m_depthImageResource->getDeviceMemory(), nullptr);
 
                 for (auto framebuffer : m_swapChain->getFramebuffers()) {
                     vkDestroyFramebuffer(m_device->getLogicalDevice(), framebuffer, nullptr);
@@ -596,8 +588,8 @@ namespace VulkanLearning {
 
             void createFramebuffers() {
                 const std::vector<VkImageView> attachments {
-                    colorImageView,
-                    depthImageView
+                    m_colorImageResource->getImageView(),
+                    m_depthImageResource->getImageView()
                 };
 
                 m_swapChain->createFramebuffers(m_device->getLogicalDevice(), 
@@ -606,14 +598,6 @@ namespace VulkanLearning {
 
             void createCommandPool() {
                 m_commandPool = new VulkanCommandPool(m_device);
-            }
-
-            void createDepthResources() {
-                VkFormat depthFormat = m_device->findDepthFormat(); 
-
-                createImage(m_swapChain->getExtent().width, m_swapChain->getExtent().height, 1, m_device->getMsaaSamples(), depthFormat, VK_IMAGE_TILING_OPTIMAL, 
-                        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
-                depthImageView = createImageView(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT, 1);
             }
 
             void createTextureImage() {
@@ -684,13 +668,20 @@ namespace VulkanLearning {
             }
 
             void createColorResources() {
-                VkFormat colorFormat = m_swapChain->getImageFormat();
-
-                createImage(m_swapChain->getExtent().width, m_swapChain->getExtent().height, 1, m_device->getMsaaSamples(), colorFormat, 
-                        VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, 
-                        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, colorImage, colorImageMemory);
-                colorImageView = createImageView(colorImage, colorFormat, VK_IMAGE_ASPECT_COLOR_BIT, 1);
+                m_colorImageResource = new VulkanImageResource(m_device, 
+                        m_swapChain, m_swapChain->getImageFormat(), 
+                        VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT
+                        | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, 
+                        VK_IMAGE_ASPECT_COLOR_BIT);
             }
+
+            void createDepthResources() {
+                m_depthImageResource = new VulkanImageResource(m_device, 
+                        m_swapChain, m_device->findDepthFormat(), 
+                        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
+                        VK_IMAGE_ASPECT_DEPTH_BIT);
+            }
+
 
             void loadModel() {
                 tinyobj::attrib_t attrib;
