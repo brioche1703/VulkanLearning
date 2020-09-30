@@ -8,14 +8,12 @@ namespace VulkanLearning {
             VulkanDescriptorPool* descriptorPool,
             std::vector<VulkanBuffer*> uniformBuffers,
             VkDeviceSize uniformBufferSize,
-            VkImageView textureImageView,
-            VkSampler textureSampler) :
+            VulkanTexture* texture) :
     m_device(device), m_swapChain(swapChain), 
         m_descriptorSetLayout(descriptorSetLayout),
         m_descriptorPool(descriptorPool), m_uniformBuffers(uniformBuffers),
         m_uniformBufferSize(uniformBufferSize),
-        m_textureImageView(textureImageView),
-        m_textureSampler(textureSampler)
+        m_texture(texture)
         {
             create();
         }
@@ -45,8 +43,8 @@ namespace VulkanLearning {
 
             VkDescriptorImageInfo imageInfo{};
             imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            imageInfo.imageView = m_textureImageView;
-            imageInfo.sampler = m_textureSampler;
+            imageInfo.imageView = m_texture->getImageView();
+            imageInfo.sampler = m_texture->getSampler();
 
             std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
 

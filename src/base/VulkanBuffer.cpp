@@ -1,4 +1,5 @@
 #include "../../include/VulkanLearning/base/VulkanBuffer.hpp"
+#include "../../include/VulkanLearning/base/VulkanCommandBuffer.hpp"
 
 namespace VulkanLearning {
 
@@ -35,14 +36,68 @@ namespace VulkanLearning {
         vkBindBufferMemory(m_device->getLogicalDevice(), buffer, bufferMemory, 0);
     }
 
+    void VulkanBuffer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties) {
+        VkBufferCreateInfo bufferInfo{};
+        bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+        bufferInfo.size = size;
+        bufferInfo.usage = usage;
+        bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+        if (vkCreateBuffer(m_device->getLogicalDevice(), &bufferInfo, nullptr, &m_buffer) != VK_SUCCESS) {
+            throw std::runtime_error("Buffer creation failed!");
+        }
+
+        VkMemoryRequirements memRequirements;
+        vkGetBufferMemoryRequirements(m_device->getLogicalDevice(), m_buffer, &memRequirements);
+
+        VkMemoryAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo.allocationSize = memRequirements.size;
+        allocInfo.memoryTypeIndex = m_device->findMemoryType(memRequirements.memoryTypeBits, properties);
+
+        if (vkAllocateMemory(m_device->getLogicalDevice(), &allocInfo, nullptr, &m_bufferMemory) != VK_SUCCESS) {
+            throw std::runtime_error("Memory allocation failed!");
+        }
+
+        vkBindBufferMemory(m_device->getLogicalDevice(), m_buffer, m_bufferMemory, 0);
+    }
+
+
     void VulkanBuffer::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
-        VkCommandBuffer commandBuffer = beginSingleTimeCommands();
+        VulkanCommandBuffer commandBuffer(m_device, m_commandPool);
+        commandBuffer.beginSingleTimeCommands();
 
         VkBufferCopy copyRegion{};
         copyRegion.size = size;
-        vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+        vkCmdCopyBuffer(commandBuffer.getCommandBuffer(), srcBuffer, dstBuffer, 1, &copyRegion);
 
-        endSingleTimeCommands(commandBuffer);
+        endSingleTimeCommands(commandBuffer.getCommandBuffer());
+    }
+    
+    void VulkanBuffer::copyBufferToImage(VkImage image, uint32_t width, uint32_t height) {
+        VulkanCommandBuffer commandBuffer(m_device, m_commandPool);
+        commandBuffer.beginSingleTimeCommands();
+
+        VkBufferImageCopy region{};
+        region.bufferOffset = 0;
+        region.bufferRowLength = 0;
+        region.bufferImageHeight = 0;
+
+        region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        region.imageSubresource.mipLevel = 0;
+        region.imageSubresource.baseArrayLayer = 0;
+        region.imageSubresource.layerCount = 1;
+
+        region.imageOffset = {0, 0, 0};
+        region.imageExtent = {
+            width,
+            height,
+            1
+        };
+
+        vkCmdCopyBufferToImage(commandBuffer.getCommandBuffer(), m_buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+        commandBuffer.endSingleTimeCommands();
     }
 
     VkCommandBuffer VulkanBuffer::beginSingleTimeCommands() {
@@ -53,16 +108,19 @@ namespace VulkanLearning {
         allocInfo.commandPool = m_commandPool->getCommandPool();
         allocInfo.commandBufferCount = 1;
 
-        VkCommandBuffer commandBuffer;
-        vkAllocateCommandBuffers(m_device->getLogicalDevice(), &allocInfo, &commandBuffer);
+        /* VkCommandBuffer commandBuffer; */
+        VulkanCommandBuffer commandBuffer(m_device, m_commandPool);
+
+        vkAllocateCommandBuffers(m_device->getLogicalDevice(), &allocInfo, 
+                commandBuffer.getCommandBufferPointer());
 
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
-        vkBeginCommandBuffer(commandBuffer, &beginInfo);
+        vkBeginCommandBuffer(commandBuffer.getCommandBuffer(), &beginInfo);
 
-        return commandBuffer;
+        return commandBuffer.getCommandBuffer();
     }
 
     void VulkanBuffer::endSingleTimeCommands(VkCommandBuffer commandBuffer) {

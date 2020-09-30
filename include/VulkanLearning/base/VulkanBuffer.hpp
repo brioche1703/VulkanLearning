@@ -47,9 +47,13 @@ namespace VulkanLearning {
                 vkFreeMemory(m_device->getLogicalDevice(), stagingBufferMemory, nullptr);
             }
 
-            void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
-
+            void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, 
+                    VkMemoryPropertyFlags properties, VkBuffer& buffer, 
+                    VkDeviceMemory& bufferMemory);
+            void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, 
+                    VkMemoryPropertyFlags properties);
             void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+            void copyBufferToImage(VkImage image, uint32_t width, uint32_t height);
 
             VkCommandBuffer beginSingleTimeCommands();
             void endSingleTimeCommands(VkCommandBuffer commandBuffer);

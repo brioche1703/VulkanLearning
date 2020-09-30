@@ -51,5 +51,7 @@ namespace VulkanLearning {
             inline VkCommandBuffer* getCommandBufferPointer(uint32_t index) { return &m_commandBuffers[index]; }
 
             void create();
+
+
     };
 }

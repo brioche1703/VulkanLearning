@@ -9,6 +9,7 @@
 #include "VulkanDescriptorSetLayout.hpp"
 #include "VulkanDescriptorPool.hpp"
 #include "VulkanBuffer.hpp"
+#include "VulkanTexture.hpp"
 
 namespace VulkanLearning {
     class VulkanDescriptorSets {
@@ -23,8 +24,7 @@ namespace VulkanLearning {
             std::vector<VulkanBuffer*> m_uniformBuffers;
             VkDeviceSize m_uniformBufferSize;
 
-            VkImageView m_textureImageView;
-            VkSampler m_textureSampler;
+            VulkanTexture* m_texture;
 
         public:
             VulkanDescriptorSets(VulkanDevice* device, 
@@ -33,8 +33,7 @@ namespace VulkanLearning {
                     VulkanDescriptorPool* descriptorPool,
                     std::vector<VulkanBuffer*> uniformBuffers,
                     VkDeviceSize uniformBufferSize,
-                    VkImageView textureImageView,
-                    VkSampler textureSampler);
+                    VulkanTexture* texture);
 
             ~VulkanDescriptorSets(); 
 
