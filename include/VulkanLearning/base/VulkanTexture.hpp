@@ -43,6 +43,7 @@ namespace VulkanLearning {
             inline VkSampler getSampler() { return m_sampler; }
 
             void create();
+            void cleanup();
             void generateMipmaps(VkFormat imageFormat, 
                     int32_t texWidth, int32_t texHeight, uint32_t mipLevels);
             void transitionImageLayout(VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);

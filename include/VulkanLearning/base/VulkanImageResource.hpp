@@ -35,6 +35,7 @@ namespace VulkanLearning {
             inline VkImageView getImageView() { return m_imageView; }
 
             void create();
+            void cleanup();
 
             void createImage(uint32_t width, uint32_t height, uint32_t mipLevels, 
                     VkSampleCountFlagBits numSamples, VkFormat format, 

@@ -23,6 +23,12 @@ namespace VulkanLearning {
         m_imageView = createImageView(m_image, m_format, m_aspect, 1);
     }
 
+    void VulkanImageResource::cleanup() {
+        vkDestroyImageView(m_device->getLogicalDevice(), m_imageView, nullptr);
+        vkDestroyImage(m_device->getLogicalDevice(), m_image, nullptr);
+        vkFreeMemory(m_device->getLogicalDevice(), m_imageMemory, nullptr);
+    }
+
     void VulkanImageResource::createImage(uint32_t width, 
             uint32_t height, uint32_t mipLevels, 
             VkSampleCountFlagBits numSamples, VkFormat format, 

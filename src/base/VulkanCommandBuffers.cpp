@@ -74,4 +74,12 @@ namespace VulkanLearning {
             }
         }
     }
+
+    void VulkanCommandBuffers::cleanup() {
+        vkFreeCommandBuffers(m_device->getLogicalDevice(), 
+                m_commandPool->getCommandPool(), 
+                static_cast<uint32_t>(
+                    m_commandBuffers.size()), 
+                m_commandBuffers.data());
+    }
 }

@@ -121,6 +121,7 @@ namespace VulkanLearning {
 
             std::vector<Vertex> vertices;
             std::vector<uint32_t> indices;
+
             VulkanBuffer* m_vertexBuffer;
             VulkanBuffer* m_indexBuffer;
 
@@ -131,10 +132,7 @@ namespace VulkanLearning {
             VulkanSyncObjects* m_syncObjects;
 
             size_t currentFrame = 0;
-
             bool framebufferResized = false;
-
-            uint32_t mipLevels;
 
             VulkanTexture* m_texture;
 
@@ -266,26 +264,16 @@ namespace VulkanLearning {
             void cleanup() {
                 cleanupSwapChain();
 
-                vkDestroySampler(m_device->getLogicalDevice(), m_texture->getSampler(), nullptr);
-                vkDestroyImageView(m_device->getLogicalDevice(), m_texture->getImageView(), nullptr);
+                m_texture->cleanup();
 
-                vkDestroyImage(m_device->getLogicalDevice(), m_texture->getImage(), nullptr);
-                vkFreeMemory(m_device->getLogicalDevice(), m_texture->getDeviceMemory(), nullptr);
+                m_descriptorSetLayout->cleanup();
 
-                vkDestroyDescriptorSetLayout(m_device->getLogicalDevice(), m_descriptorSetLayout->getDescriptorSetLayout(), nullptr);
+                m_vertexBuffer->cleanup();
+                m_indexBuffer->cleanup();
 
-                vkDestroyBuffer(m_device->getLogicalDevice(), m_vertexBuffer->getBuffer(), nullptr);
-                vkFreeMemory(m_device->getLogicalDevice(), m_vertexBuffer->getBufferMemory(), nullptr);
-                vkDestroyBuffer(m_device->getLogicalDevice(), m_indexBuffer->getBuffer(), nullptr);
-                vkFreeMemory(m_device->getLogicalDevice(), m_indexBuffer->getBufferMemory(), nullptr);
+                m_syncObjects->cleanup();
 
-                for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-                    vkDestroySemaphore(m_device->getLogicalDevice(), m_syncObjects->getImageAvailableSemaphores()[i], nullptr);
-                    vkDestroySemaphore(m_device->getLogicalDevice(), m_syncObjects->getRenderFinishedSemaphores()[i], nullptr);
-                    vkDestroyFence(m_device->getLogicalDevice(), m_syncObjects->getInFlightFences()[i], nullptr); 
-                }
-
-                vkDestroyCommandPool(m_device->getLogicalDevice(), m_commandPool->getCommandPool(), nullptr);
+                m_commandPool->cleanup();
 
                 vkDestroyDevice(m_device->getLogicalDevice(), nullptr);
 
@@ -316,7 +304,7 @@ namespace VulkanLearning {
 
                 cleanupSwapChain();
 
-                m_swapChain->create(m_window->getWindow() , *m_device, m_surface->getSurface());
+                m_swapChain->create();
 
                 createRenderPass();
                 createGraphicsPipeline();
@@ -332,36 +320,34 @@ namespace VulkanLearning {
             }
 
             void cleanupSwapChain() {
-                vkDestroyImageView(m_device->getLogicalDevice(), m_colorImageResource->getImageView(), nullptr);
-                vkDestroyImage(m_device->getLogicalDevice(), m_colorImageResource->getImage(), nullptr);
-                vkFreeMemory(m_device->getLogicalDevice(), m_colorImageResource->getDeviceMemory(), nullptr);
+                m_colorImageResource->cleanup();
+                m_depthImageResource->cleanup();
 
-                vkDestroyImageView(m_device->getLogicalDevice(), m_depthImageResource->getImageView(), nullptr);
-                vkDestroyImage(m_device->getLogicalDevice(), m_depthImageResource->getImage(), nullptr);
-                vkFreeMemory(m_device->getLogicalDevice(), m_depthImageResource->getDeviceMemory(), nullptr);
+                m_swapChain->cleanFramebuffers();
 
-                for (auto framebuffer : m_swapChain->getFramebuffers()) {
-                    vkDestroyFramebuffer(m_device->getLogicalDevice(), framebuffer, nullptr);
-                }
+                m_commandBuffers->cleanup();
 
-                vkFreeCommandBuffers(m_device->getLogicalDevice(), m_commandPool->getCommandPool(), static_cast<uint32_t>(m_commandBuffers->getCommandBuffers().size()), m_commandBuffers->getCommandBuffers().data());
+                vkDestroyPipeline(m_device->getLogicalDevice(), 
+                        m_graphicsPipeline->getGraphicsPipeline(), nullptr);
+                vkDestroyPipelineLayout(m_device->getLogicalDevice(), 
+                        m_graphicsPipeline->getPipelineLayout(), nullptr);
+                vkDestroyRenderPass(m_device->getLogicalDevice(), 
+                        m_renderPass->getRenderPass(), nullptr);
 
-                vkDestroyPipeline(m_device->getLogicalDevice(), m_graphicsPipeline->getGraphicsPipeline(), nullptr);
-                vkDestroyPipelineLayout(m_device->getLogicalDevice(), m_graphicsPipeline->getPipelineLayout(), nullptr);
-                vkDestroyRenderPass(m_device->getLogicalDevice(), m_renderPass->getRenderPass(), nullptr);
-
-                for (auto imageView : m_swapChain->getImagesViews()) {
-                    vkDestroyImageView(m_device->getLogicalDevice(), imageView, nullptr);
-                }
-
+                m_swapChain->destroyImageViews();
                 vkDestroySwapchainKHR(m_device->getLogicalDevice(), m_swapChain->getSwapChain(), nullptr);
 
                 for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
-                    vkDestroyBuffer(m_device->getLogicalDevice(), m_coordinateSystemUniformBuffers[i]->getBuffer(), nullptr);
-                    vkFreeMemory(m_device->getLogicalDevice(), m_coordinateSystemUniformBuffers[i]->getBufferMemory(), nullptr);
+                    vkDestroyBuffer(m_device->getLogicalDevice(), 
+                            m_coordinateSystemUniformBuffers[i]->getBuffer(), 
+                            nullptr);
+                    vkFreeMemory(m_device->getLogicalDevice(), 
+                            m_coordinateSystemUniformBuffers[i]->getBufferMemory(), 
+                            nullptr);
                 }
 
-                vkDestroyDescriptorPool(m_device->getLogicalDevice(), m_descriptorPool->getDescriptorPool(), nullptr);
+                vkDestroyDescriptorPool(m_device->getLogicalDevice(), 
+                        m_descriptorPool->getDescriptorPool(), nullptr);
             }
 
             void  createInstance() {
@@ -381,7 +367,7 @@ namespace VulkanLearning {
             }
 
             void  createSwapChain() {
-                m_swapChain = new VulkanSwapChain(m_window->getWindow() , *m_device, m_surface->getSurface());
+                m_swapChain = new VulkanSwapChain(m_window, m_device, m_surface);
             }
 
             void createRenderPass() {
@@ -399,8 +385,8 @@ namespace VulkanLearning {
                         m_depthImageResource->getImageView()
                 };
 
-                m_swapChain->createFramebuffers(m_device->getLogicalDevice(), 
-                        m_renderPass->getRenderPass(), attachments);
+                m_swapChain->createFramebuffers(m_renderPass->getRenderPass(), 
+                        attachments);
             }
 
             void createCommandPool() {
@@ -497,13 +483,19 @@ namespace VulkanLearning {
 
                 ubo.view = m_camera->getViewMatrix();
 
-                ubo.proj = glm::perspective(glm::radians(m_camera->getZoom()), m_swapChain->getExtent().width / (float) m_swapChain->getExtent().height, 0.1f,  100.0f);
+                ubo.proj = glm::perspective(glm::radians(m_camera->getZoom()), 
+                        m_swapChain->getExtent().width / (float) m_swapChain->getExtent().height, 
+                        0.1f,  100.0f);
+
                 ubo.proj[1][1] *= -1;
 
                 void* data;
-                vkMapMemory(m_device->getLogicalDevice(), m_coordinateSystemUniformBuffers[currentImage]->getBufferMemory(), 0, sizeof(ubo), 0, &data);
+                vkMapMemory(m_device->getLogicalDevice(), 
+                        m_coordinateSystemUniformBuffers[currentImage]->getBufferMemory(), 
+                        0, sizeof(ubo), 0, &data);
                 memcpy(data, &ubo, sizeof(ubo));
-                vkUnmapMemory(m_device->getLogicalDevice(), m_coordinateSystemUniformBuffers[currentImage]->getBufferMemory());
+                vkUnmapMemory(m_device->getLogicalDevice(), 
+                        m_coordinateSystemUniformBuffers[currentImage]->getBufferMemory());
             }
 
             void loadModel() {

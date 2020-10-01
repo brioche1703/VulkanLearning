@@ -2,13 +2,13 @@
 
 #include <array>
 #include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
 
 #include <iostream>
 #include <vector>
 
 #include "VulkanDevice.hpp"
-
+#include "VulkanSurface.hpp"
+#include "../window/Window.hpp"
 
 namespace VulkanLearning {
 
@@ -17,7 +17,6 @@ namespace VulkanLearning {
     };
 
     class VulkanSwapChain {
-
         private:
             VkSwapchainKHR m_swapChain;
 
@@ -28,9 +27,13 @@ namespace VulkanLearning {
             VkFormat m_imageFormat;
             VkExtent2D m_extent;
 
+            Window* m_window;
+            VulkanDevice* m_device;
+            VulkanSurface* m_surface;
+
         public:
-            VulkanSwapChain(GLFWwindow* window, VulkanDevice device,
-                    VkSurfaceKHR surface);
+            VulkanSwapChain(Window* window, VulkanDevice* device,
+                    VulkanSurface* surface);
 
             ~VulkanSwapChain();
 
@@ -41,26 +44,29 @@ namespace VulkanLearning {
             VkFormat getImageFormat();
             VkExtent2D getExtent();
 
-            void create(GLFWwindow* window, VulkanDevice device, 
-                    VkSurfaceKHR surface);
+            void create();
 
-            void createFramebuffers(VkDevice device, VkRenderPass renderPass,
+            void createFramebuffers(VkRenderPass renderPass,
                     const std::vector<VkImageView> attachments);
+
+            void cleanFramebuffers();
+            void destroyImageViews();
         private:
 
             VkSurfaceFormatKHR chooseSwapSurfaceFormat(
                     const std::vector<VkSurfaceFormatKHR>& availableFormats);
             VkPresentModeKHR chooseSwapPresentMode(
                     const std::vector<VkPresentModeKHR>& availablePresentModes);
-            VkExtent2D chooseSwapExtent(GLFWwindow* window,
+            VkExtent2D chooseSwapExtent(
                     const VkSurfaceCapabilitiesKHR& capabilities);
 
-            void createImageViews(VkDevice device);
-            VkImageView createImageView(VkDevice device, 
+            void createImageViews();
+            VkImageView createImageView(
                     VkImage image, VkFormat format, 
                     VkImageAspectFlags aspectFlags, 
                     uint32_t mipLevels);
 
+            void cleanup();
     };
 
 }

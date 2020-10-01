@@ -2,9 +2,10 @@
 
 namespace VulkanLearning {
 
-    VulkanSwapChain::VulkanSwapChain(GLFWwindow* window, VulkanDevice device,
-            VkSurfaceKHR surface) {
-        create(window, device, surface);
+    VulkanSwapChain::VulkanSwapChain(Window* window, VulkanDevice* device,
+            VulkanSurface* surface) 
+        : m_window(window), m_device(device), m_surface(surface) {
+        create();
     }
 
     VulkanSwapChain::~VulkanSwapChain() {}
@@ -16,22 +17,23 @@ namespace VulkanLearning {
     VkFormat VulkanSwapChain::getImageFormat() { return m_imageFormat; }
     VkExtent2D VulkanSwapChain::getExtent() { return m_extent; }
 
-    void VulkanSwapChain::create(GLFWwindow* window, VulkanDevice device, VkSurfaceKHR surface) {
-        SwapChainSupportDetails swapChainSupport = device.querySwapChainSupport(surface);
+    void VulkanSwapChain::create() {
+        SwapChainSupportDetails swapChainSupport = m_device->querySwapChainSupport(m_surface->getSurface());
 
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
-        VkExtent2D extent = chooseSwapExtent(window, swapChainSupport.capabilities);
+        VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
 
         uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
 
-        if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
+        if (swapChainSupport.capabilities.maxImageCount > 0 && 
+                imageCount > swapChainSupport.capabilities.maxImageCount) {
             imageCount = swapChainSupport.capabilities.maxImageCount;
         }
 
         VkSwapchainCreateInfoKHR createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-        createInfo.surface = surface;
+        createInfo.surface = m_surface->getSurface();
 
         createInfo.minImageCount = imageCount;
         createInfo.imageFormat = surfaceFormat.format;
@@ -40,7 +42,7 @@ namespace VulkanLearning {
         createInfo.imageArrayLayers = 1;
         createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-        QueueFamilyIndices indices = device.getQueueFamilyIndices();
+        QueueFamilyIndices indices = m_device->getQueueFamilyIndices();
 
         uint32_t queueFamilyIndices[] = {indices.graphicsFamily.value(), indices.presentFamily.value()};
         if (indices.graphicsFamily != indices.presentFamily) {
@@ -59,31 +61,30 @@ namespace VulkanLearning {
         createInfo.clipped = VK_TRUE;
         createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-        if (vkCreateSwapchainKHR(device.getLogicalDevice(), &createInfo, nullptr, &m_swapChain) != VK_SUCCESS) {
+        if (vkCreateSwapchainKHR(m_device->getLogicalDevice(), &createInfo, nullptr, &m_swapChain) != VK_SUCCESS) {
             throw std::runtime_error("Swap Chain creation failed!");
         }
 
-        vkGetSwapchainImagesKHR(device.getLogicalDevice(), m_swapChain, &imageCount, nullptr);
+        vkGetSwapchainImagesKHR(m_device->getLogicalDevice(), m_swapChain, &imageCount, nullptr);
         m_images.resize(imageCount);
-        vkGetSwapchainImagesKHR(device.getLogicalDevice(), m_swapChain, &imageCount, m_images.data());
+        vkGetSwapchainImagesKHR(m_device->getLogicalDevice(), m_swapChain, &imageCount, m_images.data());
 
         m_imageFormat = surfaceFormat.format;
         m_extent = extent;
 
-        createImageViews(device.getLogicalDevice());
+        createImageViews();
     }
 
-    void VulkanSwapChain::createImageViews(VkDevice device) {
+    void VulkanSwapChain::createImageViews() {
         m_imagesViews.resize(m_images.size());
 
         for (size_t i = 0; i < m_images.size(); i++) {
-            m_imagesViews[i] = createImageView(device, m_images[i], m_imageFormat, 
+            m_imagesViews[i] = createImageView(m_images[i], m_imageFormat, 
                     VK_IMAGE_ASPECT_COLOR_BIT, 1);
         }
     }
 
-    VkImageView VulkanSwapChain::createImageView(VkDevice device, 
-            VkImage image, VkFormat format, 
+    VkImageView VulkanSwapChain::createImageView(VkImage image, VkFormat format, 
             VkImageAspectFlags aspectFlags, 
             uint32_t mipLevels) {
         VkImageViewCreateInfo viewInfo{};
@@ -98,15 +99,14 @@ namespace VulkanLearning {
         viewInfo.subresourceRange.layerCount = 1;
 
         VkImageView imageView;
-        if (vkCreateImageView(device, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
+        if (vkCreateImageView(m_device->getLogicalDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
             throw std::runtime_error("Image view creation failed!");
         }
 
         return imageView;
     }
     
-    void VulkanSwapChain::createFramebuffers(VkDevice device, 
-            VkRenderPass renderPass,
+    void VulkanSwapChain::createFramebuffers(VkRenderPass renderPass,
             const std::vector<VkImageView> attachments) {
         m_framebuffers.resize(m_imagesViews.size());
 
@@ -122,15 +122,19 @@ namespace VulkanLearning {
             framebufferInfo.height = m_extent.height;
             framebufferInfo.layers = 1;
 
-            if (vkCreateFramebuffer(device, &framebufferInfo, nullptr, &m_framebuffers[i]) != VK_SUCCESS) {;
+            if (vkCreateFramebuffer(m_device->getLogicalDevice(), 
+                        &framebufferInfo, nullptr, &m_framebuffers[i]) 
+                    != VK_SUCCESS) {;
                 throw std::runtime_error("A framebuffer creation failed!");
             }
         }
     }
 
-    VkSurfaceFormatKHR VulkanSwapChain::chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) {
+    VkSurfaceFormatKHR VulkanSwapChain::chooseSwapSurfaceFormat(
+            const std::vector<VkSurfaceFormatKHR>& availableFormats) {
         for (const auto& availableFormat : availableFormats) {
-            if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
+            if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && 
+                    availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
                 return availableFormat;
             }
         }
@@ -138,7 +142,8 @@ namespace VulkanLearning {
         return availableFormats[0];
     }
 
-    VkPresentModeKHR VulkanSwapChain::chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes) {
+    VkPresentModeKHR VulkanSwapChain::chooseSwapPresentMode(
+            const std::vector<VkPresentModeKHR>& availablePresentModes) {
         for (const auto& availablePresentMode : availablePresentModes) {
             if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
                 return availablePresentMode;
@@ -148,12 +153,13 @@ namespace VulkanLearning {
         return VK_PRESENT_MODE_FIFO_KHR;
     }
 
-    VkExtent2D VulkanSwapChain::chooseSwapExtent(GLFWwindow* window, const VkSurfaceCapabilitiesKHR& capabilities) {
+    VkExtent2D VulkanSwapChain::chooseSwapExtent(
+            const VkSurfaceCapabilitiesKHR& capabilities) {
         if (capabilities.currentExtent.width != UINT32_MAX) {
             return capabilities.currentExtent;
         } else {
             int width, height;
-            glfwGetFramebufferSize(window, &width, &height);
+            glfwGetFramebufferSize(m_window->getWindow(), &width, &height);
 
             VkExtent2D actualExtent = {
                 static_cast<uint32_t>(width),
@@ -164,6 +170,21 @@ namespace VulkanLearning {
             actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
 
             return actualExtent;
+        }
+    }
+
+    void VulkanSwapChain::cleanup() {
+    }
+
+    void VulkanSwapChain::cleanFramebuffers() {
+        for (auto framebuffer : m_framebuffers) {
+            vkDestroyFramebuffer(m_device->getLogicalDevice(), framebuffer, nullptr);
+        }
+    }
+
+    void VulkanSwapChain::destroyImageViews() {
+        for (auto imageView : m_imagesViews) {
+            vkDestroyImageView(m_device->getLogicalDevice(), imageView, nullptr);
         }
     }
 }

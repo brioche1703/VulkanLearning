@@ -22,7 +22,6 @@ namespace VulkanLearning {
 
         }
 
-
     VulkanTexture::~VulkanTexture() {}
 
     void VulkanTexture::create() {
@@ -71,6 +70,11 @@ namespace VulkanLearning {
                 stagingBuffer.getBufferMemory(), nullptr);
 
         generateMipmaps(VK_FORMAT_R8G8B8A8_SRGB, m_width, m_height, m_mipLevels);
+    }
+
+    void VulkanTexture::cleanup() {
+        vkDestroySampler(m_device->getLogicalDevice(), m_sampler, nullptr);
+        m_textureImageResources->cleanup();
     }
 
     void VulkanTexture::generateMipmaps(VkFormat imageFormat, 

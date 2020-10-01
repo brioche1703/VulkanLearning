@@ -137,4 +137,9 @@ namespace VulkanLearning {
         vkFreeCommandBuffers(m_device->getLogicalDevice(), m_commandPool->getCommandPool(), 1, &commandBuffer);
     }
 
+    void VulkanBuffer::cleanup() {
+        vkDestroyBuffer(m_device->getLogicalDevice(), m_buffer, nullptr);
+        vkFreeMemory(m_device->getLogicalDevice(), m_bufferMemory, nullptr);
+    }
+
 }

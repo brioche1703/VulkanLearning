@@ -33,4 +33,15 @@ namespace VulkanLearning {
             }
         }
     }
+
+    void VulkanSyncObjects::cleanup() {
+        for (size_t i = 0; i < m_maxFrameInFlight; i++) {
+            vkDestroySemaphore(m_device->getLogicalDevice(), 
+                    m_imageAvailableSemaphores[i], nullptr);
+            vkDestroySemaphore(m_device->getLogicalDevice(), 
+                    m_renderFinishedSemaphores[i], nullptr);
+            vkDestroyFence(m_device->getLogicalDevice(), 
+                    m_inFlightFences[i], nullptr); 
+        }
+    }
 }

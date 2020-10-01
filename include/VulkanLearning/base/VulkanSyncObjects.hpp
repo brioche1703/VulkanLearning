@@ -31,6 +31,7 @@ namespace VulkanLearning {
             std::vector<VkFence> getImagesInFlight() { return m_imagesInFlight; }
 
             void create();
+            void cleanup();
     };
 }
 

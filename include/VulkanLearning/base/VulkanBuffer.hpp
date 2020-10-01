@@ -57,5 +57,7 @@ namespace VulkanLearning {
 
             VkCommandBuffer beginSingleTimeCommands();
             void endSingleTimeCommands(VkCommandBuffer commandBuffer);
+
+            void cleanup();
     };
 }

@@ -2,18 +2,19 @@
 
 namespace VulkanLearning {
 
-    VulkanRenderPass::VulkanRenderPass(VulkanSwapChain* swapChain, VulkanDevice* device) {
-        create(swapChain, device);
+    VulkanRenderPass::VulkanRenderPass(VulkanSwapChain* swapChain, VulkanDevice* device) 
+    : m_swapChain(swapChain), m_device(device) {
+        create();
     }
 
     VulkanRenderPass::~VulkanRenderPass() {}
 
     VkRenderPass VulkanRenderPass::getRenderPass() { return m_renderPass; }
 
-    void VulkanRenderPass::create(VulkanSwapChain* swapChain, VulkanDevice* device) {
+    void VulkanRenderPass::create() {
         VkAttachmentDescription colorAttachment{};
-        colorAttachment.format = swapChain->getImageFormat();
-        colorAttachment.samples = device->getMsaaSamples();
+        colorAttachment.format = m_swapChain->getImageFormat();
+        colorAttachment.samples = m_device->getMsaaSamples();
         colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
         colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -22,8 +23,8 @@ namespace VulkanLearning {
         colorAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
         VkAttachmentDescription depthAttachment{};
-        depthAttachment.format = device->findDepthFormat();
-        depthAttachment.samples = device->getMsaaSamples();
+        depthAttachment.format = m_device->findDepthFormat();
+        depthAttachment.samples = m_device->getMsaaSamples();
         depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
         depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
         depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
@@ -32,7 +33,7 @@ namespace VulkanLearning {
         depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
         VkAttachmentDescription colorAttachmentResolve{};
-        colorAttachmentResolve.format = swapChain->getImageFormat();
+        colorAttachmentResolve.format = m_swapChain->getImageFormat();
         colorAttachmentResolve.samples = VK_SAMPLE_COUNT_1_BIT;
         colorAttachmentResolve.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
         colorAttachmentResolve.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -79,7 +80,7 @@ namespace VulkanLearning {
         renderPassInfo.dependencyCount = 1;
         renderPassInfo.pDependencies = &dependency;
 
-        if (vkCreateRenderPass(device->getLogicalDevice(), &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS) {
+        if (vkCreateRenderPass(m_device->getLogicalDevice(), &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS) {
             throw std::runtime_error("Render pass creation failed!");
         }
     }

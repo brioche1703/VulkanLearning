@@ -11,6 +11,9 @@ namespace VulkanLearning {
         private:
             VkRenderPass m_renderPass;
 
+            VulkanSwapChain* m_swapChain;
+            VulkanDevice* m_device;
+
         public:
             VulkanRenderPass(VulkanSwapChain* swapChain, VulkanDevice* device);
             ~VulkanRenderPass();
@@ -18,7 +21,7 @@ namespace VulkanLearning {
             VkRenderPass getRenderPass();
 
         private:
-            void create(VulkanSwapChain* swapChain, VulkanDevice* device);
+            void create();
     };
 
 }

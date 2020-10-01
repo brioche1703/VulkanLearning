@@ -4,11 +4,12 @@
 
 namespace VulkanLearning {
             
-    VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(VulkanDevice* device) {
-        create(device);
+    VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(VulkanDevice* device) 
+        : m_device(device){
+            create();
     }
     
-    void VulkanDescriptorSetLayout::create(VulkanDevice* device) {
+    void VulkanDescriptorSetLayout::create() {
         VkDescriptorSetLayoutBinding uboLayoutBinding{};
         uboLayoutBinding.binding = 0;
         uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -30,8 +31,13 @@ namespace VulkanLearning {
         layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
         layoutInfo.pBindings = bindings.data();
 
-        if (vkCreateDescriptorSetLayout(device->getLogicalDevice(), &layoutInfo, nullptr, &m_descriptorSetLayout) != VK_SUCCESS) {
+        if (vkCreateDescriptorSetLayout(m_device->getLogicalDevice(), 
+                    &layoutInfo, nullptr, &m_descriptorSetLayout) != VK_SUCCESS) {
             throw std::runtime_error("Set layout descriptor creation failed!");
         }
+    }
+
+    void VulkanDescriptorSetLayout::cleanup() {
+        vkDestroyDescriptorSetLayout(m_device->getLogicalDevice(), m_descriptorSetLayout, nullptr);
     }
 }

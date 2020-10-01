@@ -9,12 +9,15 @@ namespace VulkanLearning {
     class VulkanCommandPool {
         private:
             VkCommandPool m_commandPool;
+
+            VulkanDevice* m_device;
         public:
             VulkanCommandPool(VulkanDevice* device);
             ~VulkanCommandPool();
 
             inline VkCommandPool getCommandPool() { return m_commandPool; }
 
-            void create(VulkanDevice* device);
+            void create();
+            void cleanup();
     };
 }
