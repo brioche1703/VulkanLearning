@@ -8,7 +8,6 @@
 
 #include <vulkan/vulkan_core.h>
 #include <GLFW/glfw3.h>
-#include "../include/external/tinyobjloader/tiny_obj_loader.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -55,6 +54,7 @@
 #include "../include/VulkanLearning/base/VulkanCommandBuffer.hpp"
 #include "../include/VulkanLearning/base/VulkanTexture.hpp"
 #include "../include/VulkanLearning/base/VulkanGraphicsPipeline.hpp"
+#include "../include/VulkanLearning/misc/model/ModelObj.hpp"
 
 struct CoordinatesSystemUniformBufferObject {
     alignas(16) glm::mat4 model;
@@ -119,8 +119,7 @@ namespace VulkanLearning {
 
             VulkanCommandPool* m_commandPool;
 
-            std::vector<Vertex> vertices;
-            std::vector<uint32_t> indices;
+            ModelObj* m_model;
 
             VulkanBuffer* m_vertexBuffer;
             VulkanBuffer* m_indexBuffer;
@@ -422,14 +421,14 @@ namespace VulkanLearning {
 
             void createVertexBuffer() {
                 m_vertexBuffer = new VulkanBuffer(m_device, m_commandPool);
-                m_vertexBuffer->createWithStagingBuffer(vertices, 
+                m_vertexBuffer->createWithStagingBuffer(m_model->getVerticies(), 
                         VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
                         VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
             }
 
             void createIndexBuffer() {
                 m_indexBuffer = new VulkanBuffer(m_device, m_commandPool);
-                m_indexBuffer->createWithStagingBuffer(indices, 
+                m_indexBuffer->createWithStagingBuffer(m_model->getIndicies(), 
                         VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
                         VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
             }
@@ -448,7 +447,7 @@ namespace VulkanLearning {
             void createCommandBuffers() {
                 m_commandBuffers = new VulkanCommandBuffers(m_device, 
                         m_swapChain, m_commandPool, m_renderPass, m_vertexBuffer,
-                        m_indexBuffer, static_cast<uint32_t>(indices.size()),
+                        m_indexBuffer, static_cast<uint32_t>(m_model->getIndicies().size()),
                         m_graphicsPipeline->getGraphicsPipeline(),
                         m_graphicsPipeline->getPipelineLayout(), 
                         m_descriptorSets);
@@ -499,42 +498,7 @@ namespace VulkanLearning {
             }
 
             void loadModel() {
-                tinyobj::attrib_t attrib;
-                std::vector<tinyobj::shape_t> shapes;
-                std::vector<tinyobj::material_t> materials;
-                std::string warn, err;
-
-                if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, MODEL_PATH.c_str())) {
-                    throw std::runtime_error(warn + err);
-                }
-
-                std::unordered_map<Vertex, uint32_t> uniqueVertices{};
-
-                for (const auto& shape : shapes) {
-                    for (const auto& index : shape.mesh.indices) {
-                        Vertex vertex{};
-
-                        vertex.pos = {
-                            attrib.vertices[3 * index.vertex_index + 0],
-                            attrib.vertices[3 * index.vertex_index + 1],
-                            attrib.vertices[3 * index.vertex_index + 2]
-                        };
-
-                        vertex.texCoord = {
-                            attrib.texcoords[2 * index.texcoord_index + 0],
-                            1.0f - attrib.texcoords[2 * index.texcoord_index + 1],
-                        };
-
-                        vertex.color = {1.0f, 1.0f, 1.0f};
-
-                        if (uniqueVertices.count(vertex) == 0) {
-                            uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
-                            vertices.push_back(vertex);
-                        }
-
-                        indices.push_back(uniqueVertices[vertex]);
-                    }
-                }
+                m_model = new ModelObj(MODEL_PATH);
             }
     };
 }
