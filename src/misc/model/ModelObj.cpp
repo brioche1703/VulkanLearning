@@ -1,5 +1,7 @@
 #include "../../../include/VulkanLearning/misc/model/ModelObj.hpp"
 
+#include "../../../include/external/tinyobjloader/tiny_obj_loader.h"
+
 namespace VulkanLearning {
 
     ModelObj::ModelObj(std::string modelPath) : m_modelPath(modelPath) {

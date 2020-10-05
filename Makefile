@@ -5,76 +5,94 @@ SRC_PATH = src
 BUILD_PATH = build
 BIN_PATH = $(BUILD_PATH)/bin
 
-# executable # 
-BIN_NAME = runner
-
-# extensions #
-SRC_EXT = cpp
-
-# code lists #
-# Find all source files in the source directory, sorted by
-# most recently modified
-SOURCES = $(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' | sort -k 1nr | cut -f2-)
-# Set the object file names, with the source directory stripped
-# from the path, and the build path prepended in its place
-OBJECTS = $(SOURCES:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
-# Set the dependency files that will be used to add header dependencies
-DEPS = $(OBJECTS:.o=.d)
-
-# flags 
-COMPILE_FLAGS = -std=c++17 -g
-INCLUDES = -I include/ -I /usr/local/include
-
-
 # Space-separated pkg-config libraries used by this project
 STB_PATH = ./include/stb
 TINY_OBJ_LOADER_PATH = ./include/tinyobjloader
 IMGUI_PATH = ./src/external/imgui
 INCLUDES_EXT = -I$(STB_PATH)$(TINY_OBJ_LOADER_PATH)$(IMGUI_PATH)$(MISC_PATH)
 
+# extensions #
+SRC_EXT = cpp
+
+SOURCES=$(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' | sort -k 1nr | cut -f2-)
+OBJECTS=$(SOURCES:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
+
 LIBS = `pkg-config --static --libs glfw3` -lvulkan -lglfw3
 CFLAGS = -std=c++17 $(INCLUDES_EXT) `pkg-config --cflags glfw3`
 
-.PHONY: default_target
-default_target: release
+EXAMPLES = single3DModel simpleTriangle
 
-.PHONY: release
-release: export CXXFLAGS := $(CXXFLAGS) $(COMPILE_FLAGS) $(CFLAGS)
-release: dirs
-	@$(MAKE) all
+.PHONY: default_target
+default_target: all
+
+.PHONY: all
+all: export CXXFLAGS := $(CXXFLAGS) $(COMPILE_FLAGS) $(CFLAGS)
+all: dirs
+	@$(MAKE) $(EXAMPLES)
+
+#####################################################
+################Simple3DModel
+#####################################################
+
+SOURCES_1=$(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' ! -path "src/examples/*" | sort -k 1nr | cut -f2-) src/examples/single3DModel/single3DModel.cpp
+OBJECTS_1=$(SOURCES_1:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
+DEPX_1= $(OBJECTS_1:.o=.d)
+BIN_NAME_1=single3DModel
+.PHONY: single3DModel
+single3DModel: $(BIN_PATH)/$(BIN_NAME_1)
+	@echo "Making symlink: $@ -> $<"
+	@$(RM) $
+	@ln -s $(BIN_PATH)/$(BIN_NAME_1) $(BIN_NAME_1)
+
+# Creation of the executable
+$(BIN_PATH)/$(BIN_NAME_1): $(OBJECTS_1)
+	@echo "Linking: $@"
+	$(CXX) $(OBJECTS_1) -o $@ ${LIBS}
+
+#####################################################
+###############SimpleTriangle
+#####################################################
+
+SOURCES_2=$(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' ! -path "src/examples/*" | sort -k 1nr | cut -f2-) src/examples/simpleTriangle/simpleTriangle.cpp
+OBJECTS_2=$(SOURCES_2:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
+DEPX_2= $(OBJECTS_2:.o=.d)
+BIN_NAME_2=simpleTriangle
+.PHONY: simpleTriangle
+simpleTriangle: $(BIN_PATH)/$(BIN_NAME_2)
+	@echo "Making symlink: $@ -> $<"
+	@$(RM) $
+	@ln -s $(BIN_PATH)/$(BIN_NAME_2) $(BIN_NAME_2)
+
+# Creation of the executable
+$(BIN_PATH)/$(BIN_NAME_2): $(OBJECTS_2)
+	@echo "Linking: $@"
+	$(CXX) $(OBJECTS_2) -o $@ ${LIBS}
+
+#####################################################
+#####################################################
+#####################################################
+
+
+$(BUILD_PATH)/%.o: $(SRC_PATH)/%.$(SRC_EXT)
+	@echo "Compiling: $< -> $@"
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -MP -MMD -c $< -o $@
+
+#####################################################
+#####################################################
+#####################################################
 
 .PHONY: dirs
 dirs:
 	@echo "Creating directories"
-	@mkdir -p $(dir $(OBJECTS))
+	@mkdir -p $(dir $(OBJECTS_1))
+	@mkdir -p $(dir $(OBJECTS_2))
 	@mkdir -p $(BIN_PATH)
 
 .PHONY: clean
 clean:
-	@echo "Deleting $(BIN_NAME) symlink"
-	@$(RM) $(BIN_NAME)
+	@echo "Cleaning"
+	@$(RM) $(OBJECTS)
+	@$(RM) $(EXAMPLES)
 	@echo "Deleting directories"
 	@$(RM) -r $(BUILD_PATH)
 	@$(RM) -r $(BIN_PATH)
-
-# checks the executable and symlinks to the output
-.PHONY: all
-all: $(BIN_PATH)/$(BIN_NAME)
-	@echo "Making symlink: $(BIN_NAME) -> $<"
-	@$(RM) $(BIN_NAME)
-	@ln -s $(BIN_PATH)/$(BIN_NAME) $(BIN_NAME)
-
-# Creation of the executable
-$(BIN_PATH)/$(BIN_NAME): $(OBJECTS)
-	@echo "Linking: $@"
-	$(CXX) $(OBJECTS) -o $@ ${LIBS}
-
-# Add dependency files, if they exist
--include $(DEPS)
-
-# Source file rules
-# After the first compilation they will be joined with the rules from the
-# dependency files to provide header dependencies
-$(BUILD_PATH)/%.o: $(SRC_PATH)/%.$(SRC_EXT)
-	@echo "Compiling: $< -> $@"
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -MP -MMD -c $< -o $@

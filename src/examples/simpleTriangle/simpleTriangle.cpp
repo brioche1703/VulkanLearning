@@ -1,149 +1,23 @@
-#define GLFW_INCLUDE_VULKAN
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#define GLM_ENABLE_EXPERIMENTAL
-#define STB_IMAGE_IMPLEMENTATION
-#define TINYOBJLOADER_IMPLEMENTATION
-
-#include <vulkan/vulkan_core.h>
-#include <GLFW/glfw3.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/ext/matrix_clip_space.hpp>
-#include <glm/ext/matrix_transform.hpp>
-#include <glm/ext/vector_float3.hpp>
-#include <glm/gtx/hash.hpp>
-
-#include <iostream>
-#include <stdexcept>
-#include <vector>
-#include <cstring>
-#include <cstdlib>
-#include <optional>
-#include <set>
-#include <algorithm>
-#include <fstream>
-#include <array>
-#include <unordered_map>
-#include <chrono>
-#include <functional>
-
-#include "../include/VulkanLearning/base/Vertex.hpp"
-
-#include "../include/VulkanLearning/camera/camera.hpp"
-#include "../include/VulkanLearning/misc/FpsCounter.hpp"
-#include "../include/VulkanLearning/misc/VulkanDebug.hpp"
-#include "../include/VulkanLearning/base/VulkanDevice.hpp"
-#include "../include/VulkanLearning/base/VulkanInstance.hpp"
-#include "../include/VulkanLearning/base/VulkanSwapChain.hpp"
-#include "../include/VulkanLearning/base/VulkanSurface.hpp"
-#include "../include/VulkanLearning/base/VulkanRenderPass.hpp"
-#include "../include/VulkanLearning/misc/Inputs.hpp"
-#include "../include/VulkanLearning/window/Window.hpp"
-#include "../include/VulkanLearning/base/VulkanDescriptorSetLayout.hpp"
-#include "../include/VulkanLearning/base/VulkanCommandPool.hpp"
-#include "../include/VulkanLearning/base/VulkanShaderModule.hpp"
-#include "../include/VulkanLearning/base/VulkanBuffer.hpp"
-#include "../include/VulkanLearning/base/VulkanDescriptorPool.hpp"
-#include "../include/VulkanLearning/base/VulkanDescriptorSets.hpp"
-#include "../include/VulkanLearning/base/VulkanCommandBuffers.hpp"
-#include "../include/VulkanLearning/base/VulkanSyncObjects.hpp"
-#include "../include/VulkanLearning/base/VulkanImageResource.hpp"
-#include "../include/VulkanLearning/base/VulkanCommandBuffer.hpp"
-#include "../include/VulkanLearning/base/VulkanTexture.hpp"
-#include "../include/VulkanLearning/base/VulkanGraphicsPipeline.hpp"
-#include "../include/VulkanLearning/misc/model/ModelObj.hpp"
-
-struct CoordinatesSystemUniformBufferObject {
-    alignas(16) glm::mat4 model;
-    alignas(16) glm::mat4 view;
-    alignas(16) glm::mat4 proj;
-};
+#include "../../../include/VulkanLearning/base/VulkanBase.h"
 
 namespace VulkanLearning {
 
-    const uint32_t WIDTH = 800;
-    const uint32_t HEIGHT = 600;
-
-    const std::string MODEL_PATH = "./src/models/viking_room.obj";
-    const std::string TEXTURE_PATH = "./src/textures/viking_room.png";
-
-    const int MAX_FRAMES_IN_FLIGHT = 2;
-
-    const std::vector<const char*> validationLayers = {
-        "VK_LAYER_KHRONOS_validation",
-        "VK_LAYER_MESA_overlay",
-    };
-
-#ifdef NDEBUG
-    const bool enableValidationLayers = false;
-#else
-    const bool enableValidationLayers = true;
-#endif
-
-    static bool captureMouse = true;
-
-    class HelloTriangleApplication {
+    class VulkanExample : public VulkanBase {
         public:
+            VulkanExample() {}
+            ~VulkanExample() {}
+
             void run() {
-                initWindow();
-                initCore();
-                initVulkan();
-                mainLoop();
-                cleanup();
+                VulkanBase::run();
             }
-
         private:
-            Window* m_window;
-            Camera* m_camera;
-            FpsCounter* m_fpsCounter;
-            Inputs* m_input;
 
-            VulkanInstance *m_instance;
-            VulkanDebug* m_debug = new VulkanDebug();
-            VulkanDevice* m_device;
-            VulkanSurface* m_surface;
-
-            VulkanSwapChain *m_swapChain;
-
-            VulkanRenderPass* m_renderPass;
-
-            VulkanDescriptorSetLayout* m_descriptorSetLayout;
-            VulkanDescriptorPool* m_descriptorPool;
-
-            VulkanDescriptorSets* m_descriptorSets;
-
-            VulkanGraphicsPipeline* m_graphicsPipeline;
-
-            VulkanCommandPool* m_commandPool;
-
-            ModelObj* m_model;
-
-            VulkanBuffer* m_vertexBuffer;
-            VulkanBuffer* m_indexBuffer;
-
-            std::vector<VulkanBuffer*> m_coordinateSystemUniformBuffers;
-
-            VulkanCommandBuffers* m_commandBuffers;
-
-            VulkanSyncObjects* m_syncObjects;
-
-            size_t currentFrame = 0;
-            bool framebufferResized = false;
-
-            VulkanTexture* m_texture;
-
-            VulkanImageResource* m_colorImageResource;
-            VulkanImageResource* m_depthImageResource;
-
-            void initWindow() {
+            void initWindow() override {
                 m_window = new Window("Vulkan", WIDTH, HEIGHT);
                 m_window->init();
             }
 
-            void initCore() {
+            void initCore() override {
                 m_camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f));
                 m_fpsCounter = new FpsCounter();
                 m_input = new Inputs(m_window->getWindow(), m_camera, m_fpsCounter);
@@ -155,7 +29,7 @@ namespace VulkanLearning {
                 glfwSetInputMode(m_window->getWindow() , GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             }
 
-            void initVulkan() {
+            void initVulkan() override {
                 createInstance();
                 createDebug();
                 createSurface();
@@ -183,7 +57,7 @@ namespace VulkanLearning {
                 createSyncObjects();
             }
 
-            void mainLoop() {
+            void mainLoop() override {
                 while (!glfwWindowShouldClose(m_window->getWindow() )) {
                     glfwPollEvents();
                     m_input->processKeyboardInput();
@@ -194,7 +68,7 @@ namespace VulkanLearning {
                 vkDeviceWaitIdle(m_device->getLogicalDevice());
             }
 
-            void drawFrame() {
+            void drawFrame() override {
                 vkWaitForFences(m_device->getLogicalDevice(), 1, &m_syncObjects->getInFlightFences()[currentFrame], VK_TRUE, UINT64_MAX);
 
                 uint32_t imageIndex;
@@ -260,7 +134,7 @@ namespace VulkanLearning {
                 currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
             }
 
-            void cleanup() {
+            void cleanup() override {
                 cleanupSwapChain();
 
                 m_texture->cleanup();
@@ -288,11 +162,11 @@ namespace VulkanLearning {
                 glfwTerminate();
             }
 
-            void createSurface() {
+            void createSurface() override {
                 m_surface = new VulkanSurface(m_window->getWindow() , m_instance->getInstance());
             }
 
-            void recreateSwapChain() {
+            void recreateSwapChain() override {
                 int width = 0, height = 0;
                 while (width == 0 || height == 0) {
                     glfwGetFramebufferSize(m_window->getWindow() , &width, &height);
@@ -318,7 +192,7 @@ namespace VulkanLearning {
                 createCommandBuffers();
             }
 
-            void cleanupSwapChain() {
+            void cleanupSwapChain() override {
                 m_colorImageResource->cleanup();
                 m_depthImageResource->cleanup();
 
@@ -349,36 +223,36 @@ namespace VulkanLearning {
                         m_descriptorPool->getDescriptorPool(), nullptr);
             }
 
-            void  createInstance() {
+            void  createInstance() override {
                 m_instance = new VulkanInstance(enableValidationLayers, 
                         validationLayers, *m_debug);
             }
 
-            void  createDebug() {
+            void  createDebug() override {
                 m_debug = new VulkanDebug(m_instance->getInstance(), 
                         enableValidationLayers);
             }
 
-            void  createDevice() {
+            void  createDevice() override {
                 m_device = new VulkanDevice(m_instance->getInstance(), m_surface->getSurface(), 
                         deviceExtensions,
                         enableValidationLayers, validationLayers);
             }
 
-            void  createSwapChain() {
+            void  createSwapChain() override {
                 m_swapChain = new VulkanSwapChain(m_window, m_device, m_surface);
             }
 
-            void createRenderPass() {
+            void createRenderPass() override {
                 m_renderPass = new VulkanRenderPass(m_swapChain, m_device);
             }
 
-            void createGraphicsPipeline() {
+            void createGraphicsPipeline() override {
                 m_graphicsPipeline = new VulkanGraphicsPipeline(m_device,
                         m_swapChain, m_renderPass, m_descriptorSetLayout);
             }
 
-            void createFramebuffers() {
+            void createFramebuffers() override {
                 const std::vector<VkImageView> attachments {
                     m_colorImageResource->getImageView(),
                         m_depthImageResource->getImageView()
@@ -388,11 +262,11 @@ namespace VulkanLearning {
                         attachments);
             }
 
-            void createCommandPool() {
+            void createCommandPool() override {
                 m_commandPool = new VulkanCommandPool(m_device);
             }
 
-            void createTexture() {
+            void createTexture() override {
                 m_texture = new VulkanTexture(TEXTURE_PATH, m_device, m_swapChain,
                         m_commandPool);
                 m_texture->create();
@@ -400,7 +274,7 @@ namespace VulkanLearning {
                 m_texture->createSampler();
             }
 
-            void createColorResources() {
+            void createColorResources() override {
                 m_colorImageResource = new VulkanImageResource(m_device, 
                         m_swapChain, m_commandPool, 
                         m_swapChain->getImageFormat(),  
@@ -410,7 +284,7 @@ namespace VulkanLearning {
                 m_colorImageResource->create();
             }
 
-            void createDepthResources() {
+            void createDepthResources() override {
                 m_depthImageResource = new VulkanImageResource(m_device, 
                         m_swapChain, m_commandPool, 
                         m_device->findDepthFormat(), 
@@ -419,21 +293,21 @@ namespace VulkanLearning {
                 m_depthImageResource->create();
             }
 
-            void createVertexBuffer() {
+            void createVertexBuffer() override {
                 m_vertexBuffer = new VulkanBuffer(m_device, m_commandPool);
                 m_vertexBuffer->createWithStagingBuffer(m_model->getVerticies(), 
                         VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
                         VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
             }
 
-            void createIndexBuffer() {
+            void createIndexBuffer() override {
                 m_indexBuffer = new VulkanBuffer(m_device, m_commandPool);
                 m_indexBuffer->createWithStagingBuffer(m_model->getIndicies(), 
                         VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
                         VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
             }
 
-            void createCoordinateSystemUniformBuffers() {
+            void createCoordinateSystemUniformBuffers() override {
                 VkDeviceSize bufferSize = sizeof(CoordinatesSystemUniformBufferObject);
 
                 m_coordinateSystemUniformBuffers.resize(m_swapChain->getImages().size());
@@ -444,7 +318,7 @@ namespace VulkanLearning {
                 }
             }
 
-            void createCommandBuffers() {
+            void createCommandBuffers() override {
                 m_commandBuffers = new VulkanCommandBuffers(m_device, 
                         m_swapChain, m_commandPool, m_renderPass, m_vertexBuffer,
                         m_indexBuffer, static_cast<uint32_t>(m_model->getIndicies().size()),
@@ -453,27 +327,27 @@ namespace VulkanLearning {
                         m_descriptorSets);
             }
 
-            void createSyncObjects() {
+            void createSyncObjects() override {
                 m_syncObjects = new VulkanSyncObjects(m_device, m_swapChain, 
                         MAX_FRAMES_IN_FLIGHT);
             }
 
-            void createDescriptorSetLayout() {
+            void createDescriptorSetLayout() override {
                 m_descriptorSetLayout = new VulkanDescriptorSetLayout(m_device);
             }
 
-            void createDescriptorPool() {
+            void createDescriptorPool() override {
                 m_descriptorPool = new VulkanDescriptorPool(m_device, m_swapChain);
             }
 
-            void createDescriptorSets() {
+            void createDescriptorSets() override {
                 m_descriptorSets = new VulkanDescriptorSets(m_device, m_swapChain,
                         m_descriptorSetLayout, m_descriptorPool,
                         m_coordinateSystemUniformBuffers, sizeof(CoordinatesSystemUniformBufferObject),
                         m_texture);
             }
 
-            void updateCamera(uint32_t currentImage) {
+            void updateCamera(uint32_t currentImage) override {
                 CoordinatesSystemUniformBufferObject ubo{};
 
                 ubo.model = glm::mat4(1.0f);
@@ -497,21 +371,11 @@ namespace VulkanLearning {
                         m_coordinateSystemUniformBuffers[currentImage]->getBufferMemory());
             }
 
-            void loadModel() {
+            void loadModel() override {
                 m_model = new ModelObj(MODEL_PATH);
             }
     };
+
 }
 
-int main() {
-    VulkanLearning::HelloTriangleApplication app;
-
-    try {
-        app.run();
-    } catch (const std::exception& e) {
-        std::cerr << e.what() << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
-}
+VULKAN_EXAMPLE_MAIN()

@@ -1,10 +1,10 @@
 #pragma once
 
+#define TINYOBJLOADER_IMPLEMENTATION
+
 #include <string>
 #include <vector>
 #include <unordered_map>
-
-#include "../../../external/tinyobjloader/tiny_obj_loader.h"
 
 #include "../../base/Vertex.hpp"
 
