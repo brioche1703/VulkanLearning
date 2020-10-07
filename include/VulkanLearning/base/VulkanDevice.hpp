@@ -38,15 +38,18 @@ namespace VulkanLearning {
 
             std::vector<const char*> m_deviceExtensions; 
             VkSampleCountFlagBits m_msaaSamples;
+            uint32_t m_msaaSamplesMax;
 
             QueueFamilyIndices m_queueFamilyIndices;
+
 
         public:
             VulkanDevice();
             VulkanDevice(VkInstance instance, VkSurfaceKHR surface,
                     const std::vector<const char*> deviceExtensions,
                     bool enableValidationLayers,
-                    const std::vector<const char*> validationLayers);
+                    const std::vector<const char*> validationLayers,
+                    uint32_t msaaSamplesMax);
             ~VulkanDevice();
 
             VkPhysicalDevice getPhysicalDevice();

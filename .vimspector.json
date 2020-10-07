@@ -4,7 +4,7 @@
       "adapter": "vscode-cpptools",
       "configuration": {
         "request": "launch",
-        "program": "build/bin/runner",
+        "program": "build/bin/simpleTriangle",
         "cwd": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
         "externalConsole": true,
         "MIMode": "gdb"

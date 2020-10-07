@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
 
@@ -13,21 +15,28 @@ namespace VulkanLearning {
         private:
             VkInstance m_instance;
 
+            VulkanDebug* m_debug;
+
+            const char* m_appName;
+            bool m_enableValidationLayers;
+            const std::vector<const char*> m_validationLayers;
+
         public:
             VulkanInstance();
-            VulkanInstance(bool enableValidationLayers,
+            VulkanInstance(
+                    const char* appName,
+                    bool enableValidationLayers,
                     const std::vector<const char*> validationLayers,
-                    VulkanDebug debug);
+                    VulkanDebug* debug);
             ~VulkanInstance();
 
             inline VkInstance getInstance() { return m_instance; }
 
         private:
-            void create(bool enableValidationLayers, 
-                    const std::vector<const char*> validationLayers,
-                    VulkanDebug debug);
+            void create();
             bool checkValidationLayerSupport(
                     const std::vector<const char*> validationLayers);
+
             std::vector<const char*> getRequiredExtensions(
                     bool enableValidationLayers);
     };

@@ -21,11 +21,11 @@ namespace VulkanLearning {
             throw std::runtime_error(warn + err);
         }
 
-        std::unordered_map<Vertex, uint32_t> uniqueVertices{};
+        std::unordered_map<VertexTextured, uint32_t> uniqueVertices{};
 
         for (const auto& shape : shapes) {
             for (const auto& index : shape.mesh.indices) {
-                Vertex vertex{};
+                VertexTextured vertex{};
 
                 vertex.pos = {
                     attrib.vertices[3 * index.vertex_index + 0],

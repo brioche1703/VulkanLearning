@@ -3,6 +3,10 @@
 namespace VulkanLearning {
 
     class VulkanExample : public VulkanBase {
+
+        private:
+            uint32_t m_msaaSamples = 64;
+
         public:
             VulkanExample() {}
             ~VulkanExample() {}
@@ -163,7 +167,7 @@ namespace VulkanLearning {
             }
 
             void createSurface() override {
-                m_surface = new VulkanSurface(m_window->getWindow() , m_instance->getInstance());
+                m_surface = new VulkanSurface(m_window, m_instance);
             }
 
             void recreateSwapChain() override {
@@ -224,8 +228,10 @@ namespace VulkanLearning {
             }
 
             void  createInstance() override {
-                m_instance = new VulkanInstance(enableValidationLayers, 
-                        validationLayers, *m_debug);
+                m_instance = new VulkanInstance(
+                        "Single3DModel",
+                        enableValidationLayers, 
+                        validationLayers, m_debug);
             }
 
             void  createDebug() override {
@@ -236,7 +242,7 @@ namespace VulkanLearning {
             void  createDevice() override {
                 m_device = new VulkanDevice(m_instance->getInstance(), m_surface->getSurface(), 
                         deviceExtensions,
-                        enableValidationLayers, validationLayers);
+                        enableValidationLayers, validationLayers, m_msaaSamples);
             }
 
             void  createSwapChain() override {
@@ -244,12 +250,102 @@ namespace VulkanLearning {
             }
 
             void createRenderPass() override {
+                VkAttachmentDescription colorAttachment{};
+                colorAttachment.format = m_swapChain->getImageFormat();
+                colorAttachment.samples = m_device->getMsaaSamples();
+                colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+                colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+                colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+                colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+                colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                colorAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+                VkAttachmentDescription depthAttachment{};
+                depthAttachment.format = m_device->findDepthFormat();
+                depthAttachment.samples = m_device->getMsaaSamples();
+                depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+                depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+                depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+                depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+                depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+                VkAttachmentDescription colorAttachmentResolve{};
+                colorAttachmentResolve.format = m_swapChain->getImageFormat();
+                colorAttachmentResolve.samples = VK_SAMPLE_COUNT_1_BIT;
+                colorAttachmentResolve.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+                colorAttachmentResolve.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+                colorAttachmentResolve.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+                colorAttachmentResolve.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+                colorAttachmentResolve.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                colorAttachmentResolve.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+                VkAttachmentReference colorAttachmentRef{};
+                colorAttachmentRef.attachment = 0;
+                colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+                VkAttachmentReference depthAttachmentRef{};
+                depthAttachmentRef.attachment = 1;
+                depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+                VkAttachmentReference colorAttachmentResolveRef{};
+                colorAttachmentResolveRef.attachment = 2;
+                colorAttachmentResolveRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+                VkSubpassDescription subpass{};
+                subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+                subpass.colorAttachmentCount = 1;
+                subpass.pColorAttachments = &colorAttachmentRef;
+                subpass.pDepthStencilAttachment = &depthAttachmentRef;
+                subpass.pResolveAttachments = &colorAttachmentResolveRef;
+
+                const std::vector<VkAttachmentDescription> attachments = 
+                    { colorAttachment, depthAttachment, colorAttachmentResolve };
+
                 m_renderPass = new VulkanRenderPass(m_swapChain, m_device);
+                m_renderPass->create(attachments, subpass);
             }
 
             void createGraphicsPipeline() override {
                 m_graphicsPipeline = new VulkanGraphicsPipeline(m_device,
                         m_swapChain, m_renderPass, m_descriptorSetLayout);
+
+                VulkanShaderModule vertShaderModule = 
+                    VulkanShaderModule("src/shaders/vert.spv", m_device);
+                VulkanShaderModule fragShaderModule = 
+                    VulkanShaderModule("src/shaders/frag.spv", m_device);
+
+                VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+                vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+
+                auto bindingDescription = VertexTextured::getBindingDescription();
+                auto attributeDescriptions = VertexTextured::getAttributeDescriptions();
+
+                vertexInputInfo.vertexBindingDescriptionCount = 1;
+                vertexInputInfo.vertexAttributeDescriptionCount = 
+                    static_cast<uint32_t>(attributeDescriptions.size());
+                vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+                vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+
+
+                VkPipelineDepthStencilStateCreateInfo depthStencil{};
+                depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+                depthStencil.depthTestEnable = VK_TRUE;
+                depthStencil.depthWriteEnable = VK_TRUE;
+                depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+                depthStencil.depthBoundsTestEnable = VK_FALSE;
+                depthStencil.stencilTestEnable = VK_FALSE;
+
+                VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+                pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+                pipelineLayoutInfo.setLayoutCount = 1;
+                pipelineLayoutInfo.pSetLayouts = 
+                    m_descriptorSetLayout->getDescriptorSetLayoutPointer();
+
+                m_graphicsPipeline->create(
+                        vertShaderModule, fragShaderModule,
+                        vertexInputInfo, pipelineLayoutInfo, 
+                        &depthStencil);
             }
 
             void createFramebuffers() override {
@@ -325,6 +421,12 @@ namespace VulkanLearning {
                         m_graphicsPipeline->getGraphicsPipeline(),
                         m_graphicsPipeline->getPipelineLayout(), 
                         m_descriptorSets);
+
+                std::array<VkClearValue, 2> clearValues{};
+                clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
+                clearValues[1].depthStencil = {1.0f, 0};
+
+                m_commandBuffers->create(clearValues);
             }
 
             void createSyncObjects() override {
@@ -334,17 +436,71 @@ namespace VulkanLearning {
 
             void createDescriptorSetLayout() override {
                 m_descriptorSetLayout = new VulkanDescriptorSetLayout(m_device);
+
+                VkDescriptorSetLayoutBinding uboLayoutBinding{};
+                uboLayoutBinding.binding = 0;
+                uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                uboLayoutBinding.descriptorCount = 1;
+                uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+                uboLayoutBinding.pImmutableSamplers = nullptr;
+
+                VkDescriptorSetLayoutBinding samplerLayoutBinding{};
+                samplerLayoutBinding.binding = 1;
+                samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+                samplerLayoutBinding.descriptorCount = 1;
+                samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+                samplerLayoutBinding.pImmutableSamplers = nullptr;
+        
+                std::vector<VkDescriptorSetLayoutBinding> bindings = 
+                {uboLayoutBinding, samplerLayoutBinding};
+
+                m_descriptorSetLayout->create(bindings);
             }
 
             void createDescriptorPool() override {
                 m_descriptorPool = new VulkanDescriptorPool(m_device, m_swapChain);
+
+                std::vector<VkDescriptorPoolSize> poolSizes = std::vector<VkDescriptorPoolSize>(2);
+                poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                poolSizes[0].descriptorCount = static_cast<uint32_t>(
+                        m_swapChain->getImages().size());
+                poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+                poolSizes[1].descriptorCount = static_cast<uint32_t>(
+                        m_swapChain->getImages().size());
+
+                m_descriptorPool->create(poolSizes);
             }
 
             void createDescriptorSets() override {
                 m_descriptorSets = new VulkanDescriptorSets(m_device, m_swapChain,
                         m_descriptorSetLayout, m_descriptorPool,
-                        m_coordinateSystemUniformBuffers, sizeof(CoordinatesSystemUniformBufferObject),
-                        m_texture);
+                        m_coordinateSystemUniformBuffers, 
+                        sizeof(CoordinatesSystemUniformBufferObject));
+
+                VkDescriptorBufferInfo bufferInfo{};
+                bufferInfo.offset = 0;
+
+                VkDescriptorImageInfo imageInfo{};
+                imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                imageInfo.imageView = m_texture->getImageView();
+                imageInfo.sampler = m_texture->getSampler();
+                
+                std::vector<VkWriteDescriptorSet> descriptorWrites = 
+                    std::vector<VkWriteDescriptorSet>(2);
+                
+                descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                descriptorWrites[0].dstBinding = 0;
+                descriptorWrites[0].dstArrayElement = 0;
+                descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                descriptorWrites[0].descriptorCount = 1;
+
+                descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                descriptorWrites[1].dstBinding = 1;
+                descriptorWrites[1].dstArrayElement = 0;
+                descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+                descriptorWrites[1].descriptorCount = 1;
+
+                m_descriptorSets->create(bufferInfo, descriptorWrites, &imageInfo);
             }
 
             void updateCamera(uint32_t currentImage) override {

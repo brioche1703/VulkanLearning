@@ -33,12 +33,16 @@ namespace VulkanLearning {
                     VulkanDescriptorPool* descriptorPool,
                     std::vector<VulkanBuffer*> uniformBuffers,
                     VkDeviceSize uniformBufferSize,
-                    VulkanTexture* texture);
+                    VulkanTexture* texture = nullptr);
 
             ~VulkanDescriptorSets(); 
 
             inline std::vector<VkDescriptorSet> getDescriptorSets() { return m_descriptorSets; }
 
-            void create();
+            void create(
+                    VkDescriptorBufferInfo bufferInfo,
+                    std::vector<VkWriteDescriptorSet> descriptorWrites,
+                    VkDescriptorImageInfo *imageInfo = nullptr
+                    );
     };
 }

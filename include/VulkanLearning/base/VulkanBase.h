@@ -101,7 +101,6 @@ namespace VulkanLearning {
             static std::vector<const char*> args;
 
         protected:
-
             Window* m_window;
             Camera* m_camera;
             FpsCounter* m_fpsCounter;

@@ -42,7 +42,7 @@ BIN_NAME_1=single3DModel
 single3DModel: $(BIN_PATH)/$(BIN_NAME_1)
 	@echo "Making symlink: $@ -> $<"
 	@$(RM) $
-	@ln -s $(BIN_PATH)/$(BIN_NAME_1) $(BIN_NAME_1)
+	@ln -sfn $(BIN_PATH)/$(BIN_NAME_1) $(BIN_NAME_1)
 
 # Creation of the executable
 $(BIN_PATH)/$(BIN_NAME_1): $(OBJECTS_1)
@@ -61,7 +61,7 @@ BIN_NAME_2=simpleTriangle
 simpleTriangle: $(BIN_PATH)/$(BIN_NAME_2)
 	@echo "Making symlink: $@ -> $<"
 	@$(RM) $
-	@ln -s $(BIN_PATH)/$(BIN_NAME_2) $(BIN_NAME_2)
+	@ln -sfn $(BIN_PATH)/$(BIN_NAME_2) $(BIN_NAME_2)
 
 # Creation of the executable
 $(BIN_PATH)/$(BIN_NAME_2): $(OBJECTS_2)

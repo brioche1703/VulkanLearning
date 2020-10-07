@@ -15,13 +15,16 @@ namespace VulkanLearning {
         m_uniformBufferSize(uniformBufferSize),
         m_texture(texture)
         {
-            create();
         }
 
     VulkanDescriptorSets::~VulkanDescriptorSets() {}
 
 
-    void VulkanDescriptorSets::create() {
+    void VulkanDescriptorSets::create(
+            VkDescriptorBufferInfo bufferInfo,
+            std::vector<VkWriteDescriptorSet> descriptorWrites,
+            VkDescriptorImageInfo *imageInfo
+            ) {
         std::vector<VkDescriptorSetLayout> layouts(m_swapChain->getImages().size(), m_descriptorSetLayout->getDescriptorSetLayout());
         VkDescriptorSetAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -36,35 +39,24 @@ namespace VulkanLearning {
         }
 
         for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
-            VkDescriptorBufferInfo bufferInfo{};
-            bufferInfo.buffer = m_uniformBuffers[i]->getBuffer();
-            bufferInfo.offset = 0;
-            bufferInfo.range = m_uniformBufferSize;
+            std::vector<VkWriteDescriptorSet> descriptorWritesAux = descriptorWrites;
 
-            VkDescriptorImageInfo imageInfo{};
-            imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            imageInfo.imageView = m_texture->getImageView();
-            imageInfo.sampler = m_texture->getSampler();
+            VkDescriptorBufferInfo bufferInfoAux = bufferInfo;
+            bufferInfoAux.buffer = m_uniformBuffers[i]->getBuffer();
+            bufferInfoAux.range = m_uniformBufferSize;
 
-            std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
+            descriptorWritesAux[0].pBufferInfo = &bufferInfoAux;
 
-            descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-            descriptorWrites[0].dstSet = m_descriptorSets[i];
-            descriptorWrites[0].dstBinding = 0;
-            descriptorWrites[0].dstArrayElement = 0;
-            descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            descriptorWrites[0].descriptorCount = 1;
-            descriptorWrites[0].pBufferInfo = &bufferInfo;
+            if (imageInfo != nullptr) {
+                VkDescriptorImageInfo imageInfoAux = *imageInfo;
+                descriptorWritesAux[1].pImageInfo = &imageInfoAux;
+            }
 
-            descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-            descriptorWrites[1].dstSet = m_descriptorSets[i];
-            descriptorWrites[1].dstBinding = 1;
-            descriptorWrites[1].dstArrayElement = 0;
-            descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-            descriptorWrites[1].descriptorCount = 1;
-            descriptorWrites[1].pImageInfo = &imageInfo;
+            for (int j = 0; j < descriptorWritesAux.size(); j++) {
+                descriptorWritesAux[j].dstSet = m_descriptorSets[i];
+            }
 
-            vkUpdateDescriptorSets(m_device->getLogicalDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+            vkUpdateDescriptorSets(m_device->getLogicalDevice(), static_cast<uint32_t>(descriptorWritesAux.size()), descriptorWritesAux.data(), 0, nullptr);
         }
     }
 }

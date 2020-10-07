@@ -11,3 +11,6 @@ esac
 
 $GLSLC_PATH shader.vert -o vert.spv
 $GLSLC_PATH shader.frag -o frag.spv
+
+$GLSLC_PATH simpleTriangleShader.vert -o simpleTriangleShaderVert.spv
+$GLSLC_PATH simpleTriangleShader.frag -o simpleTriangleShaderFrag.spv

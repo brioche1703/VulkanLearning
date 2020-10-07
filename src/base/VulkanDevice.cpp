@@ -1,9 +1,10 @@
-#include "../../include/VulkanLearning/base/VulkanDevice.hpp"
-
+#include <glm/glm.hpp>
 #include <iostream>
 #include <vector>
 #include <set>
 #include <string>
+
+#include "../../include/VulkanLearning/base/VulkanDevice.hpp"
 
 namespace VulkanLearning {
 
@@ -14,7 +15,8 @@ namespace VulkanLearning {
     VulkanDevice::VulkanDevice(VkInstance instance, VkSurfaceKHR surface,
             const std::vector<const char*> deviceExtensions,
             bool enableValidationLayers,
-            const std::vector<const char*> validationLayers) {
+            const std::vector<const char*> validationLayers,
+            uint32_t msaaSamplesMax) : m_msaaSamplesMax(msaaSamplesMax){
         pickPhysicalDevice(instance, surface, deviceExtensions);
         createLogicalDevice(surface, enableValidationLayers, validationLayers);
     }
@@ -42,7 +44,10 @@ namespace VulkanLearning {
         for (const auto& device : devices) {
             if (isDeviceSuitable(device, surface, deviceExtensions)) {
                 m_physicalDevice = device;
-                m_msaaSamples = getMaxUsableSampleCount();
+                m_msaaSamples = m_msaaSamplesMax <= 
+                    static_cast<int>(getMaxUsableSampleCount()) ?
+                    (VkSampleCountFlagBits) m_msaaSamplesMax 
+                        : getMaxUsableSampleCount();
                 break;
             }
         }

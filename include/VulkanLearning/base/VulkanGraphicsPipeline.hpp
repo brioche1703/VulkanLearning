@@ -29,7 +29,12 @@ namespace VulkanLearning {
             inline VkPipeline getGraphicsPipeline() { return m_graphicsPipeline; }
             inline VkPipelineLayout getPipelineLayout() { return m_pipelineLayout; }
 
-            void create();
+            void create(
+                    VulkanShaderModule vertShaderModule,
+                    VulkanShaderModule fragShaderModule,
+                    VkPipelineVertexInputStateCreateInfo vertexInputInfo,
+                    VkPipelineLayoutCreateInfo pipelineLayoutInfo,
+                    VkPipelineDepthStencilStateCreateInfo *depthStencil = nullptr);
     };
 
 }

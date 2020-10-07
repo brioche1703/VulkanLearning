@@ -2,6 +2,18 @@
 
 namespace VulkanLearning {
 
+
+    const std::vector<Vertex> vertices = {
+        {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+        {{ 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+        {{ 0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}},
+        {{-0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}}
+    };
+
+    const std::vector<uint32_t> indices = {
+        0, 1, 2, 2, 3, 0
+    };
+
     class VulkanExample : public VulkanBase {
         public:
             VulkanExample() {}
@@ -13,12 +25,12 @@ namespace VulkanLearning {
         private:
 
             void initWindow() override {
-                m_window = new Window("Vulkan", WIDTH, HEIGHT);
+                m_window = new Window("Simple Triangle", WIDTH, HEIGHT);
                 m_window->init();
             }
 
             void initCore() override {
-                m_camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f));
+                m_camera = new Camera(glm::vec3(0.0f, 2.0f, 5.0f));
                 m_fpsCounter = new FpsCounter();
                 m_input = new Inputs(m_window->getWindow(), m_camera, m_fpsCounter);
 
@@ -36,23 +48,21 @@ namespace VulkanLearning {
                 createDevice();
                 createSwapChain();
                 createRenderPass();
+
                 createDescriptorSetLayout();
 
                 createGraphicsPipeline();
 
                 createCommandPool();
-                createColorResources();
-                createDepthResources();
                 createFramebuffers();
-                createTexture();
-
-                loadModel();
 
                 createVertexBuffer();
                 createIndexBuffer();
+
                 createCoordinateSystemUniformBuffers();
                 createDescriptorPool();
                 createDescriptorSets();
+                
                 createCommandBuffers();
                 createSyncObjects();
             }
@@ -137,8 +147,6 @@ namespace VulkanLearning {
             void cleanup() override {
                 cleanupSwapChain();
 
-                m_texture->cleanup();
-
                 m_descriptorSetLayout->cleanup();
 
                 m_vertexBuffer->cleanup();
@@ -163,7 +171,7 @@ namespace VulkanLearning {
             }
 
             void createSurface() override {
-                m_surface = new VulkanSurface(m_window->getWindow() , m_instance->getInstance());
+                m_surface = new VulkanSurface(m_window, m_instance);
             }
 
             void recreateSwapChain() override {
@@ -181,8 +189,6 @@ namespace VulkanLearning {
 
                 createRenderPass();
                 createGraphicsPipeline();
-                createColorResources();
-                createDepthResources();
 
                 createFramebuffers();
 
@@ -193,21 +199,21 @@ namespace VulkanLearning {
             }
 
             void cleanupSwapChain() override {
-                m_colorImageResource->cleanup();
-                m_depthImageResource->cleanup();
-
                 m_swapChain->cleanFramebuffers();
 
                 m_commandBuffers->cleanup();
 
                 vkDestroyPipeline(m_device->getLogicalDevice(), 
                         m_graphicsPipeline->getGraphicsPipeline(), nullptr);
+
                 vkDestroyPipelineLayout(m_device->getLogicalDevice(), 
                         m_graphicsPipeline->getPipelineLayout(), nullptr);
+
                 vkDestroyRenderPass(m_device->getLogicalDevice(), 
                         m_renderPass->getRenderPass(), nullptr);
 
                 m_swapChain->destroyImageViews();
+
                 vkDestroySwapchainKHR(m_device->getLogicalDevice(), m_swapChain->getSwapChain(), nullptr);
 
                 for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
@@ -224,8 +230,8 @@ namespace VulkanLearning {
             }
 
             void  createInstance() override {
-                m_instance = new VulkanInstance(enableValidationLayers, 
-                        validationLayers, *m_debug);
+                m_instance = new VulkanInstance("Simple Triangle", enableValidationLayers, 
+                        validationLayers, m_debug);
             }
 
             void  createDebug() override {
@@ -236,7 +242,7 @@ namespace VulkanLearning {
             void  createDevice() override {
                 m_device = new VulkanDevice(m_instance->getInstance(), m_surface->getSurface(), 
                         deviceExtensions,
-                        enableValidationLayers, validationLayers);
+                        enableValidationLayers, validationLayers, 1);
             }
 
             void  createSwapChain() override {
@@ -244,65 +250,84 @@ namespace VulkanLearning {
             }
 
             void createRenderPass() override {
+                VkAttachmentDescription colorAttachment{};
+                colorAttachment.format = m_swapChain->getImageFormat();
+                colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+                colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+                colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+                colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+                colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+                colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+                VkAttachmentReference colorAttachmentRef{};
+                colorAttachmentRef.attachment = 0;
+                colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+                VkSubpassDescription subpass{};
+                subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+                subpass.colorAttachmentCount = 1;
+                subpass.pColorAttachments = &colorAttachmentRef;
+
+                const std::vector<VkAttachmentDescription> attachments = 
+                    { colorAttachment };
+
                 m_renderPass = new VulkanRenderPass(m_swapChain, m_device);
+                m_renderPass->create(attachments, subpass);
             }
 
             void createGraphicsPipeline() override {
                 m_graphicsPipeline = new VulkanGraphicsPipeline(m_device,
                         m_swapChain, m_renderPass, m_descriptorSetLayout);
+
+                VulkanShaderModule vertShaderModule = 
+                    VulkanShaderModule("src/shaders/simpleTriangleShaderVert.spv", m_device);
+                VulkanShaderModule fragShaderModule = 
+                    VulkanShaderModule("src/shaders/simpleTriangleShaderFrag.spv", m_device);
+
+                VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+                vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+
+                auto bindingDescription = Vertex::getBindingDescription();
+                auto attributeDescriptions = Vertex::getAttributeDescriptions();
+
+                vertexInputInfo.vertexBindingDescriptionCount = 1;
+                vertexInputInfo.vertexAttributeDescriptionCount = 
+                    static_cast<uint32_t>(attributeDescriptions.size());
+                vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+                vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+
+                VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+                pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+                pipelineLayoutInfo.setLayoutCount = 1;
+                pipelineLayoutInfo.pSetLayouts = 
+                    m_descriptorSetLayout->getDescriptorSetLayoutPointer();
+
+                m_graphicsPipeline->create(vertShaderModule, fragShaderModule, 
+                        vertexInputInfo, pipelineLayoutInfo);
             }
 
             void createFramebuffers() override {
-                const std::vector<VkImageView> attachments {
-                    m_colorImageResource->getImageView(),
-                        m_depthImageResource->getImageView()
-                };
+                const std::vector<VkImageView> attachments {};
 
-                m_swapChain->createFramebuffers(m_renderPass->getRenderPass(), 
-                        attachments);
+                m_swapChain->createFramebuffers(m_renderPass->getRenderPass(),
+                    attachments);
             }
 
             void createCommandPool() override {
                 m_commandPool = new VulkanCommandPool(m_device);
             }
 
-            void createTexture() override {
-                m_texture = new VulkanTexture(TEXTURE_PATH, m_device, m_swapChain,
-                        m_commandPool);
-                m_texture->create();
-                m_texture->createImageView(VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
-                m_texture->createSampler();
-            }
-
-            void createColorResources() override {
-                m_colorImageResource = new VulkanImageResource(m_device, 
-                        m_swapChain, m_commandPool, 
-                        m_swapChain->getImageFormat(),  
-                        VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT
-                        | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, 
-                        VK_IMAGE_ASPECT_COLOR_BIT);
-                m_colorImageResource->create();
-            }
-
-            void createDepthResources() override {
-                m_depthImageResource = new VulkanImageResource(m_device, 
-                        m_swapChain, m_commandPool, 
-                        m_device->findDepthFormat(), 
-                        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
-                        VK_IMAGE_ASPECT_DEPTH_BIT);
-                m_depthImageResource->create();
-            }
-
             void createVertexBuffer() override {
                 m_vertexBuffer = new VulkanBuffer(m_device, m_commandPool);
-                m_vertexBuffer->createWithStagingBuffer(m_model->getVerticies(), 
+                m_vertexBuffer->createWithStagingBuffer(vertices, 
                         VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
                         VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
             }
 
             void createIndexBuffer() override {
                 m_indexBuffer = new VulkanBuffer(m_device, m_commandPool);
-                m_indexBuffer->createWithStagingBuffer(m_model->getIndicies(), 
+                m_indexBuffer->createWithStagingBuffer(indices,
                         VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
                         VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
             }
@@ -321,10 +346,14 @@ namespace VulkanLearning {
             void createCommandBuffers() override {
                 m_commandBuffers = new VulkanCommandBuffers(m_device, 
                         m_swapChain, m_commandPool, m_renderPass, m_vertexBuffer,
-                        m_indexBuffer, static_cast<uint32_t>(m_model->getIndicies().size()),
+                        m_indexBuffer, static_cast<uint32_t>(indices.size()),
                         m_graphicsPipeline->getGraphicsPipeline(),
                         m_graphicsPipeline->getPipelineLayout(), 
                         m_descriptorSets);
+
+                std::array<VkClearValue, 1> clearValues{};
+                clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
+                m_commandBuffers->create(clearValues);
             }
 
             void createSyncObjects() override {
@@ -334,17 +363,49 @@ namespace VulkanLearning {
 
             void createDescriptorSetLayout() override {
                 m_descriptorSetLayout = new VulkanDescriptorSetLayout(m_device);
+
+                VkDescriptorSetLayoutBinding uboLayoutBinding{};
+                uboLayoutBinding.binding = 0;
+                uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                uboLayoutBinding.descriptorCount = 1;
+                uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+                uboLayoutBinding.pImmutableSamplers = nullptr;
+        
+                std::vector<VkDescriptorSetLayoutBinding> bindings = 
+                {uboLayoutBinding};
+
+                m_descriptorSetLayout->create(bindings);
             }
 
             void createDescriptorPool() override {
                 m_descriptorPool = new VulkanDescriptorPool(m_device, m_swapChain);
+
+                std::vector<VkDescriptorPoolSize> poolSizes = std::vector<VkDescriptorPoolSize>(1);
+                poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                poolSizes[0].descriptorCount = static_cast<uint32_t>(
+                        m_swapChain->getImages().size());
+
+                m_descriptorPool->create(poolSizes);
             }
 
             void createDescriptorSets() override {
                 m_descriptorSets = new VulkanDescriptorSets(m_device, m_swapChain,
                         m_descriptorSetLayout, m_descriptorPool,
-                        m_coordinateSystemUniformBuffers, sizeof(CoordinatesSystemUniformBufferObject),
-                        m_texture);
+                        m_coordinateSystemUniformBuffers, sizeof(CoordinatesSystemUniformBufferObject));
+
+                VkDescriptorBufferInfo bufferInfo{};
+                bufferInfo.offset = 0;
+
+                std::vector<VkWriteDescriptorSet> descriptorWrites = 
+                    std::vector<VkWriteDescriptorSet>(1);
+
+                descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                descriptorWrites[0].dstBinding = 0;
+                descriptorWrites[0].dstArrayElement = 0;
+                descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                descriptorWrites[0].descriptorCount = 1;
+                
+                m_descriptorSets->create(bufferInfo, descriptorWrites);
             }
 
             void updateCamera(uint32_t currentImage) override {
@@ -371,9 +432,6 @@ namespace VulkanLearning {
                         m_coordinateSystemUniformBuffers[currentImage]->getBufferMemory());
             }
 
-            void loadModel() override {
-                m_model = new ModelObj(MODEL_PATH);
-            }
     };
 
 }

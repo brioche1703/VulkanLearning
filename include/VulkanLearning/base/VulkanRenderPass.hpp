@@ -20,8 +20,11 @@ namespace VulkanLearning {
 
             VkRenderPass getRenderPass();
 
-        private:
             void create();
+            void create(
+                    const std::vector<VkAttachmentDescription> attachments,
+                    VkSubpassDescription subpass);
+        private:
     };
 
 }

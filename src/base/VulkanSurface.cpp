@@ -4,17 +4,19 @@
 
 namespace VulkanLearning {
 
-    VulkanSurface::VulkanSurface(GLFWwindow* window, VkInstance instance) {
-        createSurface(window, instance);
+    VulkanSurface::VulkanSurface(Window* window, VulkanInstance* instance)
+        : m_window(window), m_instance(instance) {
+        create();
     }
+
     VulkanSurface::~VulkanSurface() {}
 
-    void VulkanSurface::createSurface(GLFWwindow* window, VkInstance instance) {
-        if (glfwCreateWindowSurface(instance, window, 
+    void VulkanSurface::create() {
+        if (glfwCreateWindowSurface(m_instance->getInstance(), 
+                    m_window->getWindow(), 
                     nullptr, &m_surface) != VK_SUCCESS) {
             throw std::runtime_error("failed to create window surface!");
         }
     }
 
-    VkSurfaceKHR VulkanSurface::getSurface() { return m_surface; }
 }

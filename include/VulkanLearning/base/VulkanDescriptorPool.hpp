@@ -21,6 +21,6 @@ namespace VulkanLearning {
 
             inline VkDescriptorPool getDescriptorPool() { return m_descriptorPool; }
 
-            void create();
+            void create(const std::vector<VkDescriptorPoolSize> poolSizes);
     };
 }

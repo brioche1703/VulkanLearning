@@ -19,7 +19,7 @@ namespace VulkanLearning {
             inline VkDescriptorSetLayout getDescriptorSetLayout() { return m_descriptorSetLayout; }
             inline VkDescriptorSetLayout* getDescriptorSetLayoutPointer() { return &m_descriptorSetLayout; }
 
-            void create();
+            void create(std::vector<VkDescriptorSetLayoutBinding> bindings);
             void cleanup();
     };
 }
