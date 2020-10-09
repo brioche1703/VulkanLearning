@@ -2,16 +2,14 @@
 
 namespace VulkanLearning {
 
-
     const std::vector<Vertex> vertices = {
-        {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-        {{ 0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-        {{ 0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}},
-        {{-0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}}
+        {{-0.5f, 0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+        {{ 0.5f, 0.0f, -0.5f}, {0.0f, 1.0f, 0.0f}},
+        {{ 0.0f, 0.0f,  0.5f}, {0.0f, 0.0f, 1.0f}},
     };
 
     const std::vector<uint32_t> indices = {
-        0, 1, 2, 2, 3, 0
+        0, 1, 2, 0
     };
 
     class VulkanExample : public VulkanBase {
@@ -30,7 +28,7 @@ namespace VulkanLearning {
             }
 
             void initCore() override {
-                m_camera = new Camera(glm::vec3(0.0f, 2.0f, 5.0f));
+                m_camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f));
                 m_fpsCounter = new FpsCounter();
                 m_input = new Inputs(m_window->getWindow(), m_camera, m_fpsCounter);
 
@@ -413,7 +411,6 @@ namespace VulkanLearning {
 
                 ubo.model = glm::mat4(1.0f);
                 ubo.model = glm::rotate(ubo.model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-                ubo.model = glm::rotate(ubo.model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
                 ubo.view = m_camera->getViewMatrix();
 
