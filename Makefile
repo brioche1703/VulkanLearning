@@ -20,7 +20,7 @@ OBJECTS=$(SOURCES:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
 LIBS = `pkg-config --static --libs glfw3` -lvulkan -lglfw3
 CFLAGS = -std=c++17 $(INCLUDES_EXT) `pkg-config --cflags glfw3`
 
-EXAMPLES = single3DModel simpleTriangle
+EXAMPLES = single3DModel simpleTriangle dynamicUniformBuffers
 
 .PHONY: default_target
 default_target: all
@@ -69,6 +69,25 @@ $(BIN_PATH)/$(BIN_NAME_2): $(OBJECTS_2)
 	$(CXX) $(OBJECTS_2) -o $@ ${LIBS}
 
 #####################################################
+##############Dynamic Uniform Buffers
+#####################################################
+
+SOURCES_3=$(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' ! -path "src/examples/*" | sort -k 1nr | cut -f3-) src/examples/dynamicUniformBuffers/dynamicUniformBuffers.cpp
+OBJECTS_3=$(SOURCES_3:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
+DEPX_3= $(OBJECTS_3:.o=.d)
+BIN_NAME_3=dynamicUniformBuffers
+.PHONY: dynamicUniformBuffers
+dynamicUniformBuffers: $(BIN_PATH)/$(BIN_NAME_3)
+	@echo "Making symlink: $@ -> $<"
+	@$(RM) $
+	@ln -sfn $(BIN_PATH)/$(BIN_NAME_3) $(BIN_NAME_3)
+
+# Creation of the executable
+$(BIN_PATH)/$(BIN_NAME_3): $(OBJECTS_3)
+	@echo "Linking: $@"
+	$(CXX) $(OBJECTS_3) -o $@ ${LIBS}
+
+#####################################################
 #####################################################
 #####################################################
 
@@ -86,6 +105,7 @@ dirs:
 	@echo "Creating directories"
 	@mkdir -p $(dir $(OBJECTS_1))
 	@mkdir -p $(dir $(OBJECTS_2))
+	@mkdir -p $(dir $(OBJECTS_3))
 	@mkdir -p $(BIN_PATH)
 
 .PHONY: clean

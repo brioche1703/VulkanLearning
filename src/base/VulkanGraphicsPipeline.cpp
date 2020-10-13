@@ -126,7 +126,9 @@ namespace VulkanLearning {
         pipelineInfo.subpass = 0;
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-        if (vkCreateGraphicsPipelines(m_device->getLogicalDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_graphicsPipeline) != VK_SUCCESS) {
+        if (vkCreateGraphicsPipelines(m_device->getLogicalDevice(), 
+                    VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, 
+                    &m_graphicsPipeline) != VK_SUCCESS) {
             throw std::runtime_error("Graphics pipeline creation failed!");
         }
 

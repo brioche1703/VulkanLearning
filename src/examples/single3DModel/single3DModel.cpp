@@ -472,10 +472,12 @@ namespace VulkanLearning {
             }
 
             void createDescriptorSets() override {
+                std::vector<std::vector<VulkanBuffer*>> ubos{m_coordinateSystemUniformBuffers};
+                std::vector<VkDeviceSize> ubosSizes{sizeof(CoordinatesSystemUniformBufferObject)};
                 m_descriptorSets = new VulkanDescriptorSets(m_device, m_swapChain,
                         m_descriptorSetLayout, m_descriptorPool,
-                        m_coordinateSystemUniformBuffers, 
-                        sizeof(CoordinatesSystemUniformBufferObject));
+                        ubos, 
+                        ubosSizes);
 
                 VkDescriptorBufferInfo bufferInfo{};
                 bufferInfo.offset = 0;

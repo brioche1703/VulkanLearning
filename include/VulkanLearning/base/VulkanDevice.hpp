@@ -57,6 +57,7 @@ namespace VulkanLearning {
             VkQueue getGraphicsQueue();
             VkQueue getPresentQueue();
             VkSampleCountFlagBits getMsaaSamples();
+            size_t getMinUniformBufferOffsetAlignment();
             QueueFamilyIndices getQueueFamilyIndices();
             
 

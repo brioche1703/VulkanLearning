@@ -12,7 +12,6 @@ namespace VulkanLearning {
         VkCommandPoolCreateInfo poolInfo{};
         poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
         poolInfo.queueFamilyIndex = queueFamilyIndicies.graphicsFamily.value();
-        poolInfo.flags = 0; 
 
         if (vkCreateCommandPool(m_device->getLogicalDevice(), &poolInfo, nullptr, &m_commandPool) != VK_SUCCESS) {
             throw std::runtime_error("One command pool creation failed!");

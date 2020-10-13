@@ -4,7 +4,7 @@
       "adapter": "vscode-cpptools",
       "configuration": {
         "request": "launch",
-        "program": "build/bin/simpleTriangle",
+        "program": "build/bin/dynamicUniformBuffers",
         "cwd": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
         "externalConsole": true,
         "MIMode": "gdb"

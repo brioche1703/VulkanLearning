@@ -30,6 +30,13 @@ namespace VulkanLearning {
     VkSampleCountFlagBits VulkanDevice::getMsaaSamples() { return m_msaaSamples; }
     QueueFamilyIndices VulkanDevice::getQueueFamilyIndices() { return m_queueFamilyIndices; }
 
+    size_t VulkanDevice::getMinUniformBufferOffsetAlignment() {
+        VkPhysicalDeviceProperties props;
+        vkGetPhysicalDeviceProperties(m_physicalDevice, &props);
+        
+        return props.limits.minUniformBufferOffsetAlignment;
+    }
+
     void VulkanDevice::pickPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const std::vector<const char*> deviceExtensions) {
         uint32_t deviceCount = 0;
         vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);

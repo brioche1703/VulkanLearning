@@ -2,12 +2,13 @@
 
 namespace VulkanLearning {
 
-    VulkanDescriptorSets::VulkanDescriptorSets(VulkanDevice* device, 
+    VulkanDescriptorSets::VulkanDescriptorSets(
+            VulkanDevice* device, 
             VulkanSwapChain* swapChain, 
             VulkanDescriptorSetLayout* descriptorSetLayout,
             VulkanDescriptorPool* descriptorPool,
-            std::vector<VulkanBuffer*> uniformBuffers,
-            VkDeviceSize uniformBufferSize,
+            std::vector<std::vector<VulkanBuffer*>> uniformBuffers,
+            std::vector<VkDeviceSize> uniformBufferSize,
             VulkanTexture* texture) :
     m_device(device), m_swapChain(swapChain), 
         m_descriptorSetLayout(descriptorSetLayout),
@@ -23,8 +24,7 @@ namespace VulkanLearning {
     void VulkanDescriptorSets::create(
             VkDescriptorBufferInfo bufferInfo,
             std::vector<VkWriteDescriptorSet> descriptorWrites,
-            VkDescriptorImageInfo *imageInfo
-            ) {
+            VkDescriptorImageInfo *imageInfo) {
         std::vector<VkDescriptorSetLayout> layouts(m_swapChain->getImages().size(), m_descriptorSetLayout->getDescriptorSetLayout());
         VkDescriptorSetAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -42,8 +42,8 @@ namespace VulkanLearning {
             std::vector<VkWriteDescriptorSet> descriptorWritesAux = descriptorWrites;
 
             VkDescriptorBufferInfo bufferInfoAux = bufferInfo;
-            bufferInfoAux.buffer = m_uniformBuffers[i]->getBuffer();
-            bufferInfoAux.range = m_uniformBufferSize;
+            bufferInfoAux.buffer = m_uniformBuffers[0][i]->getBuffer();
+            bufferInfoAux.range = m_uniformBufferSize[0];
 
             descriptorWritesAux[0].pBufferInfo = &bufferInfoAux;
 
@@ -56,7 +56,47 @@ namespace VulkanLearning {
                 descriptorWritesAux[j].dstSet = m_descriptorSets[i];
             }
 
-            vkUpdateDescriptorSets(m_device->getLogicalDevice(), static_cast<uint32_t>(descriptorWritesAux.size()), descriptorWritesAux.data(), 0, nullptr);
+            vkUpdateDescriptorSets(m_device->getLogicalDevice(), 
+                    static_cast<uint32_t>(descriptorWritesAux.size()), 
+                    descriptorWritesAux.data(), 0, nullptr);
+        }
+    }
+
+    void VulkanDescriptorSets::create(
+            VkDescriptorBufferInfo bufferInfo,
+            std::vector<VkWriteDescriptorSet> descriptorWrites) {
+
+        std::vector<VkDescriptorSetLayout> layouts(m_swapChain->getImages().size(), 
+                m_descriptorSetLayout->getDescriptorSetLayout());
+
+        VkDescriptorSetAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool = m_descriptorPool->getDescriptorPool();
+        allocInfo.descriptorSetCount = static_cast<uint32_t>(m_swapChain->getImages().size());
+        allocInfo.pSetLayouts = layouts.data();
+
+        m_descriptorSets.resize(m_swapChain->getImages().size());
+
+        if (vkAllocateDescriptorSets(m_device->getLogicalDevice(), &allocInfo, m_descriptorSets.data()) != VK_SUCCESS) {
+            throw std::runtime_error("Descriptor set allocation failed!");
+        }
+
+        for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
+            std::vector<VkWriteDescriptorSet> descriptorWritesAux = descriptorWrites;
+
+            for (size_t j = 0; j < descriptorWritesAux.size(); j++) {
+                VkDescriptorBufferInfo bufferInfoAux = bufferInfo;
+
+                bufferInfoAux.buffer = m_uniformBuffers[j][i]->getBuffer();
+                bufferInfoAux.range = m_uniformBufferSize[j];
+
+                descriptorWritesAux[j].pBufferInfo = &bufferInfoAux;
+                descriptorWritesAux[j].dstSet = m_descriptorSets[i];
+            }
+
+            vkUpdateDescriptorSets(m_device->getLogicalDevice(), 
+                    static_cast<uint32_t>(descriptorWritesAux.size()), 
+                    descriptorWritesAux.data(), 0, nullptr);
         }
     }
 }

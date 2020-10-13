@@ -14,3 +14,6 @@ $GLSLC_PATH shader.frag -o frag.spv
 
 $GLSLC_PATH simpleTriangleShader.vert -o simpleTriangleShaderVert.spv
 $GLSLC_PATH simpleTriangleShader.frag -o simpleTriangleShaderFrag.spv
+
+$GLSLC_PATH dynamicUniformBuffers.vert -o dynamicUniformBuffersVert.spv
+$GLSLC_PATH dynamicUniformBuffers.frag -o dynamicUniformBuffersFrag.spv
