@@ -105,7 +105,7 @@ namespace VulkanLearning {
 
         return imageView;
     }
-    
+
     void VulkanSwapChain::createFramebuffers(VkRenderPass renderPass,
             const std::vector<VkImageView> attachments) {
         m_framebuffers.resize(m_imagesViews.size());

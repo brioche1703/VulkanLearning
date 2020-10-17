@@ -95,7 +95,11 @@ namespace VulkanLearning {
                     vkCmdBindVertexBuffers(m_commandBuffers[i], 0, 1, vertexBuffers, offsets);
                     vkCmdBindIndexBuffer(m_commandBuffers[i], m_indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
-                    vkCmdBindDescriptorSets(m_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineLayout, 0, 1, &m_descriptorSets->getDescriptorSets()[i], 0, nullptr);
+                    vkCmdBindDescriptorSets(m_commandBuffers[i], 
+                            VK_PIPELINE_BIND_POINT_GRAPHICS, 
+                            m_pipelineLayout, 0, 1, 
+                            &m_descriptorSets->getDescriptorSets()[i], 
+                            0, nullptr);
 
                     vkCmdDrawIndexed(m_commandBuffers[i], m_indexCount, 1, 0, 0, 0);
                     vkCmdEndRenderPass(m_commandBuffers[i]);

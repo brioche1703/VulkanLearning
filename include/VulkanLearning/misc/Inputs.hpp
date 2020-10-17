@@ -17,7 +17,7 @@ namespace VulkanLearning {
             static FpsCounter* m_fpsCounter;
 
             Inputs(GLFWwindow* window, Camera* camera, FpsCounter* fpsCounter) {
-                m_captureMouse = true;
+                m_captureMouse = false;
                 m_window = window;
                 m_camera = camera;
                 m_fpsCounter = fpsCounter;
@@ -32,8 +32,8 @@ namespace VulkanLearning {
                 }
                 if (key == GLFW_KEY_M) {
                     if (action == GLFW_PRESS) {
-                        m_captureMouse    = !m_captureMouse   ;
-                        if (m_captureMouse   ) {
+                        m_captureMouse = !m_captureMouse;
+                        if (m_captureMouse) {
                             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
                         } else {
                             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -47,7 +47,7 @@ namespace VulkanLearning {
             }
 
             static void mouse_callback(GLFWwindow* window, double xPos, double yPos) {
-                m_camera->processMouse(xPos, yPos, m_captureMouse    );
+                m_camera->processMouse(xPos, yPos, m_captureMouse);
             }
 
             void processKeyboardInput() {

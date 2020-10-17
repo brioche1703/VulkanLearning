@@ -1,0 +1,7 @@
+-I
+../include
+-I
+../vendor/include
+-std=c++17
+-stdlib=libc++
+-fPIC

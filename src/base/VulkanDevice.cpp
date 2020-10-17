@@ -8,20 +8,17 @@
 
 namespace VulkanLearning {
 
-    VulkanDevice::VulkanDevice() {
-        m_deviceExtensions = deviceExtensions;
-    }
-
     VulkanDevice::VulkanDevice(VkInstance instance, VkSurfaceKHR surface,
             const std::vector<const char*> deviceExtensions,
             bool enableValidationLayers,
             const std::vector<const char*> validationLayers,
-            uint32_t msaaSamplesMax) : m_msaaSamplesMax(msaaSamplesMax){
+            uint32_t msaaSamplesMax) : m_msaaSamplesMax(msaaSamplesMax) {
         pickPhysicalDevice(instance, surface, deviceExtensions);
         createLogicalDevice(surface, enableValidationLayers, validationLayers);
     }
 
-    VulkanDevice::~VulkanDevice() {}        
+    VulkanDevice::~VulkanDevice() {
+    }        
 
     VkPhysicalDevice VulkanDevice::getPhysicalDevice() { return m_physicalDevice; }
     VkDevice VulkanDevice::getLogicalDevice() { return m_logicalDevice; }

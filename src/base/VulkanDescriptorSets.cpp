@@ -25,7 +25,9 @@ namespace VulkanLearning {
             VkDescriptorBufferInfo bufferInfo,
             std::vector<VkWriteDescriptorSet> descriptorWrites,
             VkDescriptorImageInfo *imageInfo) {
-        std::vector<VkDescriptorSetLayout> layouts(m_swapChain->getImages().size(), m_descriptorSetLayout->getDescriptorSetLayout());
+        std::vector<VkDescriptorSetLayout> layouts(m_swapChain->getImages().size(), 
+                m_descriptorSetLayout->getDescriptorSetLayout());
+
         VkDescriptorSetAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
         allocInfo.descriptorPool = m_descriptorPool->getDescriptorPool();
@@ -63,7 +65,6 @@ namespace VulkanLearning {
     }
 
     void VulkanDescriptorSets::create(
-            VkDescriptorBufferInfo bufferInfo,
             std::vector<VkWriteDescriptorSet> descriptorWrites) {
 
         std::vector<VkDescriptorSetLayout> layouts(m_swapChain->getImages().size(), 
@@ -83,14 +84,15 @@ namespace VulkanLearning {
 
         for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
             std::vector<VkWriteDescriptorSet> descriptorWritesAux = descriptorWrites;
+            std::vector<VkDescriptorBufferInfo> bufferInfoAux = 
+                std::vector<VkDescriptorBufferInfo>(descriptorWrites.size());
 
             for (size_t j = 0; j < descriptorWritesAux.size(); j++) {
-                VkDescriptorBufferInfo bufferInfoAux = bufferInfo;
+                bufferInfoAux[j].offset = 0;
+                bufferInfoAux[j].buffer = m_uniformBuffers[j][i]->getBuffer();
+                bufferInfoAux[j].range = m_uniformBufferSize[j];
 
-                bufferInfoAux.buffer = m_uniformBuffers[j][i]->getBuffer();
-                bufferInfoAux.range = m_uniformBufferSize[j];
-
-                descriptorWritesAux[j].pBufferInfo = &bufferInfoAux;
+                descriptorWritesAux[j].pBufferInfo = &bufferInfoAux[j];
                 descriptorWritesAux[j].dstSet = m_descriptorSets[i];
             }
 

@@ -1,3 +1,8 @@
+#include <vulkan/vulkan_core.h>
+
+#include <assert.h>
+#include <string.h>
+
 #include "../../include/VulkanLearning/base/VulkanBuffer.hpp"
 #include "../../include/VulkanLearning/base/VulkanCommandBuffer.hpp"
 
@@ -5,12 +10,12 @@ namespace VulkanLearning {
 
     VulkanBuffer::VulkanBuffer(VulkanDevice* device, VulkanCommandPool* commandPool)
         : m_device(device), m_commandPool(commandPool) {
-
     }
 
     VulkanBuffer::~VulkanBuffer() {}
     
-    void VulkanBuffer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
+    void VulkanBuffer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, 
+            VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
         VkBufferCreateInfo bufferInfo{};
         bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
         bufferInfo.size = size;
@@ -20,6 +25,8 @@ namespace VulkanLearning {
         if (vkCreateBuffer(m_device->getLogicalDevice(), &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
             throw std::runtime_error("Buffer creation failed!");
         }
+
+        m_size = size;
 
         VkMemoryRequirements memRequirements;
         vkGetBufferMemoryRequirements(m_device->getLogicalDevice(), buffer, &memRequirements);
@@ -36,7 +43,8 @@ namespace VulkanLearning {
         vkBindBufferMemory(m_device->getLogicalDevice(), buffer, bufferMemory, 0);
     }
 
-    void VulkanBuffer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties) {
+    void VulkanBuffer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, 
+            VkMemoryPropertyFlags properties) {
         VkBufferCreateInfo bufferInfo{};
         bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
         bufferInfo.size = size;
@@ -46,6 +54,8 @@ namespace VulkanLearning {
         if (vkCreateBuffer(m_device->getLogicalDevice(), &bufferInfo, nullptr, &m_buffer) != VK_SUCCESS) {
             throw std::runtime_error("Buffer creation failed!");
         }
+
+        m_size = size;
 
         VkMemoryRequirements memRequirements;
         vkGetBufferMemoryRequirements(m_device->getLogicalDevice(), m_buffer, &memRequirements);
@@ -136,6 +146,34 @@ namespace VulkanLearning {
 
         vkFreeCommandBuffers(m_device->getLogicalDevice(), m_commandPool->getCommandPool(), 1, &commandBuffer);
     }
+
+    VkResult VulkanBuffer::map(VkDeviceSize size, VkDeviceSize offset) {
+            return vkMapMemory(
+                    m_device->getLogicalDevice(), 
+                    m_bufferMemory, 
+                    offset, 
+                    size, 
+                    0, 
+                    &m_mappedMemory);
+    }
+
+    void VulkanBuffer::unmap() {
+        if (m_mappedMemory) {
+            vkUnmapMemory(m_device->getLogicalDevice(), m_bufferMemory);
+            m_mappedMemory = nullptr;
+        }
+    }
+
+    VkResult VulkanBuffer::bind(VkDeviceSize offset) {
+        return vkBindBufferMemory(m_device->getLogicalDevice(), 
+               m_buffer, m_bufferMemory, offset);
+    }
+
+    void VulkanBuffer::copyTo(void* data, VkDeviceSize size) {
+        assert(m_mappedMemory);
+        memcpy(m_mappedMemory, data, size);
+    }
+
 
     void VulkanBuffer::cleanup() {
         vkDestroyBuffer(m_device->getLogicalDevice(), m_buffer, nullptr);

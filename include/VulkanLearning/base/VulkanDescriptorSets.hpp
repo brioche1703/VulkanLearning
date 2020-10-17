@@ -49,5 +49,8 @@ namespace VulkanLearning {
             void create(
                     VkDescriptorBufferInfo bufferInfo,
                     std::vector<VkWriteDescriptorSet> descriptorWrites);
+
+            void create(
+                    std::vector<VkWriteDescriptorSet> descriptorWrites);
     };
 }

@@ -337,7 +337,11 @@ namespace VulkanLearning {
 
                 for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
                     m_coordinateSystemUniformBuffers[i] = new VulkanBuffer(m_device, m_commandPool);
-                    m_coordinateSystemUniformBuffers[i]->createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, *m_coordinateSystemUniformBuffers[i]->getBufferPointer(), *m_coordinateSystemUniformBuffers[i]->getBufferMemoryPointer());
+                    m_coordinateSystemUniformBuffers[i]->createBuffer(bufferSize, 
+                            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 
+                            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
+                            *m_coordinateSystemUniformBuffers[i]->getBufferPointer(), 
+                            *m_coordinateSystemUniformBuffers[i]->getBufferMemoryPointer());
                 }
             }
 
@@ -410,7 +414,7 @@ namespace VulkanLearning {
                 descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
                 descriptorWrites[0].descriptorCount = 1;
                 
-                m_descriptorSets->create(bufferInfo, descriptorWrites);
+                m_descriptorSets->create(descriptorWrites);
             }
 
             void updateCamera(uint32_t currentImage) override {
@@ -427,13 +431,18 @@ namespace VulkanLearning {
 
                 ubo.proj[1][1] *= -1;
 
-                void* data;
-                vkMapMemory(m_device->getLogicalDevice(), 
-                        m_coordinateSystemUniformBuffers[currentImage]->getBufferMemory(), 
-                        0, sizeof(ubo), 0, &data);
-                memcpy(data, &ubo, sizeof(ubo));
-                vkUnmapMemory(m_device->getLogicalDevice(), 
-                        m_coordinateSystemUniformBuffers[currentImage]->getBufferMemory());
+                //void* data;
+                //vkMapMemory(m_device->getLogicalDevice(), 
+                //        m_coordinateSystemUniformBuffers[currentImage]->getBufferMemory(), 
+                //        0, sizeof(ubo), 0, &data);
+                //memcpy(data, &ubo, sizeof(ubo));
+                //vkUnmapMemory(m_device->getLogicalDevice(), 
+                //        m_coordinateSystemUniformBuffers[currentImage]->getBufferMemory());
+
+                m_coordinateSystemUniformBuffers[currentImage]->map();
+                memcpy(m_coordinateSystemUniformBuffers[currentImage]->getMappedMemory(), 
+                        &ubo, sizeof(ubo));
+                m_coordinateSystemUniformBuffers[currentImage]->unmap();
             }
 
     };

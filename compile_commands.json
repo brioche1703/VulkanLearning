@@ -1,26 +1,467 @@
 [
- {
-  "directory": "/Users/kevinmeniel/dev/Kevin/VulkanLearning", 
-  "arguments": [
-   "g++", 
-   "-std=c++17", 
-   "-I/Users/kevinmeniel/dev/lib/vulkan_macos_1.2.148.1/macOS/include", 
-   "-I/usr/local/include", 
-   "-o", 
-   "a.out", 
-   "main.cpp", 
-   "-L/Users/kevinmeniel/dev/lib/vulkan_macos_1.2.148.1/macOS/lib", 
-   "-L/usr/local/lib", 
-   "-lglfw3", 
-   "-framework", 
-   "Cocoa", 
-   "-framework", 
-   "IOKit", 
-   "-framework", 
-   "CoreFoundation", 
-   "-lvulkan", 
-   "-lglfw3"
-  ], 
-  "file": "main.cpp"
- }
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/external/imgui/imgui_widgets.o",
+            "src/external/imgui/imgui_widgets.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/external/imgui/imgui_widgets.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/window/Window.o",
+            "src/window/Window.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/window/Window.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanImageResource.o",
+            "src/base/VulkanImageResource.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanImageResource.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/external/imgui/imgui_impl_vulkan.o",
+            "src/external/imgui/imgui_impl_vulkan.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/external/imgui/imgui_impl_vulkan.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanTexture.o",
+            "src/base/VulkanTexture.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanTexture.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanSyncObjects.o",
+            "src/base/VulkanSyncObjects.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanSyncObjects.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/examples/simpleTriangle/simpleTriangle.o",
+            "src/examples/simpleTriangle/simpleTriangle.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/examples/simpleTriangle/simpleTriangle.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanBuffer.o",
+            "src/base/VulkanBuffer.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanBuffer.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanDescriptorPool.o",
+            "src/base/VulkanDescriptorPool.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanDescriptorPool.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanCommandBuffer.o",
+            "src/base/VulkanCommandBuffer.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanCommandBuffer.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/external/imgui/imgui_draw.o",
+            "src/external/imgui/imgui_draw.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/external/imgui/imgui_draw.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanDescriptorSets.o",
+            "src/base/VulkanDescriptorSets.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanDescriptorSets.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/examples/dynamicUniformBuffers/dynamicUniformBuffers.o",
+            "src/examples/dynamicUniformBuffers/dynamicUniformBuffers.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/examples/dynamicUniformBuffers/dynamicUniformBuffers.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/external/imgui/imgui_demo.o",
+            "src/external/imgui/imgui_demo.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/external/imgui/imgui_demo.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanGraphicsPipeline.o",
+            "src/base/VulkanGraphicsPipeline.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanGraphicsPipeline.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanRenderPass.o",
+            "src/base/VulkanRenderPass.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanRenderPass.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/examples/single3DModel/single3DModel.o",
+            "src/examples/single3DModel/single3DModel.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/examples/single3DModel/single3DModel.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/camera/camera.o",
+            "src/camera/camera.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/camera/camera.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/misc/model/ModelObj.o",
+            "src/misc/model/ModelObj.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/misc/model/ModelObj.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanSwapChain.o",
+            "src/base/VulkanSwapChain.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanSwapChain.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/external/imgui/imgui_impl_glfw.o",
+            "src/external/imgui/imgui_impl_glfw.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/external/imgui/imgui_impl_glfw.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/external/imgui/imgui.o",
+            "src/external/imgui/imgui.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/external/imgui/imgui.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanDevice.o",
+            "src/base/VulkanDevice.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanDevice.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanCommandBuffers.o",
+            "src/base/VulkanCommandBuffers.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanCommandBuffers.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanInstance.o",
+            "src/base/VulkanInstance.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanInstance.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/misc/VulkanDebug.o",
+            "src/misc/VulkanDebug.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/misc/VulkanDebug.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/misc/Inputs.o",
+            "src/misc/Inputs.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/misc/Inputs.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanSurface.o",
+            "src/base/VulkanSurface.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanSurface.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanCommandPool.o",
+            "src/base/VulkanCommandPool.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanCommandPool.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanDescriptorSetLayout.o",
+            "src/base/VulkanDescriptorSetLayout.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanDescriptorSetLayout.cpp"
+    },
+    {
+        "arguments": [
+            "g++",
+            "-c",
+            "-std=c++17",
+            "-g",
+            "-I./include/stb./include/tinyobjloader./src/external/imgui",
+            "-I/usr/local/include",
+            "-o",
+            "build/base/VulkanShaderModule.o",
+            "src/base/VulkanShaderModule.cpp"
+        ],
+        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
+        "file": "src/base/VulkanShaderModule.cpp"
+    }
 ]

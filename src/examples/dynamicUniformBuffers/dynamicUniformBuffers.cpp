@@ -1,4 +1,8 @@
 #include "../../../include/VulkanLearning/base/VulkanBase.h"
+#include <cstring>
+#include <glm/ext/matrix_transform.hpp>
+#include <vulkan/vulkan_core.h>
+#include <random>
 
 namespace VulkanLearning {
 
@@ -23,10 +27,42 @@ namespace VulkanLearning {
         7, 6, 4, 4, 6, 5,
     };
 
+    struct DynUbo {
+        glm::mat4* model;
+    } uboDataDynamic;
+
+#define NUM_OBJ 64
+
+    void* alignedAlloc(size_t size, size_t alignment) {
+        void* data = nullptr;
+#if defined(_MSC_VER) || defined(__MINGW32__)
+        data = _aligned_malloc(size, alignment);
+#else
+        int res = posix_memalign(&data, alignment, size);
+        if (res != 0)
+            data = nullptr;
+#endif
+        return data;
+    }
+
+    void alignedFree(void* data) {
+#if defined(_MSC_VER) || defined(__MINGW32__)
+        _aligned_free(data);
+#else
+        free(data);
+#endif
+    }
 
     class VulkanExample : public VulkanBase {
+        private:
+            std::vector<VulkanBuffer*> m_dynUbos;
+            size_t m_dynamicAlignment;
+            glm::vec3 m_rotations[NUM_OBJ];
+            glm::vec3 m_rotationsSpeeds[NUM_OBJ];
+
         public:
-            VulkanExample() {}
+            VulkanExample() {
+            }
             ~VulkanExample() {}
 
             void run() {
@@ -40,7 +76,7 @@ namespace VulkanLearning {
             }
 
             void initCore() override {
-                m_camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f));
+                m_camera = new Camera(glm::vec3(0.0f, 0.0f, 20.0f));
                 m_fpsCounter = new FpsCounter();
                 m_input = new Inputs(m_window->getWindow(), m_camera, m_fpsCounter);
 
@@ -48,9 +84,8 @@ namespace VulkanLearning {
                 glfwSetScrollCallback(m_window->getWindow() , m_input->scroll_callback);
                 glfwSetCursorPosCallback(m_window->getWindow() , m_input->mouse_callback);
 
-                glfwSetInputMode(m_window->getWindow() , GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                glfwSetInputMode(m_window->getWindow() , GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             }
-
             void initVulkan() override {
                 createInstance();
                 createDebug();
@@ -64,12 +99,15 @@ namespace VulkanLearning {
                 createGraphicsPipeline();
 
                 createCommandPool();
+                createDepthResources();
                 createFramebuffers();
 
                 createVertexBuffer();
                 createIndexBuffer();
 
                 createCoordinateSystemUniformBuffers();
+                createDynamicUniformBuffers();
+
                 createDescriptorPool();
                 createDescriptorSets();
                 
@@ -89,11 +127,15 @@ namespace VulkanLearning {
             }
 
             void drawFrame() override {
-                vkWaitForFences(m_device->getLogicalDevice(), 1, &m_syncObjects->getInFlightFences()[currentFrame], VK_TRUE, UINT64_MAX);
+                vkWaitForFences(m_device->getLogicalDevice(), 1, 
+                        &m_syncObjects->getInFlightFences()[currentFrame], VK_TRUE, UINT64_MAX);
 
                 uint32_t imageIndex;
 
-                VkResult result = vkAcquireNextImageKHR(m_device->getLogicalDevice(), m_swapChain->getSwapChain(), UINT64_MAX, m_syncObjects->getImageAvailableSemaphores()[currentFrame], VK_NULL_HANDLE, &imageIndex);
+                VkResult result = vkAcquireNextImageKHR(m_device->getLogicalDevice(), 
+                        m_swapChain->getSwapChain(), UINT64_MAX, 
+                        m_syncObjects->getImageAvailableSemaphores()[currentFrame], 
+                        VK_NULL_HANDLE, &imageIndex);
 
                 if (result == VK_ERROR_OUT_OF_DATE_KHR) {
                     recreateSwapChain();
@@ -103,12 +145,14 @@ namespace VulkanLearning {
                 }
 
                 if (m_syncObjects->getImagesInFlight()[imageIndex] != VK_NULL_HANDLE) {
-                    vkWaitForFences(m_device->getLogicalDevice(), 1, &m_syncObjects->getImagesInFlight()[imageIndex], VK_TRUE, UINT64_MAX);
+                    vkWaitForFences(m_device->getLogicalDevice(), 1, 
+                            &m_syncObjects->getImagesInFlight()[imageIndex], VK_TRUE, UINT64_MAX);
                 }
 
                 m_syncObjects->getImagesInFlight()[imageIndex] = m_syncObjects->getInFlightFences()[currentFrame];
 
                 updateCamera(imageIndex);
+                updateDynUbos(imageIndex);
 
                 VkSubmitInfo submitInfo{};
                 submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -199,16 +243,20 @@ namespace VulkanLearning {
 
                 createRenderPass();
                 createGraphicsPipeline();
+                createDepthResources();
 
                 createFramebuffers();
 
                 createCoordinateSystemUniformBuffers();
+                createDynamicUniformBuffers();
                 createDescriptorPool();
                 createDescriptorSets();
                 createCommandBuffers();
             }
 
             void cleanupSwapChain() override {
+                m_depthImageResource->cleanup();
+
                 m_swapChain->cleanFramebuffers();
 
                 m_commandBuffers->cleanup();
@@ -233,6 +281,12 @@ namespace VulkanLearning {
                     vkFreeMemory(m_device->getLogicalDevice(), 
                             m_coordinateSystemUniformBuffers[i]->getBufferMemory(), 
                             nullptr);
+                    vkDestroyBuffer(m_device->getLogicalDevice(), 
+                            m_dynUbos[i]->getBuffer(), 
+                            nullptr);
+                    vkFreeMemory(m_device->getLogicalDevice(), 
+                            m_dynUbos[i]->getBufferMemory(), 
+                            nullptr);
                 }
 
                 vkDestroyDescriptorPool(m_device->getLogicalDevice(), 
@@ -240,7 +294,8 @@ namespace VulkanLearning {
             }
 
             void  createInstance() override {
-                m_instance = new VulkanInstance("Simple Triangle", enableValidationLayers, 
+                m_instance = new VulkanInstance("Dynamic Uniform Buffers", 
+                        enableValidationLayers, 
                         validationLayers, m_debug);
             }
 
@@ -270,17 +325,32 @@ namespace VulkanLearning {
                 colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
                 colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
+                VkAttachmentDescription depthAttachment{};
+                depthAttachment.format = m_device->findDepthFormat();
+                depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+                depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+                depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+                depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+                depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+                depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
                 VkAttachmentReference colorAttachmentRef{};
-                colorAttachmentRef.attachment = 0;
+                colorAttachmentRef.attachment = 1;
                 colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+                VkAttachmentReference depthAttachmentRef{};
+                depthAttachmentRef.attachment = 0;
+                depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
                 VkSubpassDescription subpass{};
                 subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
                 subpass.colorAttachmentCount = 1;
                 subpass.pColorAttachments = &colorAttachmentRef;
+                subpass.pDepthStencilAttachment = &depthAttachmentRef;
 
                 const std::vector<VkAttachmentDescription> attachments = 
-                    { colorAttachment };
+                    { depthAttachment, colorAttachment };
 
                 m_renderPass = new VulkanRenderPass(m_swapChain, m_device);
                 m_renderPass->create(attachments, subpass);
@@ -291,9 +361,9 @@ namespace VulkanLearning {
                         m_swapChain, m_renderPass, m_descriptorSetLayout);
 
                 VulkanShaderModule vertShaderModule = 
-                    VulkanShaderModule("src/shaders/simpleTriangleShaderVert.spv", m_device);
+                    VulkanShaderModule("src/shaders/dynamicUniformBuffersVert.spv", m_device);
                 VulkanShaderModule fragShaderModule = 
-                    VulkanShaderModule("src/shaders/simpleTriangleShaderFrag.spv", m_device);
+                    VulkanShaderModule("src/shaders/dynamicUniformBuffersFrag.spv", m_device);
 
                 VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
                 vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -307,18 +377,29 @@ namespace VulkanLearning {
                 vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
                 vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
+                VkPipelineDepthStencilStateCreateInfo depthStencil{};
+                depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+                depthStencil.depthTestEnable = VK_TRUE;
+                depthStencil.depthWriteEnable = VK_TRUE;
+                depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+                depthStencil.depthBoundsTestEnable = VK_FALSE;
+                depthStencil.stencilTestEnable = VK_FALSE;
+
                 VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
                 pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
                 pipelineLayoutInfo.setLayoutCount = 1;
                 pipelineLayoutInfo.pSetLayouts = 
                     m_descriptorSetLayout->getDescriptorSetLayoutPointer();
 
-                m_graphicsPipeline->create(vertShaderModule, fragShaderModule, 
-                        vertexInputInfo, pipelineLayoutInfo);
+                m_graphicsPipeline->create(
+                        vertShaderModule, fragShaderModule, 
+                        vertexInputInfo, pipelineLayoutInfo, &depthStencil);
             }
 
             void createFramebuffers() override {
-                const std::vector<VkImageView> attachments {};
+                const std::vector<VkImageView> attachments {
+                    m_depthImageResource->getImageView()
+                };
 
                 m_swapChain->createFramebuffers(m_renderPass->getRenderPass(),
                     attachments);
@@ -326,6 +407,15 @@ namespace VulkanLearning {
 
             void createCommandPool() override {
                 m_commandPool = new VulkanCommandPool(m_device);
+            }
+
+            void createDepthResources() override {
+                m_depthImageResource = new VulkanImageResource(m_device, 
+                        m_swapChain, m_commandPool, 
+                        m_device->findDepthFormat(), 
+                        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
+                        VK_IMAGE_ASPECT_DEPTH_BIT);
+                m_depthImageResource->create();
             }
 
             void createVertexBuffer() override {
@@ -349,7 +439,51 @@ namespace VulkanLearning {
 
                 for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
                     m_coordinateSystemUniformBuffers[i] = new VulkanBuffer(m_device, m_commandPool);
-                    m_coordinateSystemUniformBuffers[i]->createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, *m_coordinateSystemUniformBuffers[i]->getBufferPointer(), *m_coordinateSystemUniformBuffers[i]->getBufferMemoryPointer());
+                    m_coordinateSystemUniformBuffers[i]->createBuffer(
+                            bufferSize, 
+                            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 
+                            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
+                            *m_coordinateSystemUniformBuffers[i]->getBufferPointer(), 
+                            *m_coordinateSystemUniformBuffers[i]->getBufferMemoryPointer()
+                            );
+                }
+            }
+
+            void createDynamicUniformBuffers() {
+                size_t minUboAlignment = m_device->getMinUniformBufferOffsetAlignment();
+                m_dynamicAlignment = sizeof(uboDataDynamic);
+                if (minUboAlignment > 0) {
+                    m_dynamicAlignment = (m_dynamicAlignment + minUboAlignment - 1)
+                        & ~(minUboAlignment - 1);
+                }
+
+                size_t bufferSize = NUM_OBJ * m_dynamicAlignment;
+                uboDataDynamic.model = (glm::mat4*)alignedAlloc(bufferSize, m_dynamicAlignment);
+                assert(uboDataDynamic.model);
+
+                std::cout << "minUniformBufferOffsetAlignment = " << minUboAlignment << std::endl;
+                std::cout << "dynamicAlignment = " << m_dynamicAlignment << std::endl;
+
+                m_dynUbos.resize(m_swapChain->getImages().size());
+
+                for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
+                    m_dynUbos[i] = new VulkanBuffer(m_device, m_commandPool);
+                    m_dynUbos[i]->createBuffer(
+                            bufferSize,
+                            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+                            *m_dynUbos[i]->getBufferPointer(),
+                            *m_dynUbos[i]->getBufferMemoryPointer()
+                            );
+                }
+
+                std::default_random_engine rndEngine((unsigned)time(nullptr));
+                std::normal_distribution<float> rndDist(-1.0f, 1.0f);
+                for (uint32_t i = 0; i < NUM_OBJ; i++) {
+                    m_rotations[i] = glm::vec3(rndDist(rndEngine), 
+                            rndDist(rndEngine), rndDist(rndEngine)) * 2.0f * (float) M_PI;
+                    m_rotationsSpeeds[i] = glm::vec3(rndDist(rndEngine), 
+                            rndDist(rndEngine), rndDist(rndEngine));
                 }
             }
 
@@ -361,9 +495,10 @@ namespace VulkanLearning {
                         m_graphicsPipeline->getPipelineLayout(), 
                         m_descriptorSets);
 
-                std::array<VkClearValue, 1> clearValues{};
-                clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
-                m_commandBuffers->create(clearValues);
+                std::array<VkClearValue, 2> clearValues{};
+                clearValues[1].color = {0.0f, 0.0f, 0.0f, 1.0f};
+                clearValues[0].depthStencil = {1.0f, 0};
+                m_commandBuffers->create(clearValues, m_dynamicAlignment, NUM_OBJ);
             }
 
             void createSyncObjects() override {
@@ -380,9 +515,16 @@ namespace VulkanLearning {
                 uboLayoutBinding.descriptorCount = 1;
                 uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
                 uboLayoutBinding.pImmutableSamplers = nullptr;
+
+                VkDescriptorSetLayoutBinding dynUboLayoutBinding{};
+                dynUboLayoutBinding.binding = 1;
+                dynUboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+                dynUboLayoutBinding.descriptorCount = 1;
+                dynUboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+                dynUboLayoutBinding.pImmutableSamplers = nullptr;
         
                 std::vector<VkDescriptorSetLayoutBinding> bindings = 
-                {uboLayoutBinding};
+                {uboLayoutBinding, dynUboLayoutBinding};
 
                 m_descriptorSetLayout->create(bindings);
             }
@@ -390,46 +532,59 @@ namespace VulkanLearning {
             void createDescriptorPool() override {
                 m_descriptorPool = new VulkanDescriptorPool(m_device, m_swapChain);
 
-                std::vector<VkDescriptorPoolSize> poolSizes = std::vector<VkDescriptorPoolSize>(1);
+                std::vector<VkDescriptorPoolSize> poolSizes = std::vector<VkDescriptorPoolSize>(2);
                 poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
                 poolSizes[0].descriptorCount = static_cast<uint32_t>(
+                        m_swapChain->getImages().size());
+
+                poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+                poolSizes[1].descriptorCount = static_cast<uint32_t>(
                         m_swapChain->getImages().size());
 
                 m_descriptorPool->create(poolSizes);
             }
 
             void createDescriptorSets() override {
-                std::vector<std::vector<VulkanBuffer*>> ubos{m_coordinateSystemUniformBuffers};
-                std::vector<VkDeviceSize> ubosSizes{sizeof(CoordinatesSystemUniformBufferObject)};
-                m_descriptorSets = new VulkanDescriptorSets(m_device, m_swapChain,
-                        m_descriptorSetLayout, m_descriptorPool,
-                        ubos, 
-                        ubosSizes);
-                m_descriptorSets = new VulkanDescriptorSets(m_device, m_swapChain,
-                        m_descriptorSetLayout, m_descriptorPool,
-                        ubos,
-                        ubosSizes);
+                std::vector<std::vector<VulkanBuffer*>> ubos{
+                    m_coordinateSystemUniformBuffers,
+                    m_dynUbos
+                };
 
-                VkDescriptorBufferInfo bufferInfo{};
-                bufferInfo.offset = 0;
+                std::vector<VkDeviceSize> ubosSizes{
+                    sizeof(CoordinatesSystemUniformBufferObject),
+                    sizeof(uboDataDynamic)};
+
+                m_descriptorSets = new VulkanDescriptorSets(
+                        m_device, m_swapChain,
+                        m_descriptorSetLayout, m_descriptorPool,
+                        ubos, ubosSizes);
 
                 std::vector<VkWriteDescriptorSet> descriptorWrites = 
-                    std::vector<VkWriteDescriptorSet>(1);
+                    std::vector<VkWriteDescriptorSet>(2);
 
                 descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
                 descriptorWrites[0].dstBinding = 0;
                 descriptorWrites[0].dstArrayElement = 0;
                 descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
                 descriptorWrites[0].descriptorCount = 1;
+
+                descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                descriptorWrites[1].dstBinding = 1;
+                descriptorWrites[1].dstArrayElement = 0;
+                descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+                descriptorWrites[1].descriptorCount = 1;
+
+
+                VkDescriptorBufferInfo bufferInfoAux{};
+                bufferInfoAux.offset = 0;
                 
-                m_descriptorSets->create(bufferInfo, descriptorWrites);
+                m_descriptorSets->create(descriptorWrites);
             }
 
             void updateCamera(uint32_t currentImage) override {
                 CoordinatesSystemUniformBufferObject ubo{};
 
                 ubo.model = glm::mat4(1.0f);
-                ubo.model = glm::rotate(ubo.model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 
                 ubo.view = m_camera->getViewMatrix();
 
@@ -439,15 +594,56 @@ namespace VulkanLearning {
 
                 ubo.proj[1][1] *= -1;
 
-                void* data;
-                vkMapMemory(m_device->getLogicalDevice(), 
-                        m_coordinateSystemUniformBuffers[currentImage]->getBufferMemory(), 
-                        0, sizeof(ubo), 0, &data);
-                memcpy(data, &ubo, sizeof(ubo));
-                vkUnmapMemory(m_device->getLogicalDevice(), 
-                        m_coordinateSystemUniformBuffers[currentImage]->getBufferMemory());
+                m_coordinateSystemUniformBuffers[currentImage]->map();
+                memcpy(m_coordinateSystemUniformBuffers[currentImage]->getMappedMemory(), 
+                        &ubo, sizeof(ubo));
+                m_coordinateSystemUniformBuffers[currentImage]->unmap();
             }
 
+            void updateDynUbos(uint32_t currentImage) {
+                uint32_t dim = static_cast<uint32_t>(pow(NUM_OBJ, (1.0f / 3.0f)));
+                glm::vec3 offset(5.0f);
+
+                for (uint32_t x = 0; x < dim; x++) {
+                    for (uint32_t y = 0; y < dim; y++) {
+                        for (uint32_t z = 0; z < dim; z++) {
+                            uint32_t index = x * dim * dim + y * dim + z;
+
+                            // Aligned offset
+                            glm::mat4* modelMat = (glm::mat4*)(((uint64_t)uboDataDynamic.model + (index * m_dynamicAlignment)));
+                            *modelMat = glm::mat4(1.0f);
+                            
+                            /* // Update Rotation */
+                            m_rotations[index] += m_rotationsSpeeds[index] * 0.05f;
+
+                            /* //Update matrices */
+                            glm::vec3 pos = glm::vec3(
+                                    -((dim * offset.x) / 2.0f) + offset.x / 2.0f + x * offset.x, 
+                                    -((dim * offset.y) / 2.0f) + offset.y / 2.0f + y * offset.y,
+                                    -((dim * offset.z) / 2.0f) + offset.z / 2.0f + z * offset.z);
+
+                            *modelMat = glm::translate(glm::mat4(1.0f), pos);
+                            *modelMat = glm::rotate(*modelMat, m_rotations[index].x, glm::vec3(1.0f, 1.0f, 0.0f));
+                            *modelMat = glm::rotate(*modelMat, m_rotations[index].y, glm::vec3(0.0f, 1.0f, 0.0f));
+                            *modelMat = glm::rotate(*modelMat, m_rotations[index].z, glm::vec3(0.0f, 0.0f, 1.0f));
+                        }
+                    }
+                }
+
+                m_dynUbos[currentImage]->map();
+                memcpy(m_dynUbos[currentImage]->getMappedMemory(), 
+                        uboDataDynamic.model, 
+                        m_dynUbos[currentImage]->getSize());
+                m_dynUbos[currentImage]->unmap();
+
+                /* // Flush to make changes visible to the host */
+                // TO DO to be more optimized
+                /* VkMappedMemoryRange memoryRange{}; */
+                /* memoryRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE; */
+                /* memoryRange.memory = m_dynUbos[currentImage]->getBufferMemory(); */
+                /* memoryRange.size = m_dynUbos[currentImage]->getSize(); */
+                /* vkFlushMappedMemoryRanges(m_device->getLogicalDevice(), 1, &memoryRange); */
+            }
     };
 
 }

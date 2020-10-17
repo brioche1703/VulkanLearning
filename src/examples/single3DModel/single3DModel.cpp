@@ -73,11 +73,15 @@ namespace VulkanLearning {
             }
 
             void drawFrame() override {
-                vkWaitForFences(m_device->getLogicalDevice(), 1, &m_syncObjects->getInFlightFences()[currentFrame], VK_TRUE, UINT64_MAX);
+                vkWaitForFences(m_device->getLogicalDevice(), 1, 
+                        &m_syncObjects->getInFlightFences()[currentFrame], VK_TRUE, UINT64_MAX);
 
                 uint32_t imageIndex;
 
-                VkResult result = vkAcquireNextImageKHR(m_device->getLogicalDevice(), m_swapChain->getSwapChain(), UINT64_MAX, m_syncObjects->getImageAvailableSemaphores()[currentFrame], VK_NULL_HANDLE, &imageIndex);
+                VkResult result = vkAcquireNextImageKHR(m_device->getLogicalDevice(), 
+                        m_swapChain->getSwapChain(), UINT64_MAX, 
+                        m_syncObjects->getImageAvailableSemaphores()[currentFrame], 
+                        VK_NULL_HANDLE, &imageIndex);
 
                 if (result == VK_ERROR_OUT_OF_DATE_KHR) {
                     recreateSwapChain();
@@ -351,7 +355,7 @@ namespace VulkanLearning {
             void createFramebuffers() override {
                 const std::vector<VkImageView> attachments {
                     m_colorImageResource->getImageView(),
-                        m_depthImageResource->getImageView()
+                    m_depthImageResource->getImageView()
                 };
 
                 m_swapChain->createFramebuffers(m_renderPass->getRenderPass(), 

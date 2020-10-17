@@ -18,7 +18,7 @@ SOURCES=$(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' | sort -k 1nr | cut -f2-)
 OBJECTS=$(SOURCES:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
 
 LIBS = `pkg-config --static --libs glfw3` -lvulkan -lglfw3
-CFLAGS = -std=c++17 $(INCLUDES_EXT) `pkg-config --cflags glfw3`
+CFLAGS = -std=c++17 -g $(INCLUDES_EXT) `pkg-config --cflags glfw3`
 
 EXAMPLES = single3DModel simpleTriangle dynamicUniformBuffers
 
