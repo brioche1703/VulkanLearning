@@ -72,8 +72,8 @@ namespace VulkanLearning {
     const int MAX_FRAMES_IN_FLIGHT = 2;
 
     const std::vector<const char*> validationLayers = {
-        "VK_LAYER_KHRONOS_validation",
-        "VK_LAYER_MESA_overlay",
+        //"VK_LAYER_KHRONOS_validation",
+        //"VK_LAYER_MESA_overlay",
     };
 
 #ifdef NDEBUG

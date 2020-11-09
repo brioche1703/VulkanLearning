@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/hash.hpp>
 
+#include <array>
+
 struct Vertex {
     glm::vec3 pos;
     glm::vec3 color;
