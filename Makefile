@@ -20,7 +20,7 @@ OBJECTS=$(SOURCES:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
 LIBS = `pkg-config --static --libs glfw3` -lvulkan -lglfw3
 CFLAGS = -std=c++17 -g $(INCLUDES_EXT) `pkg-config --cflags glfw3`
 
-EXAMPLES = single3DModel simpleTriangle dynamicUniformBuffers
+EXAMPLES = single3DModel simpleTriangle dynamicUniformBuffers pushConstants
 
 .PHONY: default_target
 default_target: all
@@ -91,6 +91,30 @@ $(BIN_PATH)/$(BIN_NAME_3): $(OBJECTS_3)
 #####################################################
 #####################################################
 
+#####################################################
+############## Push Constants
+#####################################################
+
+SOURCES_4=$(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' ! -path "src/examples/*" | sort -k 1nr | cut -f3-) src/examples/pushConstants/pushConstants.cpp
+OBJECTS_4=$(SOURCES_4:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
+DEPX_4= $(OBJECTS_4:.o=.d)
+BIN_NAME_4=pushConstants
+.PHONY: pushConstants
+pushConstants: $(BIN_PATH)/$(BIN_NAME_4)
+	@echo "Making symlink: $@ -> $<"
+	@$(RM) $
+	@ln -sfn $(BIN_PATH)/$(BIN_NAME_4) $(BIN_NAME_4)
+
+# Creation of the executable
+$(BIN_PATH)/$(BIN_NAME_4): $(OBJECTS_4)
+	@echo "Linking: $@"
+	$(CXX) $(OBJECTS_4) -o $@ ${LIBS}
+
+#####################################################
+#####################################################
+#####################################################
+
+
 
 $(BUILD_PATH)/%.o: $(SRC_PATH)/%.$(SRC_EXT)
 	@echo "Compiling: $< -> $@"
@@ -106,6 +130,7 @@ dirs:
 	@mkdir -p $(dir $(OBJECTS_1))
 	@mkdir -p $(dir $(OBJECTS_2))
 	@mkdir -p $(dir $(OBJECTS_3))
+	@mkdir -p $(dir $(OBJECTS_4))
 	@mkdir -p $(BIN_PATH)
 
 .PHONY: clean
