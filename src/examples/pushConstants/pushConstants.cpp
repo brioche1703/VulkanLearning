@@ -1,12 +1,19 @@
 #include "../../../include/VulkanLearning/base/VulkanBase.h"
+
 #include <cstring>
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/fwd.hpp>
 #include <vulkan/vulkan_core.h>
 #include <random>
+
+float rnd() {
+    return ((float) rand() / (RAND_MAX));
+}
 
 namespace VulkanLearning {
 
     const std::string MODEL_PATH = "./src/models/sphere.obj";
+
 
     class VulkanExample : public VulkanBase {
         private:
@@ -19,6 +26,14 @@ namespace VulkanLearning {
             void run() {
                 VulkanBase::run();
             }
+
+            struct  SpherePushConstantData {
+                glm::vec4 color;
+                glm::vec4 position;
+            };
+
+            std::array<SpherePushConstantData, 16> m_spheres;
+
         private:
 
             void initWindow() override {
@@ -62,6 +77,8 @@ namespace VulkanLearning {
 
                 createDescriptorPool();
                 createDescriptorSets();
+
+                setupSpheres();
                 
                 createCommandBuffers();
                 createSyncObjects();
@@ -305,9 +322,9 @@ namespace VulkanLearning {
                         m_swapChain, m_renderPass, m_descriptorSetLayout);
 
                 VulkanShaderModule vertShaderModule = 
-                    VulkanShaderModule("src/shaders/simpleTriangleShaderVert.spv", m_device);
+                    VulkanShaderModule("src/shaders/pushConstantsVert.spv", m_device);
                 VulkanShaderModule fragShaderModule = 
-                    VulkanShaderModule("src/shaders/simpleTriangleShaderFrag.spv", m_device);
+                    VulkanShaderModule("src/shaders/pushConstantsFrag.spv", m_device);
 
                 VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
                 vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -329,11 +346,18 @@ namespace VulkanLearning {
                 depthStencil.depthBoundsTestEnable = VK_FALSE;
                 depthStencil.stencilTestEnable = VK_FALSE;
 
+                VkPushConstantRange pushConstantRange{};
+                pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+                pushConstantRange.offset = 0;
+                pushConstantRange.size = sizeof(SpherePushConstantData);
+
                 VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
                 pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
                 pipelineLayoutInfo.setLayoutCount = 1;
                 pipelineLayoutInfo.pSetLayouts = 
                     m_descriptorSetLayout->getDescriptorSetLayoutPointer();
+                pipelineLayoutInfo.pushConstantRangeCount = 1;
+                pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
                 m_graphicsPipeline->create(
                         vertShaderModule, fragShaderModule, 
@@ -401,10 +425,70 @@ namespace VulkanLearning {
                         m_graphicsPipeline->getPipelineLayout(), 
                         m_descriptorSets);
 
+                m_commandBuffers->create();
+
                 std::array<VkClearValue, 2> clearValues{};
                 clearValues[1].color = {0.0f, 0.0f, 0.0f, 1.0f};
                 clearValues[0].depthStencil = {1.0f, 0};
-                m_commandBuffers->create(clearValues);
+
+                for (size_t i = 0; i < m_commandBuffers->getCommandBuffers().size(); i++) {
+                    VkCommandBufferBeginInfo beginInfo{};
+                    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+                    beginInfo.flags = 0;
+                    beginInfo.pInheritanceInfo = nullptr;
+
+                    if (vkBeginCommandBuffer(m_commandBuffers->getCommandBuffers()[i], &beginInfo) != VK_SUCCESS) {
+                        throw std::runtime_error("Begin recording of a command buffer failed!");
+                    }
+
+                    VkRenderPassBeginInfo renderPassInfo{};
+                    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+                    renderPassInfo.renderPass = m_renderPass->getRenderPass(); 
+                    renderPassInfo.framebuffer = m_swapChain->getFramebuffers()[i];
+                    renderPassInfo.renderArea.offset = {0, 0};
+                    renderPassInfo.renderArea.extent = m_swapChain->getExtent();
+
+                    renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+                    renderPassInfo.pClearValues = clearValues.data();
+
+                    vkCmdBeginRenderPass(m_commandBuffers->getCommandBuffers()[i], 
+                            &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+                    vkCmdBindPipeline(m_commandBuffers->getCommandBuffers()[i], 
+                            VK_PIPELINE_BIND_POINT_GRAPHICS, m_graphicsPipeline->getGraphicsPipeline());
+
+                    VkBuffer vertexBuffers[] = { m_vertexBuffer->getBuffer() };
+                    VkDeviceSize offsets[] = {0};
+                    vkCmdBindVertexBuffers(m_commandBuffers->getCommandBuffers()[i], 
+                            0, 1, vertexBuffers, offsets);
+                    vkCmdBindIndexBuffer(m_commandBuffers->getCommandBuffers()[i], 
+                            m_indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
+                    vkCmdBindDescriptorSets(m_commandBuffers->getCommandBuffers()[i], 
+                            VK_PIPELINE_BIND_POINT_GRAPHICS, 
+                            m_graphicsPipeline->getPipelineLayout(), 0, 1, 
+                            &m_descriptorSets->getDescriptorSets()[i], 
+                            0, nullptr);
+
+                    uint32_t sphereCount = static_cast<uint32_t>(m_spheres.size());
+                    for (uint32_t j = 0; j < sphereCount; j++) {
+                        vkCmdPushConstants(m_commandBuffers->getCommandBuffers()[i], 
+                                m_graphicsPipeline->getPipelineLayout(), 
+                                VK_SHADER_STAGE_VERTEX_BIT, 0, 
+                                sizeof(SpherePushConstantData), 
+                                &m_spheres[j]);
+
+                    vkCmdDrawIndexed(m_commandBuffers->getCommandBuffers()[i], 
+                            static_cast<uint32_t>(m_model->getIndicies().size())
+                            , 1, 0, 0, 0);
+                    }
+
+                    vkCmdEndRenderPass(m_commandBuffers->getCommandBuffers()[i]);
+
+                    if (vkEndCommandBuffer(m_commandBuffers->getCommandBuffers()[i]) != VK_SUCCESS) {
+                        throw std::runtime_error("Recording of a command buffer failed!");
+                    }
+                }
             }
 
             void createSyncObjects() override {
@@ -472,6 +556,7 @@ namespace VulkanLearning {
                 CoordinatesSystemUniformBufferObject ubo{};
 
                 ubo.model = glm::mat4(1.0f);
+                ubo.model = glm::scale(ubo.model, glm::vec3(0.5f, 0.5f, 0.5f));
 
                 ubo.view = m_camera->getViewMatrix();
 
@@ -489,6 +574,18 @@ namespace VulkanLearning {
 
             void loadModel() override {
                 m_model = new ModelObj(MODEL_PATH);
+            }
+
+            void setupSpheres() {
+                for (uint32_t i = 0; i < m_spheres.size(); i++) {
+                    m_spheres[i].color = glm::vec4(rnd(), rnd(), rnd(), 1.0f);
+
+                    const float rad = glm::radians(i * 360.0f 
+                            / static_cast<uint32_t>(m_spheres.size()));
+
+                    m_spheres[i].position = glm::vec4(glm::vec3(sin(rad), cos(rad),
+                                0.0f) * 3.5f, 1.0f);
+                }
             }
 
     };

@@ -50,7 +50,19 @@ namespace VulkanLearning {
             inline std::vector<VkCommandBuffer>* getCommandBuffersPointer() { return &m_commandBuffers; }
             inline VkCommandBuffer* getCommandBufferPointer(uint32_t index) { return &m_commandBuffers[index]; }
 
-            void create();
+            void create() {
+                m_commandBuffers.resize(m_swapChain->getFramebuffers().size());
+
+                VkCommandBufferAllocateInfo allocInfo{};
+                allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+                allocInfo.commandPool = m_commandPool->getCommandPool();
+                allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+                allocInfo.commandBufferCount = (uint32_t) m_commandBuffers.size();
+
+                if (vkAllocateCommandBuffers(m_device->getLogicalDevice(), &allocInfo, m_commandBuffers.data()) != VK_SUCCESS) {
+                    throw std::runtime_error("Command buffers allocation failed!");
+                }
+            }
 
             template<std::size_t SIZE>
             void create(const std::array<VkClearValue, SIZE>& clearValues) {
