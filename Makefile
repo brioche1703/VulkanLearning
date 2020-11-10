@@ -20,7 +20,7 @@ OBJECTS=$(SOURCES:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
 LIBS = `pkg-config --static --libs glfw3` -lvulkan -lglfw3
 CFLAGS = -std=c++17 -g $(INCLUDES_EXT) `pkg-config --cflags glfw3`
 
-EXAMPLES = single3DModel simpleTriangle dynamicUniformBuffers pushConstants
+EXAMPLES = single3DModel simpleTriangle dynamicUniformBuffers pushConstants specializationConstant
 
 .PHONY: default_target
 default_target: all
@@ -114,6 +114,29 @@ $(BIN_PATH)/$(BIN_NAME_4): $(OBJECTS_4)
 #####################################################
 #####################################################
 
+#####################################################
+############## SpecializationConstant
+#####################################################
+
+SOURCES_5=$(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' ! -path "src/examples/*" | sort -k 1nr | cut -f3-) src/examples/specializationConstant/specializationConstant.cpp
+OBJECTS_5=$(SOURCES_5:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
+DEPX_5= $(OBJECTS_5:.o=.d)
+BIN_NAME_5=specializationConstant
+.PHONY: specializationConstant
+specializationConstant: $(BIN_PATH)/$(BIN_NAME_5)
+	@echo "Making symlink: $@ -> $<"
+	@$(RM) $
+	@ln -sfn $(BIN_PATH)/$(BIN_NAME_5) $(BIN_NAME_5)
+
+# Creation of the executable
+$(BIN_PATH)/$(BIN_NAME_5): $(OBJECTS_5)
+	@echo "Linking: $@"
+	$(CXX) $(OBJECTS_5) -o $@ ${LIBS}
+
+#####################################################
+#####################################################
+#####################################################
+
 
 
 $(BUILD_PATH)/%.o: $(SRC_PATH)/%.$(SRC_EXT)
@@ -131,6 +154,7 @@ dirs:
 	@mkdir -p $(dir $(OBJECTS_2))
 	@mkdir -p $(dir $(OBJECTS_3))
 	@mkdir -p $(dir $(OBJECTS_4))
+	@mkdir -p $(dir $(OBJECTS_5))
 	@mkdir -p $(BIN_PATH)
 
 .PHONY: clean

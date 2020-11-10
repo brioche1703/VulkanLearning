@@ -20,3 +20,6 @@ $GLSLC_PATH dynamicUniformBuffers.frag -o dynamicUniformBuffersFrag.spv
 
 $GLSLC_PATH pushConstants.vert -o pushConstantsVert.spv
 $GLSLC_PATH pushConstants.frag -o pushConstantsFrag.spv
+
+$GLSLC_PATH specializationConstant.vert -o specializationConstantVert.spv
+$GLSLC_PATH specializationConstant.frag -o specializationConstantFrag.spv

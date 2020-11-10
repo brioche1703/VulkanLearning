@@ -40,6 +40,7 @@ struct VertexTextured {
     glm::vec3 pos;
     glm::vec3 color;
     glm::vec2 texCoord;
+    glm::vec3 normal;
 
     static VkVertexInputBindingDescription getBindingDescription() {
         VkVertexInputBindingDescription bindingDescription{};
@@ -50,8 +51,8 @@ struct VertexTextured {
         return bindingDescription;
     }
 
-    static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions() {
-        std::array<VkVertexInputAttributeDescription, 3> attributeDescription;
+    static std::array<VkVertexInputAttributeDescription, 4> getAttributeDescriptions() {
+        std::array<VkVertexInputAttributeDescription, 4> attributeDescription;
         attributeDescription[0].binding = 0;
         attributeDescription[0].location = 0;
         attributeDescription[0].format = VK_FORMAT_R32G32B32_SFLOAT;
@@ -67,21 +68,30 @@ struct VertexTextured {
         attributeDescription[2].format = VK_FORMAT_R32G32_SFLOAT;
         attributeDescription[2].offset = offsetof(VertexTextured, texCoord);
 
+        attributeDescription[3].binding = 0;
+        attributeDescription[3].location = 3;
+        attributeDescription[3].format = VK_FORMAT_R32G32B32_SFLOAT;
+        attributeDescription[3].offset = offsetof(VertexTextured, normal);
+
         return attributeDescription;
     }
 
     bool operator==(const VertexTextured& other) const {
-        return pos == other.pos && color == other.color && texCoord == other.texCoord;
+        return 
+            pos == other.pos 
+            && color == other.color 
+            && texCoord == other.texCoord
+            && normal == other.normal;
     }
 };
 
 namespace std {
     template<> struct hash<VertexTextured> {
         size_t operator()(VertexTextured const& vertex) const {
-            return ((hash<glm::vec3>()(vertex.pos) ^
-                        (hash<glm::vec3>()(vertex.color) << 1 )) >> 1) ^
-                (hash<glm::vec2>()(vertex.texCoord) << 1);
+            return ((hash<glm::vec3>()(vertex.pos) 
+                        ^ (hash<glm::vec3>()(vertex.color) << 1 )) >> 1) 
+                        ^ (hash<glm::vec2>()(vertex.texCoord) << 1)
+                        ^ (hash<glm::vec3>()(vertex.normal) << 1);
         }
     };
 }
-

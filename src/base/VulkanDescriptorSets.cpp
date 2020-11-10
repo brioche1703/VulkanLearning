@@ -48,6 +48,7 @@ namespace VulkanLearning {
             bufferInfoAux.range = m_uniformBufferSize[0];
 
             descriptorWritesAux[0].pBufferInfo = &bufferInfoAux;
+            descriptorWritesAux[2].pBufferInfo = &bufferInfoAux;
 
             if (imageInfo != nullptr) {
                 VkDescriptorImageInfo imageInfoAux = *imageInfo;
