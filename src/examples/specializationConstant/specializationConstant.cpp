@@ -84,7 +84,8 @@ namespace VulkanLearning {
 
             void drawFrame() override {
                 vkWaitForFences(m_device->getLogicalDevice(), 1, 
-                        &m_syncObjects->getInFlightFences()[currentFrame], VK_TRUE, UINT64_MAX);
+                        &m_syncObjects->getInFlightFences()[currentFrame],
+                        VK_TRUE, UINT64_MAX);
 
                 uint32_t imageIndex;
 
@@ -101,7 +102,9 @@ namespace VulkanLearning {
                 }
 
                 if (m_syncObjects->getImagesInFlight()[imageIndex] != VK_NULL_HANDLE) {
-                    vkWaitForFences(m_device->getLogicalDevice(), 1, &m_syncObjects->getImagesInFlight()[imageIndex], VK_TRUE, UINT64_MAX);
+                    vkWaitForFences(m_device->getLogicalDevice(), 1, 
+                            &m_syncObjects->getImagesInFlight()[imageIndex], 
+                            VK_TRUE, UINT64_MAX);
                 }
 
                 m_syncObjects->getImagesInFlight()[imageIndex] = m_syncObjects->getInFlightFences()[currentFrame];
@@ -112,21 +115,33 @@ namespace VulkanLearning {
                 VkSubmitInfo submitInfo{};
                 submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-                VkSemaphore waitSemaphore[] = {m_syncObjects->getImageAvailableSemaphores()[currentFrame]};
-                VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+                VkSemaphore waitSemaphore[] = { 
+                    m_syncObjects->getImageAvailableSemaphores()[currentFrame] 
+                };
+
+                VkPipelineStageFlags waitStages[] = {
+                    VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
+                };
+
                 submitInfo.waitSemaphoreCount = 1;
                 submitInfo.pWaitSemaphores = waitSemaphore;
                 submitInfo.pWaitDstStageMask = waitStages;
                 submitInfo.commandBufferCount = 1;
                 submitInfo.pCommandBuffers = m_commandBuffers->getCommandBufferPointer(imageIndex);
 
-                VkSemaphore signalSemaphores[] = {m_syncObjects->getRenderFinishedSemaphores()[currentFrame]};
+                VkSemaphore signalSemaphores[] = {
+                    m_syncObjects->getRenderFinishedSemaphores()[currentFrame]
+                };
+
                 submitInfo.signalSemaphoreCount = 1;
                 submitInfo.pSignalSemaphores = signalSemaphores;
 
-                vkResetFences(m_device->getLogicalDevice(), 1, &m_syncObjects->getInFlightFences()[currentFrame]);
+                vkResetFences(m_device->getLogicalDevice(), 1, 
+                        &m_syncObjects->getInFlightFences()[currentFrame]);
 
-                if (vkQueueSubmit(m_device->getGraphicsQueue(), 1, &submitInfo, m_syncObjects->getInFlightFences()[currentFrame]) != VK_SUCCESS) {
+                if (vkQueueSubmit(m_device->getGraphicsQueue(), 1, &submitInfo, 
+                            m_syncObjects->getInFlightFences()[currentFrame]) 
+                        != VK_SUCCESS) {
                     throw std::runtime_error("Command buffer sending failed!");
                 }
 
@@ -143,7 +158,9 @@ namespace VulkanLearning {
 
                 result = vkQueuePresentKHR(m_device->getPresentQueue(), &presentInfo);
 
-                if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized) {
+                if (result == VK_ERROR_OUT_OF_DATE_KHR 
+                        || result == VK_SUBOPTIMAL_KHR 
+                        || framebufferResized) {
                     framebufferResized = false;
                     recreateSwapChain();
                 } else if (result != VK_SUCCESS) {
@@ -206,6 +223,8 @@ namespace VulkanLearning {
                 createFramebuffers();
 
                 createCoordinateSystemUniformBuffers();
+                createLightUniformBuffers();
+
                 createDescriptorPool();
                 createDescriptorSets();
                 createCommandBuffers();
@@ -251,7 +270,7 @@ namespace VulkanLearning {
 
             void  createInstance() override {
                 m_instance = new VulkanInstance(
-                        "Single3DModel",
+                        "Specialization Constants",
                         enableValidationLayers, 
                         validationLayers, m_debug);
             }
@@ -432,7 +451,13 @@ namespace VulkanLearning {
 
                 for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
                     m_coordinateSystemUniformBuffers[i] = new VulkanBuffer(m_device, m_commandPool);
-                    m_coordinateSystemUniformBuffers[i]->createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, *m_coordinateSystemUniformBuffers[i]->getBufferPointer(), *m_coordinateSystemUniformBuffers[i]->getBufferMemoryPointer());
+                    m_coordinateSystemUniformBuffers[i]->createBuffer(
+                            bufferSize, 
+                            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 
+                            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT 
+                            | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
+                            *m_coordinateSystemUniformBuffers[i]->getBufferPointer(), 
+                            *m_coordinateSystemUniformBuffers[i]->getBufferMemoryPointer());
                 }
             }
 
@@ -443,7 +468,13 @@ namespace VulkanLearning {
 
                 for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
                     m_lightUniformBuffers[i] = new VulkanBuffer(m_device, m_commandPool);
-                    m_lightUniformBuffers[i]->createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, *m_lightUniformBuffers[i]->getBufferPointer(), *m_lightUniformBuffers[i]->getBufferMemoryPointer());
+                    m_lightUniformBuffers[i]->createBuffer(
+                            bufferSize, 
+                            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 
+                            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT 
+                            | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
+                            *m_lightUniformBuffers[i]->getBufferPointer(), 
+                            *m_lightUniformBuffers[i]->getBufferMemoryPointer());
                 }
             }
 
@@ -491,8 +522,11 @@ namespace VulkanLearning {
                 samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
                 samplerLayoutBinding.pImmutableSamplers = nullptr;
         
-                std::vector<VkDescriptorSetLayoutBinding> bindings = 
-                {uboLayoutBinding, samplerLayoutBinding, uboLightsLayoutBinding};
+                std::vector<VkDescriptorSetLayoutBinding> bindings = {
+                    uboLayoutBinding, 
+                    samplerLayoutBinding, 
+                    uboLightsLayoutBinding
+                };
 
                 m_descriptorSetLayout->create(bindings);
             }
@@ -525,49 +559,62 @@ namespace VulkanLearning {
                     sizeof(UBOLight)
                 };
 
-                m_descriptorSets = new VulkanDescriptorSets(m_device, m_swapChain,
-                        m_descriptorSetLayout, m_descriptorPool,
+                m_descriptorSets = new VulkanDescriptorSets(
+                        m_device, 
+                        m_swapChain,
+                        m_descriptorSetLayout, 
+                        m_descriptorPool,
                         ubos, 
                         ubosSizes);
 
-                VkDescriptorBufferInfo bufferInfo{};
-                bufferInfo.offset = 0;
-
-                VkDescriptorImageInfo imageInfo{};
-                imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                imageInfo.imageView = m_texture->getImageView();
-                imageInfo.sampler = m_texture->getSampler();
+                m_descriptorSets->create();
                 
-                std::vector<VkWriteDescriptorSet> descriptorWrites = 
-                    std::vector<VkWriteDescriptorSet>(3);
-                
-                descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                descriptorWrites[0].dstBinding = 0;
-                descriptorWrites[0].dstArrayElement = 0;
-                descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                descriptorWrites[0].descriptorCount = 1;
+                for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
+                    std::vector<VkWriteDescriptorSet> descriptorWrites = 
+                        std::vector<VkWriteDescriptorSet>(3);
 
-                descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                descriptorWrites[1].dstBinding = 1;
-                descriptorWrites[1].dstArrayElement = 0;
-                descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                descriptorWrites[1].descriptorCount = 1;
+                    std::vector<VkDescriptorBufferInfo> buffersInfo(ubos.size());
+                    buffersInfo[0].offset = 0;
+                    buffersInfo[0].buffer = ubos[0][i]->getBuffer();
+                    buffersInfo[0].range = ubosSizes[0];
+                    buffersInfo[1].offset = 0;
+                    buffersInfo[1].buffer = ubos[1][i]->getBuffer();
+                    buffersInfo[1].range = ubosSizes[1];
 
-                descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                descriptorWrites[2].dstBinding = 2;
-                descriptorWrites[2].dstArrayElement = 0;
-                descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                descriptorWrites[2].descriptorCount = 1;
+                    descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                    descriptorWrites[0].dstBinding = 0;
+                    descriptorWrites[0].dstArrayElement = 0;
+                    descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                    descriptorWrites[0].descriptorCount = 1;
+                    descriptorWrites[0].pBufferInfo = &buffersInfo[0];
 
-                m_descriptorSets->create(bufferInfo, descriptorWrites, &imageInfo);
+                    VkDescriptorImageInfo imageInfo{};
+                    imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                    imageInfo.imageView = m_texture->getImageView();
+                    imageInfo.sampler = m_texture->getSampler();
+
+                    descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                    descriptorWrites[1].dstBinding = 1;
+                    descriptorWrites[1].dstArrayElement = 0;
+                    descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+                    descriptorWrites[1].descriptorCount = 1;
+                    descriptorWrites[1].pImageInfo = &imageInfo;
+
+                    descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                    descriptorWrites[2].dstBinding = 2;
+                    descriptorWrites[2].dstArrayElement = 0;
+                    descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                    descriptorWrites[2].descriptorCount = 1;
+                    descriptorWrites[2].pBufferInfo = &buffersInfo[1];
+
+                    m_descriptorSets->update(descriptorWrites, i);
+                }
             }
 
             void updateCamera(uint32_t currentImage) override {
                 CoordinatesSystemUniformBufferObject ubo{};
 
                 ubo.model = glm::mat4(1.0f);
-                /* ubo.model = glm::rotate(ubo.model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)); */
-                /* ubo.model = glm::rotate(ubo.model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f)); */
 
                 ubo.view = m_camera->getViewMatrix();
 

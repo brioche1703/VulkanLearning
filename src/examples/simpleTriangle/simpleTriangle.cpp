@@ -391,30 +391,41 @@ namespace VulkanLearning {
             }
 
             void createDescriptorSets() override {
-                std::vector<std::vector<VulkanBuffer*>> ubos{m_coordinateSystemUniformBuffers};
-                std::vector<VkDeviceSize> ubosSizes{sizeof(CoordinatesSystemUniformBufferObject)};
-                m_descriptorSets = new VulkanDescriptorSets(m_device, m_swapChain,
-                        m_descriptorSetLayout, m_descriptorPool,
-                        ubos, 
-                        ubosSizes);
-                m_descriptorSets = new VulkanDescriptorSets(m_device, m_swapChain,
-                        m_descriptorSetLayout, m_descriptorPool,
+                std::vector<std::vector<VulkanBuffer*>> ubos {
+                    m_coordinateSystemUniformBuffers
+                };
+                std::vector<VkDeviceSize> ubosSizes{
+                    sizeof(CoordinatesSystemUniformBufferObject)
+                };
+
+                m_descriptorSets = new VulkanDescriptorSets(
+                        m_device, 
+                        m_swapChain,
+                        m_descriptorSetLayout, 
+                        m_descriptorPool,
                         ubos,
                         ubosSizes);
 
-                VkDescriptorBufferInfo bufferInfo{};
-                bufferInfo.offset = 0;
+                m_descriptorSets->create();
 
-                std::vector<VkWriteDescriptorSet> descriptorWrites = 
-                    std::vector<VkWriteDescriptorSet>(1);
+                for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
+                    VkDescriptorBufferInfo bufferInfo{};
+                    bufferInfo.offset = 0;
+                    bufferInfo.buffer = ubos[0][i]->getBuffer();
+                    bufferInfo.range = ubosSizes[0];
 
-                descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                descriptorWrites[0].dstBinding = 0;
-                descriptorWrites[0].dstArrayElement = 0;
-                descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                descriptorWrites[0].descriptorCount = 1;
-                
-                m_descriptorSets->create(descriptorWrites);
+                    std::vector<VkWriteDescriptorSet> descriptorWrites = 
+                        std::vector<VkWriteDescriptorSet>(1);
+
+                    descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                    descriptorWrites[0].dstBinding = 0;
+                    descriptorWrites[0].dstArrayElement = 0;
+                    descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                    descriptorWrites[0].descriptorCount = 1;
+                    descriptorWrites[0].pBufferInfo = &bufferInfo;
+
+                    m_descriptorSets->update(descriptorWrites, i);
+                }
             }
 
             void updateCamera(uint32_t currentImage) override {

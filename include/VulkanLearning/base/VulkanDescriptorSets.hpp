@@ -40,17 +40,9 @@ namespace VulkanLearning {
             inline std::vector<VkDescriptorSet> getDescriptorSets() { return m_descriptorSets; }
             inline std::vector<VkDescriptorSet>* getDescriptorSetsPointer() { return &m_descriptorSets; }
 
-            void create(
-                    VkDescriptorBufferInfo bufferInfo,
-                    std::vector<VkWriteDescriptorSet> descriptorWrites,
-                    VkDescriptorImageInfo *imageInfo 
-                    );
+            void update(std::vector<VkWriteDescriptorSet> descriptorWrites, 
+                    uint32_t imageIndex);
 
-            void create(
-                    VkDescriptorBufferInfo bufferInfo,
-                    std::vector<VkWriteDescriptorSet> descriptorWrites);
-
-            void create(
-                    std::vector<VkWriteDescriptorSet> descriptorWrites);
+            void create();
     };
 }
