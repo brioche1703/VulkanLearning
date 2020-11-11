@@ -63,7 +63,8 @@ void main() {
 //            outColor = vec4(ambient + diffuse + vec3(specular), 1.0);
 //            break;
 //        }
-            vec4 color = texture(texSampler, fragUV).rrra;
+
+            vec4 color = texture(texSampler, fragUV).rgba;
             vec3 ambient = color.rgb * vec3(0.25) * fragColor;
             vec3 N = normalize(fragNormal);
             vec3 L = normalize(fragLightVec);
