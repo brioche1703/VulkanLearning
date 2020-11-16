@@ -7,8 +7,9 @@ namespace VulkanLearning {
                     VulkanSwapChain* swapChain, VulkanRenderPass* renderPass,
                     VulkanDescriptorSetLayout* descriptorSetLayout)
         : m_device(device), m_swapChain(swapChain), m_renderPass(renderPass),
-            m_descriptorSetLayout(descriptorSetLayout) {
-        }
+            m_descriptorSetLayout(descriptorSetLayout) 
+    {
+    }
 
     VulkanGraphicsPipeline::~VulkanGraphicsPipeline() {}
 

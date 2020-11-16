@@ -27,6 +27,7 @@ namespace VulkanLearning {
             ~VulkanGraphicsPipeline();
 
             inline VkPipeline getGraphicsPipeline() { return m_graphicsPipeline; }
+            inline VkPipeline* getGraphicsPipelinePointer() { return &m_graphicsPipeline; }
             inline VkPipelineLayout getPipelineLayout() { return m_pipelineLayout; }
 
             void create(
