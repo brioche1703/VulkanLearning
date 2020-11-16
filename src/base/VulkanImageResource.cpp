@@ -107,8 +107,8 @@ namespace VulkanLearning {
     }
 
     void VulkanImageResource::transitionImageLayout(VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels) {
-        VulkanCommandBuffer commandBuffer(m_device, m_commandPool);
-        commandBuffer.beginSingleTimeCommands();
+        VulkanCommandBuffer commandBuffer;
+        commandBuffer.beginSingleTimeCommands(m_device, m_commandPool);
 
         VkImageMemoryBarrier barrier{};
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -145,6 +145,6 @@ namespace VulkanLearning {
         vkCmdPipelineBarrier(commandBuffer.getCommandBuffer(), sourceStage, 
                 destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
-        commandBuffer.endSingleTimeCommands();
+        commandBuffer.endSingleTimeCommands(m_device, m_commandPool);
     }
 }

@@ -48,7 +48,6 @@
 #include "VulkanBuffer.hpp"
 #include "VulkanDescriptorPool.hpp"
 #include "VulkanDescriptorSets.hpp"
-#include "VulkanCommandBuffers.hpp"
 #include "VulkanSyncObjects.hpp"
 #include "VulkanImageResource.hpp"
 #include "VulkanCommandBuffer.hpp"
@@ -129,7 +128,7 @@ namespace VulkanLearning {
 
             std::vector<VulkanBuffer*> m_coordinateSystemUniformBuffers;
 
-            VulkanCommandBuffers* m_commandBuffers;
+            std::vector<VulkanCommandBuffer> m_commandBuffers;
 
             VulkanSyncObjects* m_syncObjects;
 

@@ -2,22 +2,19 @@
 
 namespace VulkanLearning {
 
-    VulkanCommandBuffer::VulkanCommandBuffer(VulkanDevice* device, 
-            VulkanCommandPool* commandPool)
-        : m_device(device), m_commandPool(commandPool) {
-        }
+    VulkanCommandBuffer::VulkanCommandBuffer() {}
 
     VulkanCommandBuffer::~VulkanCommandBuffer() {}
 
-    void VulkanCommandBuffer::beginSingleTimeCommands() {
+    void VulkanCommandBuffer::beginSingleTimeCommands(VulkanDevice* device, VulkanCommandPool* commandPool) {
         VkCommandBufferAllocateInfo allocInfo{};
 
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandPool = m_commandPool->getCommandPool();
+        allocInfo.commandPool = commandPool->getCommandPool();
         allocInfo.commandBufferCount = 1;
 
-        vkAllocateCommandBuffers(m_device->getLogicalDevice(), &allocInfo, &m_commandBuffer);
+        vkAllocateCommandBuffers(device->getLogicalDevice(), &allocInfo, &m_commandBuffer);
 
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -26,7 +23,7 @@ namespace VulkanLearning {
         vkBeginCommandBuffer(m_commandBuffer, &beginInfo);
     }
 
-    void VulkanCommandBuffer::endSingleTimeCommands() {
+    void VulkanCommandBuffer::endSingleTimeCommands(VulkanDevice* device, VulkanCommandPool* commandPool) {
         vkEndCommandBuffer(m_commandBuffer);
 
         VkSubmitInfo submitInfo{};
@@ -34,9 +31,9 @@ namespace VulkanLearning {
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &m_commandBuffer;
 
-        vkQueueSubmit(m_device->getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(m_device->getGraphicsQueue());
+        vkQueueSubmit(device->getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
+        vkQueueWaitIdle(device->getGraphicsQueue());
 
-        vkFreeCommandBuffers(m_device->getLogicalDevice(), m_commandPool->getCommandPool(), 1, &m_commandBuffer);
+        vkFreeCommandBuffers(device->getLogicalDevice(), commandPool->getCommandPool(), 1, &m_commandBuffer);
     }
 }

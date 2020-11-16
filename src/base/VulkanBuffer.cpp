@@ -74,8 +74,8 @@ namespace VulkanLearning {
 
 
     void VulkanBuffer::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
-        VulkanCommandBuffer commandBuffer(m_device, m_commandPool);
-        commandBuffer.beginSingleTimeCommands();
+        VulkanCommandBuffer commandBuffer;
+        commandBuffer.beginSingleTimeCommands(m_device, m_commandPool);
 
         VkBufferCopy copyRegion{};
         copyRegion.size = size;
@@ -85,8 +85,8 @@ namespace VulkanLearning {
     }
     
     void VulkanBuffer::copyBufferToImage(VkImage image, uint32_t width, uint32_t height) {
-        VulkanCommandBuffer commandBuffer(m_device, m_commandPool);
-        commandBuffer.beginSingleTimeCommands();
+        VulkanCommandBuffer commandBuffer;
+        commandBuffer.beginSingleTimeCommands(m_device, m_commandPool);
 
         VkBufferImageCopy region{};
         region.bufferOffset = 0;
@@ -107,7 +107,7 @@ namespace VulkanLearning {
 
         vkCmdCopyBufferToImage(commandBuffer.getCommandBuffer(), m_buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
-        commandBuffer.endSingleTimeCommands();
+        commandBuffer.endSingleTimeCommands(m_device, m_commandPool);
     }
 
     VkCommandBuffer VulkanBuffer::beginSingleTimeCommands() {
@@ -119,7 +119,7 @@ namespace VulkanLearning {
         allocInfo.commandBufferCount = 1;
 
         /* VkCommandBuffer commandBuffer; */
-        VulkanCommandBuffer commandBuffer(m_device, m_commandPool);
+        VulkanCommandBuffer commandBuffer;
 
         vkAllocateCommandBuffers(m_device->getLogicalDevice(), &allocInfo, 
                 commandBuffer.getCommandBufferPointer());

@@ -131,7 +131,7 @@ namespace VulkanLearning {
                 submitInfo.pWaitSemaphores = waitSemaphore;
                 submitInfo.pWaitDstStageMask = waitStages;
                 submitInfo.commandBufferCount = 1;
-                submitInfo.pCommandBuffers = m_commandBuffers->getCommandBufferPointer(imageIndex);
+                submitInfo.pCommandBuffers = m_commandBuffers[imageIndex].getCommandBufferPointer();
 
                 VkSemaphore signalSemaphores[] = {m_syncObjects->getRenderFinishedSemaphores()[currentFrame]};
                 submitInfo.signalSemaphoreCount = 1;
@@ -226,7 +226,11 @@ namespace VulkanLearning {
 
                 m_swapChain->cleanFramebuffers();
 
-                m_commandBuffers->cleanup();
+                vkFreeCommandBuffers(m_device->getLogicalDevice(), 
+                        m_commandPool->getCommandPool(), 
+                        static_cast<uint32_t>(
+                            m_commandBuffers.size()), 
+                        m_commandBuffers.data()->getCommandBufferPointer());
 
                 vkDestroyPipeline(m_device->getLogicalDevice(), 
                         m_graphicsPipeline->getGraphicsPipeline(), nullptr);
@@ -418,26 +422,29 @@ namespace VulkanLearning {
             }
 
             void createCommandBuffers() override {
-                m_commandBuffers = new VulkanCommandBuffers(m_device, 
-                        m_swapChain, m_commandPool, m_renderPass, m_vertexBuffer,
-                        m_indexBuffer, static_cast<uint32_t>(m_model->getIndicies().size()),
-                        m_graphicsPipeline->getGraphicsPipeline(),
-                        m_graphicsPipeline->getPipelineLayout(), 
-                        m_descriptorSets);
+                m_commandBuffers.resize(m_swapChain->getFramebuffers().size());
 
-                m_commandBuffers->create();
+                VkCommandBufferAllocateInfo allocInfo{};
+                allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+                allocInfo.commandPool = m_commandPool->getCommandPool();
+                allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+                allocInfo.commandBufferCount = (uint32_t) m_commandBuffers.size();
+
+                if (vkAllocateCommandBuffers(m_device->getLogicalDevice(), &allocInfo, m_commandBuffers.data()->getCommandBufferPointer()) != VK_SUCCESS) {
+                    throw std::runtime_error("Command buffers allocation failed!");
+                }
 
                 std::array<VkClearValue, 2> clearValues{};
                 clearValues[1].color = {0.0f, 0.0f, 0.0f, 1.0f};
                 clearValues[0].depthStencil = {1.0f, 0};
 
-                for (size_t i = 0; i < m_commandBuffers->getCommandBuffers().size(); i++) {
+                for (size_t i = 0; i < m_commandBuffers.size(); i++) {
                     VkCommandBufferBeginInfo beginInfo{};
                     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
                     beginInfo.flags = 0;
                     beginInfo.pInheritanceInfo = nullptr;
 
-                    if (vkBeginCommandBuffer(m_commandBuffers->getCommandBuffers()[i], &beginInfo) != VK_SUCCESS) {
+                    if (vkBeginCommandBuffer(m_commandBuffers[i].getCommandBuffer(), &beginInfo) != VK_SUCCESS) {
                         throw std::runtime_error("Begin recording of a command buffer failed!");
                     }
 
@@ -451,20 +458,20 @@ namespace VulkanLearning {
                     renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
                     renderPassInfo.pClearValues = clearValues.data();
 
-                    vkCmdBeginRenderPass(m_commandBuffers->getCommandBuffers()[i], 
+                    vkCmdBeginRenderPass(m_commandBuffers[i].getCommandBuffer(), 
                             &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-                    vkCmdBindPipeline(m_commandBuffers->getCommandBuffers()[i], 
+                    vkCmdBindPipeline(m_commandBuffers[i].getCommandBuffer(), 
                             VK_PIPELINE_BIND_POINT_GRAPHICS, m_graphicsPipeline->getGraphicsPipeline());
 
                     VkBuffer vertexBuffers[] = { m_vertexBuffer->getBuffer() };
                     VkDeviceSize offsets[] = {0};
-                    vkCmdBindVertexBuffers(m_commandBuffers->getCommandBuffers()[i], 
+                    vkCmdBindVertexBuffers(m_commandBuffers[i].getCommandBuffer(), 
                             0, 1, vertexBuffers, offsets);
-                    vkCmdBindIndexBuffer(m_commandBuffers->getCommandBuffers()[i], 
+                    vkCmdBindIndexBuffer(m_commandBuffers[i].getCommandBuffer(), 
                             m_indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
-                    vkCmdBindDescriptorSets(m_commandBuffers->getCommandBuffers()[i], 
+                    vkCmdBindDescriptorSets(m_commandBuffers[i].getCommandBuffer(), 
                             VK_PIPELINE_BIND_POINT_GRAPHICS, 
                             m_graphicsPipeline->getPipelineLayout(), 0, 1, 
                             &m_descriptorSets->getDescriptorSets()[i], 
@@ -472,20 +479,20 @@ namespace VulkanLearning {
 
                     uint32_t sphereCount = static_cast<uint32_t>(m_spheres.size());
                     for (uint32_t j = 0; j < sphereCount; j++) {
-                        vkCmdPushConstants(m_commandBuffers->getCommandBuffers()[i], 
+                        vkCmdPushConstants(m_commandBuffers[i].getCommandBuffer(), 
                                 m_graphicsPipeline->getPipelineLayout(), 
                                 VK_SHADER_STAGE_VERTEX_BIT, 0, 
                                 sizeof(SpherePushConstantData), 
                                 &m_spheres[j]);
 
-                    vkCmdDrawIndexed(m_commandBuffers->getCommandBuffers()[i], 
+                    vkCmdDrawIndexed(m_commandBuffers[i].getCommandBuffer(), 
                             static_cast<uint32_t>(m_model->getIndicies().size())
                             , 1, 0, 0, 0);
                     }
 
-                    vkCmdEndRenderPass(m_commandBuffers->getCommandBuffers()[i]);
+                    vkCmdEndRenderPass(m_commandBuffers[i].getCommandBuffer());
 
-                    if (vkEndCommandBuffer(m_commandBuffers->getCommandBuffers()[i]) != VK_SUCCESS) {
+                    if (vkEndCommandBuffer(m_commandBuffers[i].getCommandBuffer()) != VK_SUCCESS) {
                         throw std::runtime_error("Recording of a command buffer failed!");
                     }
                 }

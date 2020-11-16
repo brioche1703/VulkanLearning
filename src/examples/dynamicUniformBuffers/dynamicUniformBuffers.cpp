@@ -163,7 +163,7 @@ namespace VulkanLearning {
                 submitInfo.pWaitSemaphores = waitSemaphore;
                 submitInfo.pWaitDstStageMask = waitStages;
                 submitInfo.commandBufferCount = 1;
-                submitInfo.pCommandBuffers = m_commandBuffers->getCommandBufferPointer(imageIndex);
+                submitInfo.pCommandBuffers = m_commandBuffers[imageIndex].getCommandBufferPointer();
 
                 VkSemaphore signalSemaphores[] = {m_syncObjects->getRenderFinishedSemaphores()[currentFrame]};
                 submitInfo.signalSemaphoreCount = 1;
@@ -259,7 +259,11 @@ namespace VulkanLearning {
 
                 m_swapChain->cleanFramebuffers();
 
-                m_commandBuffers->cleanup();
+                vkFreeCommandBuffers(m_device->getLogicalDevice(), 
+                        m_commandPool->getCommandPool(), 
+                        static_cast<uint32_t>(
+                            m_commandBuffers.size()), 
+                        m_commandBuffers.data()->getCommandBufferPointer());
 
                 vkDestroyPipeline(m_device->getLogicalDevice(), 
                         m_graphicsPipeline->getGraphicsPipeline(), nullptr);
@@ -488,17 +492,93 @@ namespace VulkanLearning {
             }
 
             void createCommandBuffers() override {
-                m_commandBuffers = new VulkanCommandBuffers(m_device, 
-                        m_swapChain, m_commandPool, m_renderPass, m_vertexBuffer,
-                        m_indexBuffer, static_cast<uint32_t>(indices.size()),
-                        m_graphicsPipeline->getGraphicsPipeline(),
-                        m_graphicsPipeline->getPipelineLayout(), 
-                        m_descriptorSets);
+
+                m_commandBuffers.resize(m_swapChain->getFramebuffers().size());
+
+                VkCommandBufferAllocateInfo allocInfo{};
+                allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+                allocInfo.commandPool = m_commandPool->getCommandPool();
+                allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+                allocInfo.commandBufferCount = (uint32_t) m_commandBuffers.size();
+
+                if (vkAllocateCommandBuffers(m_device->getLogicalDevice(), &allocInfo, m_commandBuffers.data()->getCommandBufferPointer()) != VK_SUCCESS) {
+                    throw std::runtime_error("Command buffers allocation failed!");
+                }
 
                 std::array<VkClearValue, 2> clearValues{};
                 clearValues[1].color = {0.0f, 0.0f, 0.0f, 1.0f};
                 clearValues[0].depthStencil = {1.0f, 0};
-                m_commandBuffers->create(clearValues, m_dynamicAlignment, NUM_OBJ);
+
+                for (size_t i = 0; i < m_commandBuffers.size(); i++) {
+                    VkCommandBufferBeginInfo beginInfo{};
+                    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+                    beginInfo.flags = 0;
+                    beginInfo.pInheritanceInfo = nullptr;
+
+                    if (vkBeginCommandBuffer(m_commandBuffers[i].getCommandBuffer(), &beginInfo) != VK_SUCCESS) {
+                        throw std::runtime_error("Begin recording of a command buffer failed!");
+                    }
+
+                    VkRenderPassBeginInfo renderPassInfo{};
+                    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+                    renderPassInfo.renderPass = m_renderPass->getRenderPass(); 
+                    renderPassInfo.framebuffer = m_swapChain->getFramebuffers()[i];
+                    renderPassInfo.renderArea.offset = {0, 0};
+                    renderPassInfo.renderArea.extent = m_swapChain->getExtent();
+
+                    renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+                    renderPassInfo.pClearValues = clearValues.data();
+
+                    vkCmdBeginRenderPass(
+                            m_commandBuffers[i].getCommandBuffer(), 
+                            &renderPassInfo, 
+                            VK_SUBPASS_CONTENTS_INLINE);
+
+                    vkCmdBindPipeline(
+                            m_commandBuffers[i].getCommandBuffer(), 
+                            VK_PIPELINE_BIND_POINT_GRAPHICS, 
+                            m_graphicsPipeline->getGraphicsPipeline());
+
+                    VkBuffer vertexBuffers[] = {m_vertexBuffer->getBuffer()};
+                    VkDeviceSize offsets[] = {0};
+                    vkCmdBindVertexBuffers(m_commandBuffers[i].getCommandBuffer(), 
+                            0, 
+                            1, 
+                            vertexBuffers, 
+                            offsets);
+                    vkCmdBindIndexBuffer(
+                            m_commandBuffers[i].getCommandBuffer(), 
+                            m_indexBuffer->getBuffer(), 
+                            0, 
+                            VK_INDEX_TYPE_UINT32);
+
+                    for (uint32_t j = 0; j < NUM_OBJ; j++) {
+                        uint32_t dynamicOffset = j * static_cast<uint32_t>(m_dynamicAlignment);
+                        vkCmdBindDescriptorSets(
+                                m_commandBuffers[i].getCommandBuffer(), 
+                                VK_PIPELINE_BIND_POINT_GRAPHICS,
+                                m_graphicsPipeline->getPipelineLayout(),
+                                0, 
+                                1, 
+                                &m_descriptorSets->getDescriptorSets()[i], 
+                                1, 
+                                &dynamicOffset);
+                               
+                        vkCmdDrawIndexed(
+                                m_commandBuffers[i].getCommandBuffer(), 
+                                static_cast<uint32_t>(indices.size()),
+                                1, 
+                                0, 
+                                0, 
+                                0);
+                    }
+
+                    vkCmdEndRenderPass(m_commandBuffers[i].getCommandBuffer());
+
+                    if (vkEndCommandBuffer(m_commandBuffers[i].getCommandBuffer()) != VK_SUCCESS) {
+                        throw std::runtime_error("Recording of a command buffer failed!");
+                    }
+                }
             }
 
             void createSyncObjects() override {
@@ -645,14 +725,6 @@ namespace VulkanLearning {
                         uboDataDynamic.model, 
                         m_dynUbos[currentImage]->getSize());
                 m_dynUbos[currentImage]->unmap();
-
-                /* // Flush to make changes visible to the host */
-                // TO DO to be more optimized
-                /* VkMappedMemoryRange memoryRange{}; */
-                /* memoryRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE; */
-                /* memoryRange.memory = m_dynUbos[currentImage]->getBufferMemory(); */
-                /* memoryRange.size = m_dynUbos[currentImage]->getSize(); */
-                /* vkFlushMappedMemoryRanges(m_device->getLogicalDevice(), 1, &memoryRange); */
             }
     };
 

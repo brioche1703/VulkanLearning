@@ -88,8 +88,8 @@ namespace VulkanLearning {
             throw std::runtime_error("Image texture format does not support linear filtering");
         }
 
-        VulkanCommandBuffer commandBuffer(m_device, m_commandPool);
-        commandBuffer.beginSingleTimeCommands();
+        VulkanCommandBuffer commandBuffer;
+        commandBuffer.beginSingleTimeCommands(m_device, m_commandPool);
 
         VkImageMemoryBarrier barrier{};
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -161,14 +161,14 @@ namespace VulkanLearning {
                 VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
                 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
-        commandBuffer.endSingleTimeCommands();
+        commandBuffer.endSingleTimeCommands(m_device, m_commandPool);
     }
 
     void VulkanTexture::transitionImageLayout(VkFormat format, 
             VkImageLayout oldLayout, VkImageLayout newLayout, 
             uint32_t mipLevels) {
-        VulkanCommandBuffer commandBuffer(m_device, m_commandPool);
-        commandBuffer.beginSingleTimeCommands();
+        VulkanCommandBuffer commandBuffer;
+        commandBuffer.beginSingleTimeCommands(m_device, m_commandPool);
 
         VkImageMemoryBarrier barrier{};
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -206,7 +206,7 @@ namespace VulkanLearning {
         vkCmdPipelineBarrier(commandBuffer.getCommandBuffer(), sourceStage, 
                 destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
-        commandBuffer.endSingleTimeCommands();
+        commandBuffer.endSingleTimeCommands(m_device, m_commandPool);
     }
 
     void VulkanTexture::createImageView(VkFormat format, 
