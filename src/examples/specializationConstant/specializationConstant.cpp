@@ -4,7 +4,7 @@
 
 namespace VulkanLearning {
 
-    const std::string MODEL_PATH = "./src/models/sphere.obj";
+    const std::string MODEL_PATH = "./src/models/sphere2.obj";
     const std::string TEXTURE_PATH = "./src/textures/sphere_texture.png";
 
     class VulkanExample : public VulkanBase {
@@ -499,6 +499,31 @@ namespace VulkanLearning {
                 pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
                 pipelineInfo.pDynamicState = &dynamicState;
 
+                struct SpecializationData {
+                    uint32_t lightingModel;
+                    float toonDesaturationFactor = 0.5f;
+                } specializationData;
+
+                std::array<VkSpecializationMapEntry, 2> specializationMapEntries;
+
+                specializationMapEntries[0].constantID = 0;
+                specializationMapEntries[0].size = sizeof(specializationData.lightingModel);
+                specializationMapEntries[0].offset = 0;
+
+                specializationMapEntries[1].constantID = 1;
+                specializationMapEntries[1].size = sizeof(specializationData.toonDesaturationFactor);
+                specializationMapEntries[1].offset = offsetof(SpecializationData, toonDesaturationFactor);
+                
+                VkSpecializationInfo specializationInfo{};
+                specializationInfo.dataSize = sizeof(specializationData.toonDesaturationFactor);
+                specializationInfo.mapEntryCount = static_cast<uint32_t>(specializationMapEntries.size());
+                specializationInfo.pMapEntries = specializationMapEntries.data();
+                specializationInfo.pData = &specializationData;
+
+                shaderStages[1].pSpecializationInfo = &specializationInfo;
+
+                // Phong
+                specializationData.lightingModel = 0;
                 if (vkCreateGraphicsPipelines(
                             m_device->getLogicalDevice(), 
                             VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, 
@@ -506,6 +531,8 @@ namespace VulkanLearning {
                     throw std::runtime_error("Graphics pipeline creation failed!");
                 }
 
+                // Toon
+                specializationData.lightingModel = 1;
                 if (vkCreateGraphicsPipelines(
                             m_device->getLogicalDevice(), 
                             VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, 
@@ -513,6 +540,8 @@ namespace VulkanLearning {
                     throw std::runtime_error("Graphics pipeline creation failed!");
                 }
 
+                // Textured
+                specializationData.lightingModel = 2;
                 if (vkCreateGraphicsPipelines(
                             m_device->getLogicalDevice(), 
                             VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, 
@@ -903,7 +932,7 @@ namespace VulkanLearning {
             void updateLight(uint32_t currentImage) {
                 UBOLight ubo{};
 
-                ubo.lightPos = glm::vec4(0.0f, -2.0f, 1.0f, 0.0f);
+                ubo.lightPos = glm::vec4(5.0f, 0.0f, 5.0f, 0.0f);
 
                 m_lightUniformBuffers[currentImage]->map();
                 memcpy(m_lightUniformBuffers[currentImage]->getMappedMemory(),

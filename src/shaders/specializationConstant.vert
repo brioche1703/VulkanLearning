@@ -30,14 +30,11 @@ void main() {
     fragColor = inColor;
     fragUV = inUV;
 
-    gl_Position = ubo.proj * ubo.view * ubo.model * vec4(inPosition, 1.0);
+    gl_Position = ubo.proj * ubo.model * ubo.view * vec4(inPosition.xyz, 1.0);
 
-    fragNormal = mat3(ubo.view * ubo.model) * inNormal;
-
-    vec4 pos = ubo.view * ubo.model * vec4(inPosition, 1.0);
-
-    fragViewVec = -pos.xyz;
-
-    vec3 lPos = mat3(ubo.view * ubo.model) * uboLight.lightPos.xyz;
+    vec4 pos = ubo.model * vec4(inPosition, 1.0);
+    fragNormal = mat3(ubo.model) * inNormal;
+    vec3 lPos = mat3(ubo.view) * uboLight.lightPos.xyz;
     fragLightVec = lPos - pos.xyz;
+    fragViewVec = -pos.xyz;
 }
