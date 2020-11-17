@@ -42,7 +42,7 @@ namespace VulkanLearning {
             }
 
             void initCore() override {
-                m_camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f));
+                m_camera = new Camera(glm::vec3(0.0f, 0.0f, 7.0f));
                 m_fpsCounter = new FpsCounter();
                 m_input = new Inputs(m_window->getWindow(), m_camera, m_fpsCounter);
 
@@ -369,14 +369,24 @@ namespace VulkanLearning {
             }
 
             void createGraphicsPipeline() override {
+                VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+                pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+                pipelineLayoutInfo.setLayoutCount = 1;
+                pipelineLayoutInfo.pSetLayouts = 
+                    m_descriptorSetLayout->getDescriptorSetLayoutPointer();
+
+                if (vkCreatePipelineLayout(m_device->getLogicalDevice(), &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS) {
+                    throw std::runtime_error("Pipeline layout creation failed!");
+                }
+
                 VulkanShaderModule vertShaderModule = 
                     VulkanShaderModule("src/shaders/specializationConstantVert.spv", m_device);
                 VulkanShaderModule fragShaderModule = 
                     VulkanShaderModule("src/shaders/specializationConstantFrag.spv", m_device);
 
-
                 auto bindingDescription = VertexTextured::getBindingDescription();
                 auto attributeDescriptions = VertexTextured::getAttributeDescriptions();
+
                 VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
                 vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
                 vertexInputInfo.vertexBindingDescriptionCount = 1;
@@ -394,12 +404,6 @@ namespace VulkanLearning {
                 depthStencil.depthBoundsTestEnable = VK_FALSE;
                 depthStencil.stencilTestEnable = VK_FALSE;
 
-                VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-                pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-                pipelineLayoutInfo.setLayoutCount = 1;
-                pipelineLayoutInfo.pSetLayouts = 
-                    m_descriptorSetLayout->getDescriptorSetLayoutPointer();
-
                 VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
                 vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
                 vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
@@ -412,7 +416,9 @@ namespace VulkanLearning {
                 fragShaderStageInfo.module = fragShaderModule.getModule();
                 fragShaderStageInfo.pName = "main";
 
-                VkPipelineShaderStageCreateInfo shaderStages[] = {vertShaderStageInfo, fragShaderStageInfo};
+                VkPipelineShaderStageCreateInfo shaderStages[] = {
+                    vertShaderStageInfo, fragShaderStageInfo
+                };
 
                 VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
                 inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -420,24 +426,10 @@ namespace VulkanLearning {
                 inputAssembly.flags = 0;
                 inputAssembly.primitiveRestartEnable = VK_FALSE;
 
-                VkViewport viewport{};
-                viewport.x = 0.0f;
-                viewport.y = 0.0f;
-                viewport.width = (float) m_swapChain->getExtent().width;
-                viewport.height = (float) m_swapChain->getExtent().height;
-                viewport.minDepth = 0.0f;
-                viewport.maxDepth = 1.0f;
-
-                VkRect2D scissor{};
-                scissor.offset = {0, 0};
-                scissor.extent = m_swapChain->getExtent();
-
                 VkPipelineViewportStateCreateInfo viewportState{};
                 viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
                 viewportState.viewportCount = 1;
-                viewportState.pViewports = &viewport;
                 viewportState.scissorCount = 1;
-                viewportState.pScissors = &scissor;
                 viewportState.flags = 0;
 
                 VkPipelineRasterizationStateCreateInfo rasterizer{};
@@ -490,10 +482,6 @@ namespace VulkanLearning {
                 dynamicState.dynamicStateCount = 3;
                 dynamicState.pDynamicStates = dynamicStates;
 
-                if (vkCreatePipelineLayout(m_device->getLogicalDevice(), &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS) {
-                    throw std::runtime_error("Pipeline layout creation failed!");
-                }
-
                 VkGraphicsPipelineCreateInfo pipelineInfo{};
                 pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
                 pipelineInfo.stageCount = 2;
@@ -509,6 +497,7 @@ namespace VulkanLearning {
                 pipelineInfo.renderPass = m_renderPass->getRenderPass();
                 pipelineInfo.subpass = 0;
                 pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+                pipelineInfo.pDynamicState = &dynamicState;
 
                 if (vkCreateGraphicsPipelines(
                             m_device->getLogicalDevice(), 
@@ -702,6 +691,8 @@ namespace VulkanLearning {
                     viewport.width = m_swapChain->getExtent().width / 3.0f;
                     viewport.minDepth = 0.0f;
                     viewport.maxDepth = 1.0f;
+                    viewport.x = 0.0f;
+                    viewport.y = 0.0f;
 
                     vkCmdSetViewport(
                             m_commandBuffers[i].getCommandBuffer(), 
@@ -898,7 +889,7 @@ namespace VulkanLearning {
                 ubo.view = m_camera->getViewMatrix();
 
                 ubo.proj = glm::perspective(glm::radians(m_camera->getZoom()), 
-                        m_swapChain->getExtent().width / (float) m_swapChain->getExtent().height, 
+                        m_swapChain->getExtent().width / 3.0f / (float) m_swapChain->getExtent().height, 
                         0.1f,  100.0f);
 
                 ubo.proj[1][1] *= -1;
