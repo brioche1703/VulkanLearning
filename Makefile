@@ -20,7 +20,7 @@ OBJECTS=$(SOURCES:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
 LIBS = `pkg-config --static --libs glfw3` -lvulkan -lglfw3
 CFLAGS = -std=c++17 -g $(INCLUDES_EXT) `pkg-config --cflags glfw3`
 
-EXAMPLES = single3DModel simpleTriangle dynamicUniformBuffers pushConstants specializationConstant
+EXAMPLES = single3DModel simpleTriangle dynamicUniformBuffers pushConstants specializationConstant texture
 
 .PHONY: default_target
 default_target: all
@@ -137,15 +137,33 @@ $(BIN_PATH)/$(BIN_NAME_5): $(OBJECTS_5)
 #####################################################
 #####################################################
 
+#####################################################
+################ Texture
+#####################################################
 
+SOURCES_6=$(shell find $(SRC_PATH) -name '*.$(SRC_EXT)' ! -path "src/examples/*" | sort -k 1nr | cut -f2-) src/examples/texture/texture.cpp
+OBJECTS_6=$(SOURCES_6:$(SRC_PATH)/%.$(SRC_EXT)=$(BUILD_PATH)/%.o)
+DEPX_6= $(OBJECTS_6:.o=.d)
+BIN_NAME_6=texture
+.PHONY: texture
+texture: $(BIN_PATH)/$(BIN_NAME_6)
+	@echo "Making symlink: $@ -> $<"
+	@$(RM) $
+	@ln -sfn $(BIN_PATH)/$(BIN_NAME_6) $(BIN_NAME_6)
+
+# Creation of the executable
+$(BIN_PATH)/$(BIN_NAME_6): $(OBJECTS_6)
+	@echo "Linking: $@"
+	$(CXX) $(OBJECTS_6) -o $@ ${LIBS}
+
+#####################################################
+#####################################################
+#####################################################
 
 $(BUILD_PATH)/%.o: $(SRC_PATH)/%.$(SRC_EXT)
 	@echo "Compiling: $< -> $@"
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -MP -MMD -c $< -o $@
 
-#####################################################
-#####################################################
-#####################################################
 
 .PHONY: dirs
 dirs:
@@ -155,6 +173,7 @@ dirs:
 	@mkdir -p $(dir $(OBJECTS_3))
 	@mkdir -p $(dir $(OBJECTS_4))
 	@mkdir -p $(dir $(OBJECTS_5))
+	@mkdir -p $(dir $(OBJECTS_6))
 	@mkdir -p $(BIN_PATH)
 
 .PHONY: clean
