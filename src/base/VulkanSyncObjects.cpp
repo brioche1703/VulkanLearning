@@ -1,4 +1,4 @@
-#include "../../include/VulkanLearning/base/VulkanSyncObjects.hpp"
+#include "VulkanSyncObjects.hpp"
 
 namespace VulkanLearning {
 

@@ -1,4 +1,4 @@
-#include "../../include/VulkanLearning/misc/VulkanDebug.hpp"
+#include "misc/VulkanDebug.hpp"
 
 #include <iostream>
 

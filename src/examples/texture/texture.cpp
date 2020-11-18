@@ -1,4 +1,6 @@
-#include "../../../include/VulkanLearning/base/VulkanBase.h"
+#include "VulkanBase.h"
+
+#include "ktx.h"
 
 namespace VulkanLearning {
 

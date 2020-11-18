@@ -5,6 +5,7 @@
 #define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #define GLM_ENABLE_EXPERIMENTAL
+#define GLM_FORCE_SWIZZLE
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <vulkan/vulkan_core.h>
@@ -32,16 +33,16 @@
 #include <functional>
 
 #include "Vertex.hpp"
-#include "../camera/camera.hpp"
-#include "../misc/FpsCounter.hpp"
-#include "../misc/VulkanDebug.hpp"
+#include "camera/camera.hpp"
+#include "misc/FpsCounter.hpp"
+#include "misc/VulkanDebug.hpp"
 #include "VulkanDevice.hpp"
 #include "VulkanInstance.hpp"
 #include "VulkanSwapChain.hpp"
 #include "VulkanSurface.hpp"
 #include "VulkanRenderPass.hpp"
-#include "../misc/Inputs.hpp"
-#include "../window/Window.hpp"
+#include "misc/Inputs.hpp"
+#include "window/Window.hpp"
 #include "VulkanDescriptorSetLayout.hpp"
 #include "VulkanCommandPool.hpp"
 #include "VulkanShaderModule.hpp"
@@ -53,7 +54,7 @@
 #include "VulkanCommandBuffer.hpp"
 #include "VulkanTexture.hpp"
 #include "VulkanGraphicsPipeline.hpp"
-#include "../misc/model/ModelObj.hpp"
+#include "misc/model/ModelObj.hpp"
 
 
 struct CoordinatesSystemUniformBufferObject {

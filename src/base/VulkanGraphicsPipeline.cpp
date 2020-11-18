@@ -1,5 +1,5 @@
-#include "../../include/VulkanLearning/base/VulkanGraphicsPipeline.hpp"
-#include "../../include/VulkanLearning/base/Vertex.hpp"
+#include "VulkanGraphicsPipeline.hpp"
+#include "Vertex.hpp"
 
 namespace VulkanLearning {
 

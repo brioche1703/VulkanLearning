@@ -1,4 +1,4 @@
-#include "../../include/VulkanLearning/base/VulkanCommandBuffer.hpp"
+#include "VulkanCommandBuffer.hpp"
 
 namespace VulkanLearning {
 

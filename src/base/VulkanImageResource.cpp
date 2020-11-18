@@ -1,5 +1,5 @@
-#include "../../include/VulkanLearning/base/VulkanImageResource.hpp"
-#include "../../include/VulkanLearning/base/VulkanCommandBuffer.hpp"
+#include "VulkanImageResource.hpp"
+#include "VulkanCommandBuffer.hpp"
 
 namespace VulkanLearning {
 

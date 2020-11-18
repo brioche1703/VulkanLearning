@@ -6,7 +6,7 @@
 #include <vector>
 #include <unordered_map>
 
-#include "../../base/Vertex.hpp"
+#include "Vertex.hpp"
 
 namespace VulkanLearning {
 

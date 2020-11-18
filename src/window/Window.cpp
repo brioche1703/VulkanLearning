@@ -1,4 +1,4 @@
-#include "../../include/VulkanLearning/window/Window.hpp"
+#include "window/Window.hpp"
 
 namespace VulkanLearning {
 

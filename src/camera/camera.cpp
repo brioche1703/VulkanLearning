@@ -1,5 +1,6 @@
-#include "../../include/VulkanLearning/camera/camera.hpp"
-#include <glm/ext/matrix_transform.hpp>
+#include "camera/camera.hpp"
+
+#include "glm/ext/matrix_transform.hpp"
 
 namespace VulkanLearning {
 

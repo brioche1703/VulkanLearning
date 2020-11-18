@@ -6,10 +6,16 @@ BUILD_PATH = build
 BIN_PATH = $(BUILD_PATH)/bin
 
 # Space-separated pkg-config libraries used by this project
-STB_PATH = ./include/stb
-TINY_OBJ_LOADER_PATH = ./include/tinyobjloader
-IMGUI_PATH = ./src/external/imgui
-INCLUDES_EXT = -I$(STB_PATH)$(TINY_OBJ_LOADER_PATH)$(IMGUI_PATH)$(MISC_PATH)
+BASE_PATH=include/VulkanLearning/base
+VK_LEARNING_PATH=include/VulkanLearning
+GLM_PATH=external/glm
+STB_PATH=include/external/stb
+TINY_OBJ_LOADER_PATH=include/external/tinyobjloader
+IMGUI_PATH=src/external/imgui
+KTX_PATH=external/KTX-Software/include
+KTX_OTHER_PATH=external/KTX-Software/other_include
+
+INCLUDES_EXT=-I$(BASE_PATH) -I$(VK_LEARNING_PATH) -I$(STB_PATH) -I$(TINY_OBJ_LOADER_PATH) -I$(IMGUI_PATH) -I$(KTX_PATH) -I$(GLM_PATH)
 
 # extensions #
 SRC_EXT = cpp
@@ -162,7 +168,7 @@ $(BIN_PATH)/$(BIN_NAME_6): $(OBJECTS_6)
 
 $(BUILD_PATH)/%.o: $(SRC_PATH)/%.$(SRC_EXT)
 	@echo "Compiling: $< -> $@"
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -MP -MMD -c $< -o $@
+	$(CXX) $(CXXFLAGS) -MP -MMD -c $< -o $@
 
 
 .PHONY: dirs

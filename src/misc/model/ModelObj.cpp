@@ -1,6 +1,6 @@
-#include "../../../include/VulkanLearning/misc/model/ModelObj.hpp"
+#include "misc/model/ModelObj.hpp"
 
-#include "../../../include/external/tinyobjloader/tiny_obj_loader.h"
+#include "tiny_obj_loader.h"
 
 namespace VulkanLearning {
 

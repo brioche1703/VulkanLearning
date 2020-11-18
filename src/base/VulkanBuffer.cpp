@@ -3,8 +3,8 @@
 #include <assert.h>
 #include <string.h>
 
-#include "../../include/VulkanLearning/base/VulkanBuffer.hpp"
-#include "../../include/VulkanLearning/base/VulkanCommandBuffer.hpp"
+#include "VulkanBuffer.hpp"
+#include "VulkanCommandBuffer.hpp"
 
 namespace VulkanLearning {
 

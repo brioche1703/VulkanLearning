@@ -1,4 +1,4 @@
-#include "../../include/VulkanLearning/base/VulkanDescriptorSets.hpp"
+#include "VulkanDescriptorSets.hpp"
 
 namespace VulkanLearning {
 

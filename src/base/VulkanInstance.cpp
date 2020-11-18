@@ -1,4 +1,4 @@
-#include "../../include/VulkanLearning/base/VulkanInstance.hpp"
+#include "VulkanInstance.hpp"
 
 namespace VulkanLearning {
 

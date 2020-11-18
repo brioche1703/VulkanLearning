@@ -1,5 +1,6 @@
 #pragma once
 
+#define GLM_ENABLE_EXPERIMENTAL
 #include <vulkan/vulkan_core.h>
 
 #include "VulkanDevice.hpp"

@@ -1,4 +1,4 @@
-#include "../../include/VulkanLearning/misc/Inputs.hpp"
+#include "misc/Inputs.hpp"
 
 namespace VulkanLearning {
     Camera* Inputs::m_camera = new Camera(glm::vec3(0.0f, 0.0f, 5.0f));

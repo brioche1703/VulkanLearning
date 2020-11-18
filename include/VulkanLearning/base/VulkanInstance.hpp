@@ -7,7 +7,7 @@
 #include <vector>
 #include <cstring>
 
-#include "../../../include/VulkanLearning/misc/VulkanDebug.hpp"
+#include "misc/VulkanDebug.hpp"
 
 namespace VulkanLearning {
 

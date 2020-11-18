@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vulkan/vulkan_core.h>
-#include <glm/glm.hpp>
-#include <glm/gtx/hash.hpp>
+#include "glm/glm.hpp"
+#include "glm/gtx/hash.hpp"
 
 #include <array>
 

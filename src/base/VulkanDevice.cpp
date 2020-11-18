@@ -4,7 +4,7 @@
 #include <set>
 #include <string>
 
-#include "../../include/VulkanLearning/base/VulkanDevice.hpp"
+#include "VulkanDevice.hpp"
 
 namespace VulkanLearning {
 

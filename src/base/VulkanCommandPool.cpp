@@ -1,4 +1,4 @@
-#include "../../include/VulkanLearning/base/VulkanCommandPool.hpp"
+#include "VulkanCommandPool.hpp"
 
 namespace VulkanLearning {
     VulkanCommandPool::VulkanCommandPool(VulkanDevice* device) 

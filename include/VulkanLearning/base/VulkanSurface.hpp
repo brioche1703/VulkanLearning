@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include "VulkanInstance.hpp"
-#include "../window/Window.hpp"
+#include "window/Window.hpp"
 
 namespace VulkanLearning {
     class VulkanSurface {

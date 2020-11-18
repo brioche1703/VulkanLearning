@@ -1,4 +1,4 @@
-#include "../../include/VulkanLearning/base/VulkanRenderPass.hpp"
+#include "VulkanRenderPass.hpp"
 
 namespace VulkanLearning {
 

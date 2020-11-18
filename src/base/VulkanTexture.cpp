@@ -1,7 +1,7 @@
-#include "../../include/VulkanLearning/base/VulkanTexture.hpp"
-#include "../../include/VulkanLearning/base/VulkanCommandBuffer.hpp"
-#include "../../include/VulkanLearning/base/VulkanBuffer.hpp"
-#include "../../include/VulkanLearning/base/VulkanImageResource.hpp"
+#include "VulkanTexture.hpp"
+#include "VulkanCommandBuffer.hpp"
+#include "VulkanBuffer.hpp"
+#include "VulkanImageResource.hpp"
 
 #include <cstring>
 

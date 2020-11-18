@@ -7,7 +7,7 @@
 #include <memory>
 #include <cmath>
 
-#include "../../external/stb/stb_image.h"
+#include "stb_image.h"
 
 #include "VulkanDevice.hpp"
 #include "VulkanCommandPool.hpp"

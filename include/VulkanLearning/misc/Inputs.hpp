@@ -2,8 +2,8 @@
 
 #include <GLFW/glfw3.h>
 
-#include "../camera/camera.hpp"
-#include "../misc/FpsCounter.hpp"
+#include "camera/camera.hpp"
+#include "misc/FpsCounter.hpp"
 
 namespace VulkanLearning {
 

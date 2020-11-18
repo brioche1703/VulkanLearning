@@ -1,4 +1,4 @@
-#include "../../include/VulkanLearning/base/VulkanShaderModule.hpp"
+#include "VulkanShaderModule.hpp"
 
 namespace VulkanLearning {
     VulkanShaderModule::VulkanShaderModule(std::string spvFileName, 
