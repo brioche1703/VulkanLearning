@@ -39,3 +39,6 @@
 # Build
 build/
 runner
+
+# Other
+.ccls-cache

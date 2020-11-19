@@ -1,0 +1,1 @@
+/usr/bin/c++   -DNOMINMAX -D_USE_MATH_DEFINES  -rdynamic CMakeFiles/dynamicUniformBuffers.dir/dynamicUniformBuffers/dynamicUniformBuffers.cpp.o  -o ../../bin/dynamicUniformBuffers  -lvulkan -lvulkan -lpthread ../base/libbase.a ../../external/glfw-3.3.2/src/libglfw3.a -lvulkan -lrt -lm -ldl -lX11 -lpthread 

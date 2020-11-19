@@ -2,6 +2,7 @@
 #include "VulkanCommandBuffer.hpp"
 #include "VulkanBuffer.hpp"
 #include "VulkanImageResource.hpp"
+#include "ktx.h"
 
 #include <cstring>
 
@@ -23,6 +24,13 @@ namespace VulkanLearning {
         }
 
     VulkanTexture::~VulkanTexture() {}
+
+    void VulkanTexture::createKTX() {
+        ktxTexture* texture;
+        ktxResult res;
+
+        res = ktxTexture_CreateFromNamedFile(m_filename.c_str(), KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &texture);
+    }
 
     void VulkanTexture::create() {
         stbi_uc* pixels = stbi_load(m_filename.c_str(), &m_width, &m_height, 
