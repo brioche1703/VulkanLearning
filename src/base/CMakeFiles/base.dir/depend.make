@@ -116,8 +116,19 @@ src/base/CMakeFiles/base.dir/__/__/external/KTX-Software/lib/texture2.c.o: exter
 src/base/CMakeFiles/base.dir/__/__/external/KTX-Software/lib/zstddeclib.c.o: external/KTX-Software/lib/zstddeclib.c
 
 src/base/CMakeFiles/base.dir/VulkanBuffer.cpp.o: src/base/VulkanBuffer.cpp
+src/base/CMakeFiles/base.dir/VulkanBuffer.cpp.o: external/KTX-Software/lib/dfdutils/vulkan/vk_platform.h
+src/base/CMakeFiles/base.dir/VulkanBuffer.cpp.o: external/KTX-Software/lib/dfdutils/vulkan/vulkan_core.h
+src/base/CMakeFiles/base.dir/VulkanBuffer.cpp.o: include/VulkanLearning/base/VulkanBuffer.hpp
+src/base/CMakeFiles/base.dir/VulkanBuffer.cpp.o: include/VulkanLearning/base/VulkanCommandBuffer.hpp
+src/base/CMakeFiles/base.dir/VulkanBuffer.cpp.o: include/VulkanLearning/base/VulkanCommandPool.hpp
+src/base/CMakeFiles/base.dir/VulkanBuffer.cpp.o: include/VulkanLearning/base/VulkanDevice.hpp
 
 src/base/CMakeFiles/base.dir/VulkanCommandBuffer.cpp.o: src/base/VulkanCommandBuffer.cpp
+src/base/CMakeFiles/base.dir/VulkanCommandBuffer.cpp.o: external/KTX-Software/lib/dfdutils/vulkan/vk_platform.h
+src/base/CMakeFiles/base.dir/VulkanCommandBuffer.cpp.o: external/KTX-Software/lib/dfdutils/vulkan/vulkan_core.h
+src/base/CMakeFiles/base.dir/VulkanCommandBuffer.cpp.o: include/VulkanLearning/base/VulkanCommandBuffer.hpp
+src/base/CMakeFiles/base.dir/VulkanCommandBuffer.cpp.o: include/VulkanLearning/base/VulkanCommandPool.hpp
+src/base/CMakeFiles/base.dir/VulkanCommandBuffer.cpp.o: include/VulkanLearning/base/VulkanDevice.hpp
 
 src/base/CMakeFiles/base.dir/VulkanCommandPool.cpp.o: src/base/VulkanCommandPool.cpp
 
@@ -286,6 +297,31 @@ src/base/CMakeFiles/base.dir/VulkanDevice.cpp.o: external/glm/glm/vector_relatio
 src/base/CMakeFiles/base.dir/VulkanGraphicsPipeline.cpp.o: src/base/VulkanGraphicsPipeline.cpp
 
 src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: src/base/VulkanImageResource.cpp
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: external/KTX-Software/lib/dfdutils/vulkan/vk_platform.h
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: external/KTX-Software/lib/dfdutils/vulkan/vulkan_core.h
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: external/KTX-Software/other_include/GL/glcorearb.h
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: external/KTX-Software/other_include/GL/glext.h
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: external/KTX-Software/other_include/GLES/gl.h
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: external/KTX-Software/other_include/GLES/glext.h
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: external/KTX-Software/other_include/GLES/glplatform.h
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: external/KTX-Software/other_include/GLES2/gl2.h
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: external/KTX-Software/other_include/GLES2/gl2ext.h
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: external/KTX-Software/other_include/GLES2/gl2platform.h
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: external/KTX-Software/other_include/GLES3/gl3.h
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: external/KTX-Software/other_include/GLES3/gl31.h
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: external/KTX-Software/other_include/GLES3/gl3platform.h
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: external/KTX-Software/other_include/KHR/khrplatform.h
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: external/glfw-3.3.2/include/GLFW/glfw3.h
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: include/VulkanLearning/base/VulkanBuffer.hpp
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: include/VulkanLearning/base/VulkanCommandBuffer.hpp
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: include/VulkanLearning/base/VulkanCommandPool.hpp
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: include/VulkanLearning/base/VulkanDevice.hpp
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: include/VulkanLearning/base/VulkanImageResource.hpp
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: include/VulkanLearning/base/VulkanInstance.hpp
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: include/VulkanLearning/base/VulkanSurface.hpp
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: include/VulkanLearning/base/VulkanSwapChain.hpp
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: include/VulkanLearning/misc/VulkanDebug.hpp
+src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o: include/VulkanLearning/window/Window.hpp
 
 src/base/CMakeFiles/base.dir/VulkanInstance.cpp.o: src/base/VulkanInstance.cpp
 
@@ -301,6 +337,33 @@ src/base/CMakeFiles/base.dir/VulkanSyncObjects.cpp.o: src/base/VulkanSyncObjects
 
 src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: src/base/VulkanTexture.cpp
 src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: external/KTX-Software/include/ktx.h
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: external/KTX-Software/lib/dfdutils/vulkan/vk_platform.h
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: external/KTX-Software/lib/dfdutils/vulkan/vulkan_core.h
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: external/KTX-Software/other_include/GL/glcorearb.h
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: external/KTX-Software/other_include/GL/glext.h
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: external/KTX-Software/other_include/GLES/gl.h
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: external/KTX-Software/other_include/GLES/glext.h
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: external/KTX-Software/other_include/GLES/glplatform.h
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: external/KTX-Software/other_include/GLES2/gl2.h
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: external/KTX-Software/other_include/GLES2/gl2ext.h
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: external/KTX-Software/other_include/GLES2/gl2platform.h
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: external/KTX-Software/other_include/GLES3/gl3.h
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: external/KTX-Software/other_include/GLES3/gl31.h
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: external/KTX-Software/other_include/GLES3/gl3platform.h
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: external/KTX-Software/other_include/KHR/khrplatform.h
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: external/glfw-3.3.2/include/GLFW/glfw3.h
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: include/VulkanLearning/base/VulkanBuffer.hpp
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: include/VulkanLearning/base/VulkanCommandBuffer.hpp
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: include/VulkanLearning/base/VulkanCommandPool.hpp
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: include/VulkanLearning/base/VulkanDevice.hpp
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: include/VulkanLearning/base/VulkanImageResource.hpp
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: include/VulkanLearning/base/VulkanInstance.hpp
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: include/VulkanLearning/base/VulkanSurface.hpp
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: include/VulkanLearning/base/VulkanSwapChain.hpp
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: include/VulkanLearning/base/VulkanTexture.hpp
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: include/VulkanLearning/misc/VulkanDebug.hpp
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: include/VulkanLearning/window/Window.hpp
+src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o: include/external/stb/stb_image.h
 
 src/base/CMakeFiles/base.dir/__/camera/camera.cpp.o: src/camera/camera.cpp
 src/base/CMakeFiles/base.dir/__/camera/camera.cpp.o: external/glm/glm/common.hpp

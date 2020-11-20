@@ -64,7 +64,6 @@ namespace VulkanLearning {
             void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
             void copyBufferToImage(VkImage image, uint32_t width, uint32_t height);
 
-            VkCommandBuffer beginSingleTimeCommands();
             void endSingleTimeCommands(VkCommandBuffer commandBuffer);
 
             VkResult map(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);

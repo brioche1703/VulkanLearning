@@ -11,6 +11,8 @@ VulkanBase.h
 /home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples/texture/VulkanBase.h
 ktx.h
 /home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples/texture/ktx.h
+vulkan/vulkan_core.h
+-
 
 external/KTX-Software/include/ktx.h
 stdio.h

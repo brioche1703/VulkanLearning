@@ -117,8 +117,19 @@ src/base/CMakeFiles/base.dir/__/__/external/KTX-Software/lib/zstddeclib.c.o
  /home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/zstddeclib.c
 src/base/CMakeFiles/base.dir/VulkanBuffer.cpp.o
  /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanBuffer.cpp
+ external/KTX-Software/lib/dfdutils/vulkan/vk_platform.h
+ external/KTX-Software/lib/dfdutils/vulkan/vulkan_core.h
+ include/VulkanLearning/base/VulkanBuffer.hpp
+ include/VulkanLearning/base/VulkanCommandBuffer.hpp
+ include/VulkanLearning/base/VulkanCommandPool.hpp
+ include/VulkanLearning/base/VulkanDevice.hpp
 src/base/CMakeFiles/base.dir/VulkanCommandBuffer.cpp.o
  /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanCommandBuffer.cpp
+ external/KTX-Software/lib/dfdutils/vulkan/vk_platform.h
+ external/KTX-Software/lib/dfdutils/vulkan/vulkan_core.h
+ include/VulkanLearning/base/VulkanCommandBuffer.hpp
+ include/VulkanLearning/base/VulkanCommandPool.hpp
+ include/VulkanLearning/base/VulkanDevice.hpp
 src/base/CMakeFiles/base.dir/VulkanCommandPool.cpp.o
  /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanCommandPool.cpp
 src/base/CMakeFiles/base.dir/VulkanDebug.cpp.o
@@ -287,6 +298,31 @@ src/base/CMakeFiles/base.dir/VulkanGraphicsPipeline.cpp.o
  /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanGraphicsPipeline.cpp
 src/base/CMakeFiles/base.dir/VulkanImageResource.cpp.o
  /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanImageResource.cpp
+ external/KTX-Software/lib/dfdutils/vulkan/vk_platform.h
+ external/KTX-Software/lib/dfdutils/vulkan/vulkan_core.h
+ external/KTX-Software/other_include/GL/glcorearb.h
+ external/KTX-Software/other_include/GL/glext.h
+ external/KTX-Software/other_include/GLES/gl.h
+ external/KTX-Software/other_include/GLES/glext.h
+ external/KTX-Software/other_include/GLES/glplatform.h
+ external/KTX-Software/other_include/GLES2/gl2.h
+ external/KTX-Software/other_include/GLES2/gl2ext.h
+ external/KTX-Software/other_include/GLES2/gl2platform.h
+ external/KTX-Software/other_include/GLES3/gl3.h
+ external/KTX-Software/other_include/GLES3/gl31.h
+ external/KTX-Software/other_include/GLES3/gl3platform.h
+ external/KTX-Software/other_include/KHR/khrplatform.h
+ external/glfw-3.3.2/include/GLFW/glfw3.h
+ include/VulkanLearning/base/VulkanBuffer.hpp
+ include/VulkanLearning/base/VulkanCommandBuffer.hpp
+ include/VulkanLearning/base/VulkanCommandPool.hpp
+ include/VulkanLearning/base/VulkanDevice.hpp
+ include/VulkanLearning/base/VulkanImageResource.hpp
+ include/VulkanLearning/base/VulkanInstance.hpp
+ include/VulkanLearning/base/VulkanSurface.hpp
+ include/VulkanLearning/base/VulkanSwapChain.hpp
+ include/VulkanLearning/misc/VulkanDebug.hpp
+ include/VulkanLearning/window/Window.hpp
 src/base/CMakeFiles/base.dir/VulkanInstance.cpp.o
  /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanInstance.cpp
 src/base/CMakeFiles/base.dir/VulkanRenderPass.cpp.o
@@ -302,6 +338,33 @@ src/base/CMakeFiles/base.dir/VulkanSyncObjects.cpp.o
 src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o
  /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanTexture.cpp
  external/KTX-Software/include/ktx.h
+ external/KTX-Software/lib/dfdutils/vulkan/vk_platform.h
+ external/KTX-Software/lib/dfdutils/vulkan/vulkan_core.h
+ external/KTX-Software/other_include/GL/glcorearb.h
+ external/KTX-Software/other_include/GL/glext.h
+ external/KTX-Software/other_include/GLES/gl.h
+ external/KTX-Software/other_include/GLES/glext.h
+ external/KTX-Software/other_include/GLES/glplatform.h
+ external/KTX-Software/other_include/GLES2/gl2.h
+ external/KTX-Software/other_include/GLES2/gl2ext.h
+ external/KTX-Software/other_include/GLES2/gl2platform.h
+ external/KTX-Software/other_include/GLES3/gl3.h
+ external/KTX-Software/other_include/GLES3/gl31.h
+ external/KTX-Software/other_include/GLES3/gl3platform.h
+ external/KTX-Software/other_include/KHR/khrplatform.h
+ external/glfw-3.3.2/include/GLFW/glfw3.h
+ include/VulkanLearning/base/VulkanBuffer.hpp
+ include/VulkanLearning/base/VulkanCommandBuffer.hpp
+ include/VulkanLearning/base/VulkanCommandPool.hpp
+ include/VulkanLearning/base/VulkanDevice.hpp
+ include/VulkanLearning/base/VulkanImageResource.hpp
+ include/VulkanLearning/base/VulkanInstance.hpp
+ include/VulkanLearning/base/VulkanSurface.hpp
+ include/VulkanLearning/base/VulkanSwapChain.hpp
+ include/VulkanLearning/base/VulkanTexture.hpp
+ include/VulkanLearning/misc/VulkanDebug.hpp
+ include/VulkanLearning/window/Window.hpp
+ include/external/stb/stb_image.h
 src/base/CMakeFiles/base.dir/__/camera/camera.cpp.o
  /home/brioche/dev/graphics/vulkan/VulkanLearning/src/camera/camera.cpp
  external/glm/glm/common.hpp

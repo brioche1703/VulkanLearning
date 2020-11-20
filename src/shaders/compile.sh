@@ -23,3 +23,6 @@ $GLSLC_PATH pushConstants.frag -o pushConstantsFrag.spv
 
 $GLSLC_PATH specializationConstant.vert -o specializationConstantVert.spv
 $GLSLC_PATH specializationConstant.frag -o specializationConstantFrag.spv
+
+$GLSLC_PATH texture.vert -o textureVert.spv
+$GLSLC_PATH texture.frag -o textureFrag.spv

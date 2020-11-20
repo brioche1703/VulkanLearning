@@ -1,4 +1,5 @@
 #include "VulkanCommandBuffer.hpp"
+#include <vulkan/vulkan_core.h>
 
 namespace VulkanLearning {
 
@@ -6,11 +7,10 @@ namespace VulkanLearning {
 
     VulkanCommandBuffer::~VulkanCommandBuffer() {}
 
-    void VulkanCommandBuffer::beginSingleTimeCommands(VulkanDevice* device, VulkanCommandPool* commandPool) {
+    void VulkanCommandBuffer::create(VulkanDevice* device, VulkanCommandPool* commandPool, VkCommandBufferLevel level, bool begin) {
         VkCommandBufferAllocateInfo allocInfo{};
-
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+        allocInfo.level = level;
         allocInfo.commandPool = commandPool->getCommandPool();
         allocInfo.commandBufferCount = 1;
 
@@ -23,17 +23,42 @@ namespace VulkanLearning {
         vkBeginCommandBuffer(m_commandBuffer, &beginInfo);
     }
 
-    void VulkanCommandBuffer::endSingleTimeCommands(VulkanDevice* device, VulkanCommandPool* commandPool) {
-        vkEndCommandBuffer(m_commandBuffer);
+    void VulkanCommandBuffer::flushCommandBuffer(VulkanDevice* device, VulkanCommandPool* commandPool, bool free) {
+        if (m_commandBuffer == VK_NULL_HANDLE) {
+            return;
+        } 
 
-        VkSubmitInfo submitInfo{};
+        if (vkEndCommandBuffer(m_commandBuffer) != VK_SUCCESS) {
+            throw std::runtime_error("Command buffer end failed!");
+        }
+
+        VkSubmitInfo submitInfo = {};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = &m_commandBuffer;
 
-        vkQueueSubmit(device->getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(device->getGraphicsQueue());
+        VkFenceCreateInfo fenceInfo = {};
+        fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 
-        vkFreeCommandBuffers(device->getLogicalDevice(), commandPool->getCommandPool(), 1, &m_commandBuffer);
+        VkFence fence;
+        if (vkCreateFence(device->getLogicalDevice(), &fenceInfo, nullptr, &fence) != VK_SUCCESS) {
+            throw std::runtime_error("Fence creation failed!");
+        }
+
+        if (vkQueueSubmit(device->getGraphicsQueue(), 1, &submitInfo, fence) != VK_SUCCESS) {
+            throw std::runtime_error("Fence submition to queue failed!");
+        }
+
+        if (vkWaitForFences(device->getLogicalDevice(), 1, &fence, VK_TRUE, UINT64_MAX) != VK_SUCCESS) {
+            throw std::runtime_error("Waiting for fence failed!");
+        }
+
+        vkDestroyFence(device->getLogicalDevice(), fence, nullptr);
+
+        if (free)
+        {
+            vkFreeCommandBuffers(device->getLogicalDevice(), commandPool->getCommandPool(), 1, &m_commandBuffer);
+        }
+
     }
 }

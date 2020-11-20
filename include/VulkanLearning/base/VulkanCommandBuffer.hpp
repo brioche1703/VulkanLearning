@@ -18,7 +18,8 @@ namespace VulkanLearning {
             inline VkCommandBuffer getCommandBuffer() { return m_commandBuffer; }
             inline VkCommandBuffer* getCommandBufferPointer() { return &m_commandBuffer; }
 
-            void beginSingleTimeCommands(VulkanDevice* device, VulkanCommandPool* commandPool);
-            void endSingleTimeCommands(VulkanDevice* device, VulkanCommandPool* commandPool);
+            void create(VulkanDevice* device, VulkanCommandPool* commandPool, VkCommandBufferLevel level, bool begin);
+
+            void flushCommandBuffer(VulkanDevice* device, VulkanCommandPool* commandPool, bool free);
     };
 }

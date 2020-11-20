@@ -37,8 +37,12 @@
 *.spv
 
 # Build
+bin/
 build/
 runner
+
+# CMake
+CMakeCache.txt
 
 # Other
 .ccls-cache

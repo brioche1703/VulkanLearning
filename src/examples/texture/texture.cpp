@@ -1,11 +1,18 @@
 #include "VulkanBase.h"
 
 #include "ktx.h"
+#include <vulkan/vulkan_core.h>
 
 namespace VulkanLearning {
 
     const std::string MODEL_PATH = "./src/models/viking_room.obj";
-    const std::string TEXTURE_PATH = "./src/textures/viking_room.png";
+    const std::string TEXTURE_PATH = "./src/textures/metalplate01_rgba.ktx";
+
+    struct Vertex {
+        glm::vec3 pos;
+        glm::vec2 uv;
+        glm::vec3 normal;
+    };
 
     class VulkanExample : public VulkanBase {
 
@@ -19,7 +26,29 @@ namespace VulkanLearning {
             void run() {
                 VulkanBase::run();
             }
+
+
+            struct Texture {
+                VkSampler sampler;
+                VkImage image;
+                VkImageLayout imageLayout;
+                VkDeviceMemory deviceMemory;
+                VkImageView view;
+                uint32_t width, height;
+                uint32_t mipLevels;
+            } texture;
+
         private:
+            std::vector<Vertex> m_vertices =
+            {
+                { {  1.0f,  1.0f, 0.0f }, { 1.0f, 1.0f },{ 0.0f, 0.0f, 1.0f } },
+                { { -1.0f,  1.0f, 0.0f }, { 0.0f, 1.0f },{ 0.0f, 0.0f, 1.0f } },
+                { { -1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f },{ 0.0f, 0.0f, 1.0f } },
+                { {  1.0f, -1.0f, 0.0f }, { 1.0f, 0.0f },{ 0.0f, 0.0f, 1.0f } }
+            };
+
+            std::vector<uint32_t> m_indices = { 0,1,2, 2,3,0 };
+
 
             void initWindow() override {
                 m_window = new Window("Vulkan", WIDTH, HEIGHT);
@@ -53,7 +82,7 @@ namespace VulkanLearning {
                 createColorResources();
                 createDepthResources();
                 createFramebuffers();
-                createTexture();
+                createTextureKTX();
 
                 loadModel();
 
@@ -150,7 +179,8 @@ namespace VulkanLearning {
             void cleanup() override {
                 cleanupSwapChain();
 
-                m_texture->cleanup();
+                //m_texture->cleanup();
+                destroyTextureImage(texture);
 
                 m_descriptorSetLayout->cleanup();
 
@@ -324,9 +354,9 @@ namespace VulkanLearning {
                         m_swapChain, m_renderPass, m_descriptorSetLayout);
 
                 VulkanShaderModule vertShaderModule = 
-                    VulkanShaderModule("src/shaders/vert.spv", m_device);
+                    VulkanShaderModule("src/shaders/textureVert.spv", m_device);
                 VulkanShaderModule fragShaderModule = 
-                    VulkanShaderModule("src/shaders/frag.spv", m_device);
+                    VulkanShaderModule("src/shaders/textureFrag.spv", m_device);
 
                 VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
                 vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -334,11 +364,35 @@ namespace VulkanLearning {
                 auto bindingDescription = VertexTextured::getBindingDescription();
                 auto attributeDescriptions = VertexTextured::getAttributeDescriptions();
 
+                VkVertexInputBindingDescription vertexBindingDescription;
+                vertexBindingDescription.binding = 0;
+                vertexBindingDescription.stride = sizeof(Vertex);
+                vertexBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+                std::vector<VkVertexInputAttributeDescription> vertexAttributeDescription;
+                vertexAttributeDescription.resize(3);
+                vertexAttributeDescription[0].binding = 0;
+                vertexAttributeDescription[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+                vertexAttributeDescription[0].location = 0;
+                vertexAttributeDescription[0].offset = offsetof(Vertex, pos);
+
+                vertexAttributeDescription[1].binding = 0;
+                vertexAttributeDescription[1].format = VK_FORMAT_R32G32_SFLOAT;
+                vertexAttributeDescription[1].location = 1;
+                vertexAttributeDescription[1].offset = offsetof(Vertex, uv);
+
+                vertexAttributeDescription[2].binding = 0;
+                vertexAttributeDescription[2].format = VK_FORMAT_R32G32B32_SFLOAT;
+                vertexAttributeDescription[2].location = 2;
+                vertexAttributeDescription[2].offset = offsetof(Vertex, normal);
+
+
+
                 vertexInputInfo.vertexBindingDescriptionCount = 1;
                 vertexInputInfo.vertexAttributeDescriptionCount = 
-                    static_cast<uint32_t>(attributeDescriptions.size());
-                vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
-                vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+                    static_cast<uint32_t>(vertexAttributeDescription.size());
+                vertexInputInfo.pVertexBindingDescriptions = &vertexBindingDescription;
+                vertexInputInfo.pVertexAttributeDescriptions = vertexAttributeDescription.data();
 
 
                 VkPipelineDepthStencilStateCreateInfo depthStencil{};
@@ -375,10 +429,246 @@ namespace VulkanLearning {
                 m_commandPool = new VulkanCommandPool(m_device);
             }
 
+            void destroyTextureImage(Texture texture) {
+                vkDestroyImageView(m_device->getLogicalDevice(), texture.view, nullptr);
+                vkDestroyImage(m_device->getLogicalDevice(), texture.image, nullptr);
+                vkDestroySampler(m_device->getLogicalDevice(), texture.sampler, nullptr);
+                vkFreeMemory(m_device->getLogicalDevice(), texture.deviceMemory, nullptr);
+            }
+
+            void createTextureKTX() {
+                VkFormat format = VK_FORMAT_R8G8B8A8_UNORM;
+
+                ktxResult result;
+                ktxTexture* ktxTexture;
+
+                result = ktxTexture_CreateFromNamedFile(TEXTURE_PATH.c_str(), KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &ktxTexture);
+
+                if (result != KTX_SUCCESS) {
+                    throw std::runtime_error("KTX Texture creation failed!");
+                }
+
+                texture.width = ktxTexture->baseWidth;
+                texture.height = ktxTexture->baseHeight;
+                texture.mipLevels = ktxTexture->numLevels;
+              
+                ktx_uint8_t *ktxTextureData = ktxTexture_GetData(ktxTexture);
+                ktx_size_t ktxTextureSize = ktxTexture_GetDataSize(ktxTexture);
+
+                VkBool32 useStaging = true;
+
+                bool forceLinearTiling = false;
+                if (forceLinearTiling) {
+                    VkFormatProperties formatProperties;
+                    vkGetPhysicalDeviceFormatProperties(m_device->getPhysicalDevice(), format, &formatProperties);
+                    useStaging = !(formatProperties.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT);
+                }
+
+                VkMemoryAllocateInfo memAllocInfo = {};
+                memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+                VkMemoryRequirements memReqs = {};
+
+                if (useStaging) {
+                    VkBuffer stagingBuffer;
+                    VkDeviceMemory stagingMemory;
+
+                    VkBufferCreateInfo bufferCreateInfo = {};
+                    bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+                    bufferCreateInfo.size = ktxTextureSize;
+                    bufferCreateInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
+                    bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+                    if (vkCreateBuffer(m_device->getLogicalDevice(), &bufferCreateInfo, nullptr, &stagingBuffer) != VK_SUCCESS) {
+                        throw std::runtime_error("Buffer creation failed!");
+                    }
+
+                    vkGetBufferMemoryRequirements(m_device->getLogicalDevice(), stagingBuffer, &memReqs);
+                    memAllocInfo.allocationSize = memReqs.size;
+                    memAllocInfo.memoryTypeIndex = m_device->findMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+                    if (vkAllocateMemory(m_device->getLogicalDevice(), &memAllocInfo, nullptr, &stagingMemory) != VK_SUCCESS) {
+                        throw std::runtime_error("Memory allocation failed!");
+                    }
+
+                    if (vkBindBufferMemory(m_device->getLogicalDevice(), stagingBuffer, stagingMemory, 0) != VK_SUCCESS) {
+                        throw std::runtime_error("Buffer memory binding failed!");
+                    }
+
+                    uint8_t * data;
+                    if (vkMapMemory(m_device->getLogicalDevice(), stagingMemory, 0, memReqs.size, 0, (void **)&data) != VK_SUCCESS) {
+                        throw std::runtime_error("Mapping memory failed!");
+                    }
+                    memcpy(data, ktxTextureData, ktxTextureSize);
+                    vkUnmapMemory(m_device->getLogicalDevice(), stagingMemory);
+
+                    std::vector<VkBufferImageCopy> bufferCopyRegions;
+
+                    uint32_t offset = 0;
+
+                    for (uint32_t i = 0; i < texture.mipLevels; i++) {
+                        ktx_size_t offset;
+                        if (ktxTexture_GetImageOffset(ktxTexture, i, 0, 0, &offset) != KTX_SUCCESS) {
+                            throw std::runtime_error("KTX get image offset failed!");
+                        }
+
+                        VkBufferImageCopy bufferCopyRegion = {};
+                        bufferCopyRegion.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+                        bufferCopyRegion.imageSubresource.mipLevel = i;
+                        bufferCopyRegion.imageSubresource.baseArrayLayer = 0;
+                        bufferCopyRegion.imageSubresource.layerCount = 1;
+                        bufferCopyRegion.imageExtent.width = ktxTexture->baseWidth >> i;
+                        bufferCopyRegion.imageExtent.height = ktxTexture->baseHeight >> i;
+                        bufferCopyRegion.imageExtent.depth = 1;
+                        bufferCopyRegion.bufferOffset = offset;
+                        bufferCopyRegions.push_back(bufferCopyRegion);
+                    }
+
+                    VkImageCreateInfo imageCreateInfo = {};
+                    imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+                    imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
+                    imageCreateInfo.format = format;
+                    imageCreateInfo.mipLevels = texture.mipLevels;
+                    imageCreateInfo.arrayLayers = 1;
+                    imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+                    imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+                    imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+                    imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                    imageCreateInfo.extent = { texture.width, texture.height, 1 };
+                    imageCreateInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+
+                    if (vkCreateImage(m_device->getLogicalDevice(), &imageCreateInfo, nullptr, &texture.image) != VK_SUCCESS) {
+                        throw std::runtime_error("Image creation failed!");
+                    }
+
+                    vkGetImageMemoryRequirements(m_device->getLogicalDevice(), texture.image, &memReqs);
+                    memAllocInfo.allocationSize = memReqs.size;
+                    memAllocInfo.memoryTypeIndex = m_device->findMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+                    if (vkAllocateMemory(m_device->getLogicalDevice(), &memAllocInfo, nullptr, &texture.deviceMemory) != VK_SUCCESS) {
+                        throw std::runtime_error("Memory allocation failed!");
+                    }
+
+                    if (vkBindImageMemory(m_device->getLogicalDevice(), texture.image, texture.deviceMemory, 0) != VK_SUCCESS) {
+                        throw std::runtime_error("Image memory binding failed!");
+                    }
+
+                    VulkanCommandBuffer copyCmd;
+                    copyCmd.create(m_device, m_commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+
+                    VkImageSubresourceRange subresourceRange = {};
+                    subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+                    subresourceRange.baseMipLevel = 0;
+                    subresourceRange.levelCount = texture.mipLevels;
+                    subresourceRange.layerCount = 1;
+
+                    VkImageMemoryBarrier imageMemoryBarrier = {};
+                    imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+                    imageMemoryBarrier.image = texture.image;
+                    imageMemoryBarrier.subresourceRange = subresourceRange;
+                    imageMemoryBarrier.srcAccessMask = 0;
+                    imageMemoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+                    imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+                    imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+
+                    vkCmdPipelineBarrier(
+                            copyCmd.getCommandBuffer(), 
+                            VK_PIPELINE_STAGE_HOST_BIT, 
+                            VK_PIPELINE_STAGE_TRANSFER_BIT, 
+                            0,
+                            0,
+                            nullptr,
+                            0,
+                            nullptr,
+                            1,
+                            &imageMemoryBarrier);
+                           
+                    vkCmdCopyBufferToImage(
+                            copyCmd.getCommandBuffer(), 
+                            stagingBuffer, 
+                            texture.image, 
+                            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 
+                            static_cast<uint32_t>(bufferCopyRegions.size()), 
+                            bufferCopyRegions.data());
+
+                    imageMemoryBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+                    imageMemoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+                    imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+                    imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+                    vkCmdPipelineBarrier(
+                            copyCmd.getCommandBuffer(), 
+                            VK_PIPELINE_STAGE_HOST_BIT, 
+                            VK_PIPELINE_STAGE_TRANSFER_BIT, 
+                            0,
+                            0,
+                            nullptr,
+                            0,
+                            nullptr,
+                            1,
+                            &imageMemoryBarrier);
+
+                    texture.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+
+                    // FLUSHHHHH MEMORY!?
+                    copyCmd.flushCommandBuffer(m_device, m_commandPool, true);
+
+                    vkFreeMemory(m_device->getLogicalDevice(), stagingMemory, nullptr);
+                    vkDestroyBuffer(m_device->getLogicalDevice(), stagingBuffer, nullptr);
+                } else {
+                    // TODO
+                }
+
+                ktxTexture_Destroy(ktxTexture);
+
+                VkSamplerCreateInfo sampler = {};
+                sampler.magFilter = VK_FILTER_LINEAR;
+                sampler.minFilter = VK_FILTER_LINEAR;
+                sampler.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+                sampler.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+                sampler.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+                sampler.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+                sampler.mipLodBias = 0.0f;
+                sampler.compareOp = VK_COMPARE_OP_NEVER;
+                sampler.minLod = 0.0f;
+                sampler.maxLod = (useStaging) ? (float)texture.mipLevels : 0.0f;
+                sampler.anisotropyEnable = VK_TRUE;
+                sampler.maxAnisotropy = 16.0f;
+
+                sampler.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
+
+                if (vkCreateSampler(m_device->getLogicalDevice(), &sampler, 
+                            nullptr, &texture.sampler) != VK_SUCCESS) {
+                    throw std::runtime_error("Sampler creation failed!");
+                }
+
+                VkImageViewCreateInfo view = {};
+                view.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+                view.viewType = VK_IMAGE_VIEW_TYPE_2D;
+                view.format = format;
+                view.components = {
+                    VK_COMPONENT_SWIZZLE_R,
+                    VK_COMPONENT_SWIZZLE_G,
+                    VK_COMPONENT_SWIZZLE_B,
+                    VK_COMPONENT_SWIZZLE_A
+                };
+                view.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+                view.subresourceRange.baseMipLevel = 0;
+                view.subresourceRange.baseArrayLayer = 0;
+                view.subresourceRange.layerCount = 1;
+                view.subresourceRange.levelCount = (useStaging) ? texture.mipLevels : 1;
+                view.image = texture.image;
+
+                if (vkCreateImageView(m_device->getLogicalDevice(), &view, 
+                            nullptr, &texture.view) != VK_SUCCESS) {
+                    throw std::runtime_error("Image view creation failed!");
+                }
+            }
+ 
             void createTexture() override {
                 m_texture = new VulkanTexture(TEXTURE_PATH, m_device, m_swapChain,
                         m_commandPool);
-                m_texture->create();
+                m_texture->createKTX();
                 m_texture->createImageView(VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
                 m_texture->createSampler();
             }
@@ -404,14 +694,14 @@ namespace VulkanLearning {
 
             void createVertexBuffer() override {
                 m_vertexBuffer = new VulkanBuffer(m_device, m_commandPool);
-                m_vertexBuffer->createWithStagingBuffer(m_model->getVerticies(), 
+                m_vertexBuffer->createWithStagingBuffer(m_vertices,
                         VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
                         VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
             }
 
             void createIndexBuffer() override {
                 m_indexBuffer = new VulkanBuffer(m_device, m_commandPool);
-                m_indexBuffer->createWithStagingBuffer(m_model->getIndicies(), 
+                m_indexBuffer->createWithStagingBuffer(m_indices,
                         VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
                         VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
             }
@@ -500,7 +790,7 @@ namespace VulkanLearning {
 
                     vkCmdDrawIndexed(
                             m_commandBuffers[i].getCommandBuffer(), 
-                            static_cast<uint32_t>(m_model->getIndicies().size()), 
+                            static_cast<uint32_t>(m_indices.size()), 
                             1, 
                             0, 
                             0, 
@@ -591,9 +881,9 @@ namespace VulkanLearning {
                     descriptorWrites[0].pBufferInfo = &bufferInfo;
 
                     VkDescriptorImageInfo imageInfo{};
-                    imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                    imageInfo.imageView = m_texture->getImageView();
-                    imageInfo.sampler = m_texture->getSampler();
+                    imageInfo.imageView = texture.view;
+                    imageInfo.sampler = texture.sampler;
+                    imageInfo.imageLayout = texture.imageLayout;
 
                     descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
                     descriptorWrites[1].dstBinding = 1;
@@ -610,8 +900,6 @@ namespace VulkanLearning {
                 CoordinatesSystemUniformBufferObject ubo{};
 
                 ubo.model = glm::mat4(1.0f);
-                ubo.model = glm::rotate(ubo.model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-                ubo.model = glm::rotate(ubo.model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
                 ubo.view = m_camera->getViewMatrix();
 

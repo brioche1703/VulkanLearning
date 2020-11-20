@@ -52,7 +52,7 @@ namespace VulkanLearning {
 
             void copyBufferToImage(VulkanBuffer buffer, uint32_t width, uint32_t height) {
                 VulkanCommandBuffer commandBuffer;
-                commandBuffer.beginSingleTimeCommands(m_device, m_commandPool);
+                commandBuffer.create(m_device, m_commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
                 VkBufferImageCopy region{};
                 region.bufferOffset = 0;
@@ -73,7 +73,7 @@ namespace VulkanLearning {
 
                 vkCmdCopyBufferToImage(commandBuffer.getCommandBuffer(), buffer.getBuffer(), m_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
-                commandBuffer.endSingleTimeCommands(m_device, m_commandPool);
+                commandBuffer.flushCommandBuffer(m_device, m_commandPool, true);
             }
     };
 
