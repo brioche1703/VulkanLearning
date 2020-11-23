@@ -65,7 +65,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanSwapChain.cpp" "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/CMakeFiles/base.dir/VulkanSwapChain.cpp.o"
   "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanSyncObjects.cpp" "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/CMakeFiles/base.dir/VulkanSyncObjects.cpp.o"
   "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanTexture.cpp" "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o"
-  "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/camera/camera.cpp" "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/CMakeFiles/base.dir/__/camera/camera.cpp.o"
+  "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/camera/Camera.cpp" "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/CMakeFiles/base.dir/__/camera/Camera.cpp.o"
   "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/external/imgui/imgui.cpp" "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/CMakeFiles/base.dir/__/external/imgui/imgui.cpp.o"
   "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/external/imgui/imgui_demo.cpp" "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/CMakeFiles/base.dir/__/external/imgui/imgui_demo.cpp.o"
   "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/external/imgui/imgui_draw.cpp" "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/CMakeFiles/base.dir/__/external/imgui/imgui_draw.cpp.o"

@@ -54,6 +54,8 @@ namespace VulkanLearning {
             Camera(float posX, float posY, float posZ, float upX, float upY, float upZ,
                     float yaw, float pitch);
 
+            inline glm::vec3 position() { return m_Position; }
+
             glm::mat4 getViewMatrix();
             float getZoom();
 

@@ -923,6 +923,8 @@ namespace VulkanLearning {
 
                 ubo.proj[1][1] *= -1;
 
+                ubo.camPos = m_camera->position();
+
                 m_coordinateSystemUniformBuffers[currentImage]->map();
                 memcpy(m_coordinateSystemUniformBuffers[currentImage]->getMappedMemory(),
                         &ubo, sizeof(ubo));

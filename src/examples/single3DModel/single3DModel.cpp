@@ -322,9 +322,9 @@ namespace VulkanLearning {
                         m_swapChain, m_renderPass, m_descriptorSetLayout);
 
                 VulkanShaderModule vertShaderModule = 
-                    VulkanShaderModule("src/shaders/vert.spv", m_device);
+                    VulkanShaderModule("src/shaders/single3DModelVert.spv", m_device);
                 VulkanShaderModule fragShaderModule = 
-                    VulkanShaderModule("src/shaders/frag.spv", m_device);
+                    VulkanShaderModule("src/shaders/single3DModelFrag.spv", m_device);
 
                 VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
                 vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -618,6 +618,8 @@ namespace VulkanLearning {
                         0.1f,  100.0f);
 
                 ubo.proj[1][1] *= -1;
+
+                ubo.camPos = m_camera->position();
 
                 m_coordinateSystemUniformBuffers[currentImage]->map();
                 memcpy(m_coordinateSystemUniformBuffers[currentImage]->getMappedMemory(), 

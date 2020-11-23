@@ -43,7 +43,6 @@ namespace VulkanLearning {
             inline VkSampler getSampler() { return m_sampler; }
 
             void create();
-            void createKTX();
             void cleanup();
             void generateMipmaps(VkFormat imageFormat, 
                     int32_t texWidth, int32_t texHeight, uint32_t mipLevels);

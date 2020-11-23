@@ -28,10 +28,7 @@ namespace VulkanLearning {
     QueueFamilyIndices VulkanDevice::getQueueFamilyIndices() { return m_queueFamilyIndices; }
 
     size_t VulkanDevice::getMinUniformBufferOffsetAlignment() {
-        VkPhysicalDeviceProperties props;
-        vkGetPhysicalDeviceProperties(m_physicalDevice, &props);
-        
-        return props.limits.minUniformBufferOffsetAlignment;
+        return properties.limits.minUniformBufferOffsetAlignment;
     }
 
     void VulkanDevice::pickPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const std::vector<const char*> deviceExtensions) {
@@ -48,6 +45,7 @@ namespace VulkanLearning {
         for (const auto& device : devices) {
             if (isDeviceSuitable(device, surface, deviceExtensions)) {
                 m_physicalDevice = device;
+                vkGetPhysicalDeviceProperties(m_physicalDevice, &properties);
                 m_msaaSamples = m_msaaSamplesMax <= 
                     static_cast<int>(getMaxUsableSampleCount()) ?
                     (VkSampleCountFlagBits) m_msaaSamplesMax 
@@ -108,11 +106,8 @@ namespace VulkanLearning {
 
 
     VkSampleCountFlagBits VulkanDevice::getMaxUsableSampleCount() {
-        VkPhysicalDeviceProperties physicalDeviceProperties;
-        vkGetPhysicalDeviceProperties(m_physicalDevice, &physicalDeviceProperties);
-
-        VkSampleCountFlags counts = physicalDeviceProperties.limits.framebufferColorSampleCounts 
-            & physicalDeviceProperties.limits.framebufferDepthSampleCounts;
+        VkSampleCountFlags counts = properties.limits.framebufferColorSampleCounts 
+            & properties.limits.framebufferDepthSampleCounts;
 
         if (counts & VK_SAMPLE_COUNT_64_BIT) { return VK_SAMPLE_COUNT_64_BIT; }
         if (counts & VK_SAMPLE_COUNT_32_BIT) { return VK_SAMPLE_COUNT_32_BIT; }
@@ -136,10 +131,9 @@ namespace VulkanLearning {
             swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
         }
 
-        VkPhysicalDeviceFeatures supportedFeatures;
-        vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
+        vkGetPhysicalDeviceFeatures(device, &features);
 
-        return m_queueFamilyIndices.isComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;
+        return m_queueFamilyIndices.isComplete() && extensionsSupported && swapChainAdequate && features.samplerAnisotropy;
     }
 
     QueueFamilyIndices VulkanDevice::findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface) {

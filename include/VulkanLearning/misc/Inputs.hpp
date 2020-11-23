@@ -2,7 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "camera/camera.hpp"
+#include "camera/Camera.hpp"
 #include "misc/FpsCounter.hpp"
 
 namespace VulkanLearning {

@@ -1,0 +1,3 @@
+/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/CMakeFiles/rebuild_cache.dir
+/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/CMakeFiles/edit_cache.dir
+/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/CMakeFiles/base.dir

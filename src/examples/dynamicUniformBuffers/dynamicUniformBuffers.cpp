@@ -454,7 +454,7 @@ namespace VulkanLearning {
             }
 
             void createDynamicUniformBuffers() {
-                size_t minUboAlignment = m_device->getMinUniformBufferOffsetAlignment();
+                size_t minUboAlignment = m_device->properties.limits.minUniformBufferOffsetAlignment;
                 m_dynamicAlignment = sizeof(uboDataDynamic);
                 if (minUboAlignment > 0) {
                     m_dynamicAlignment = (m_dynamicAlignment + minUboAlignment - 1)
@@ -683,6 +683,8 @@ namespace VulkanLearning {
                         0.1f,  100.0f);
 
                 ubo.proj[1][1] *= -1;
+
+                ubo.camPos = m_camera->position();
 
                 m_coordinateSystemUniformBuffers[currentImage]->map();
                 memcpy(m_coordinateSystemUniformBuffers[currentImage]->getMappedMemory(), 

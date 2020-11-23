@@ -238,7 +238,7 @@ src/examples/CMakeFiles/specializationConstant.dir/specializationConstant/specia
 src/examples/CMakeFiles/specializationConstant.dir/specializationConstant/specializationConstant.cpp.o: include/VulkanLearning/base/VulkanSwapChain.hpp
 src/examples/CMakeFiles/specializationConstant.dir/specializationConstant/specializationConstant.cpp.o: include/VulkanLearning/base/VulkanSyncObjects.hpp
 src/examples/CMakeFiles/specializationConstant.dir/specializationConstant/specializationConstant.cpp.o: include/VulkanLearning/base/VulkanTexture.hpp
-src/examples/CMakeFiles/specializationConstant.dir/specializationConstant/specializationConstant.cpp.o: include/VulkanLearning/camera/camera.hpp
+src/examples/CMakeFiles/specializationConstant.dir/specializationConstant/specializationConstant.cpp.o: include/VulkanLearning/camera/Camera.hpp
 src/examples/CMakeFiles/specializationConstant.dir/specializationConstant/specializationConstant.cpp.o: include/VulkanLearning/misc/FpsCounter.hpp
 src/examples/CMakeFiles/specializationConstant.dir/specializationConstant/specializationConstant.cpp.o: include/VulkanLearning/misc/Inputs.hpp
 src/examples/CMakeFiles/specializationConstant.dir/specializationConstant/specializationConstant.cpp.o: include/VulkanLearning/misc/VulkanDebug.hpp

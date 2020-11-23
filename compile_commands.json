@@ -1,695 +1,322 @@
 [
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/base/VulkanDescriptorPool.o",
-            "src/base/VulkanDescriptorPool.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/base/VulkanDescriptorPool.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/misc/Inputs.o",
-            "src/misc/Inputs.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/misc/Inputs.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/external/imgui/imgui_impl_vulkan.o",
-            "src/external/imgui/imgui_impl_vulkan.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/external/imgui/imgui_impl_vulkan.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/base/VulkanCommandPool.o",
-            "src/base/VulkanCommandPool.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/base/VulkanCommandPool.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/base/VulkanRenderPass.o",
-            "src/base/VulkanRenderPass.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/base/VulkanRenderPass.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/external/imgui/imgui_impl_glfw.o",
-            "src/external/imgui/imgui_impl_glfw.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/external/imgui/imgui_impl_glfw.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/examples/texture/texture.o",
-            "src/examples/texture/texture.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/examples/texture/texture.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/examples/dynamicUniformBuffers/dynamicUniformBuffers.o",
-            "src/examples/dynamicUniformBuffers/dynamicUniformBuffers.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/examples/dynamicUniformBuffers/dynamicUniformBuffers.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/base/VulkanDescriptorSets.o",
-            "src/base/VulkanDescriptorSets.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/base/VulkanDescriptorSets.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/base/VulkanSyncObjects.o",
-            "src/base/VulkanSyncObjects.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/base/VulkanSyncObjects.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/camera/camera.o",
-            "src/camera/camera.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/camera/camera.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/external/imgui/imgui.o",
-            "src/external/imgui/imgui.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/external/imgui/imgui.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/base/VulkanSwapChain.o",
-            "src/base/VulkanSwapChain.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/base/VulkanSwapChain.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/examples/single3DModel/single3DModel.o",
-            "src/examples/single3DModel/single3DModel.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/examples/single3DModel/single3DModel.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/base/VulkanSurface.o",
-            "src/base/VulkanSurface.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/base/VulkanSurface.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/external/imgui/imgui_widgets.o",
-            "src/external/imgui/imgui_widgets.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/external/imgui/imgui_widgets.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/external/imgui/imgui_demo.o",
-            "src/external/imgui/imgui_demo.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/external/imgui/imgui_demo.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/external/imgui/imgui_draw.o",
-            "src/external/imgui/imgui_draw.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/external/imgui/imgui_draw.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/misc/model/ModelObj.o",
-            "src/misc/model/ModelObj.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/misc/model/ModelObj.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/base/VulkanShaderModule.o",
-            "src/base/VulkanShaderModule.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/base/VulkanShaderModule.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/base/VulkanInstance.o",
-            "src/base/VulkanInstance.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/base/VulkanInstance.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/base/VulkanImageResource.o",
-            "src/base/VulkanImageResource.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/base/VulkanImageResource.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/base/VulkanTexture.o",
-            "src/base/VulkanTexture.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/base/VulkanTexture.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/base/VulkanCommandBuffer.o",
-            "src/base/VulkanCommandBuffer.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/base/VulkanCommandBuffer.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/examples/simpleTriangle/simpleTriangle.o",
-            "src/examples/simpleTriangle/simpleTriangle.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/examples/simpleTriangle/simpleTriangle.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/base/VulkanBuffer.o",
-            "src/base/VulkanBuffer.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/base/VulkanBuffer.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/base/VulkanDescriptorSetLayout.o",
-            "src/base/VulkanDescriptorSetLayout.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/base/VulkanDescriptorSetLayout.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/base/VulkanDevice.o",
-            "src/base/VulkanDevice.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/base/VulkanDevice.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/window/Window.o",
-            "src/window/Window.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/window/Window.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/misc/VulkanDebug.o",
-            "src/misc/VulkanDebug.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/misc/VulkanDebug.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/examples/specializationConstant/specializationConstant.o",
-            "src/examples/specializationConstant/specializationConstant.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/examples/specializationConstant/specializationConstant.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/base/VulkanGraphicsPipeline.o",
-            "src/base/VulkanGraphicsPipeline.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/base/VulkanGraphicsPipeline.cpp"
-    },
-    {
-        "arguments": [
-            "g++",
-            "-c",
-            "-std=c++17",
-            "-g",
-            "-Iinclude/VulkanLearning/base",
-            "-Iinclude/VulkanLearning",
-            "-Iinclude/external/stb",
-            "-Iinclude/external/tinyobjloader",
-            "-Isrc/external/imgui",
-            "-Iexternal/KTX-Software/include",
-            "-Iexternal/glm",
-            "-I/usr/local/include",
-            "-o",
-            "build/examples/pushConstants/pushConstants.o",
-            "src/examples/pushConstants/pushConstants.cpp"
-        ],
-        "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning",
-        "file": "src/examples/pushConstants/pushConstants.cpp"
-    }
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/__/external/imgui/imgui.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/external/imgui/imgui.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/external/imgui/imgui.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/__/external/imgui/imgui_demo.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/external/imgui/imgui_demo.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/external/imgui/imgui_demo.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/__/external/imgui/imgui_draw.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/external/imgui/imgui_draw.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/external/imgui/imgui_draw.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/__/external/imgui/imgui_impl_glfw.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/external/imgui/imgui_impl_glfw.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/external/imgui/imgui_impl_glfw.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/__/external/imgui/imgui_impl_vulkan.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/external/imgui/imgui_impl_vulkan.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/external/imgui/imgui_impl_vulkan.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/__/external/imgui/imgui_widgets.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/external/imgui/imgui_widgets.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/external/imgui/imgui_widgets.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanBuffer.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanBuffer.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanBuffer.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanCommandBuffer.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanCommandBuffer.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanCommandBuffer.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanCommandPool.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanCommandPool.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanCommandPool.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanDebug.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanDebug.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanDebug.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanDescriptorPool.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanDescriptorPool.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanDescriptorPool.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanDescriptorSetLayout.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanDescriptorSetLayout.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanDescriptorSetLayout.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanDescriptorSets.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanDescriptorSets.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanDescriptorSets.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanDevice.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanDevice.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanDevice.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanGraphicsPipeline.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanGraphicsPipeline.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanGraphicsPipeline.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanImageResource.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanImageResource.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanImageResource.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanInstance.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanInstance.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanInstance.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanRenderPass.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanRenderPass.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanRenderPass.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanShaderModule.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanShaderModule.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanShaderModule.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanSurface.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanSurface.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanSurface.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanSwapChain.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanSwapChain.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanSwapChain.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanSyncObjects.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanSyncObjects.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanSyncObjects.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/VulkanTexture.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanTexture.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanTexture.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/__/camera/Camera.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/camera/Camera.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/camera/Camera.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/__/misc/Inputs.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/misc/Inputs.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/misc/Inputs.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/__/misc/model/ModelObj.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/misc/model/ModelObj.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/misc/model/ModelObj.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -std=gnu++17 -o CMakeFiles/base.dir/__/window/Window.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/window/Window.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/window/Window.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include    -o CMakeFiles/base.dir/__/__/external/KTX-Software/lib/texture.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/texture.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/texture.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include    -o CMakeFiles/base.dir/__/__/external/KTX-Software/lib/texture1.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/texture1.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/texture1.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include    -o CMakeFiles/base.dir/__/__/external/KTX-Software/lib/texture2.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/texture2.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/texture2.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include    -o CMakeFiles/base.dir/__/__/external/KTX-Software/lib/hashlist.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/hashlist.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/hashlist.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include    -o CMakeFiles/base.dir/__/__/external/KTX-Software/lib/checkheader.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/checkheader.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/checkheader.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include    -o CMakeFiles/base.dir/__/__/external/KTX-Software/lib/swap.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/swap.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/swap.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include    -o CMakeFiles/base.dir/__/__/external/KTX-Software/lib/memstream.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/memstream.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/memstream.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include    -o CMakeFiles/base.dir/__/__/external/KTX-Software/lib/filestream.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/filestream.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/filestream.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include    -o CMakeFiles/base.dir/__/__/external/KTX-Software/lib/dfdutils/createdfd.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils/createdfd.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils/createdfd.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include    -o CMakeFiles/base.dir/__/__/external/KTX-Software/lib/dfdutils/colourspaces.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils/colourspaces.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils/colourspaces.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include    -o CMakeFiles/base.dir/__/__/external/KTX-Software/lib/dfdutils/interpretdfd.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils/interpretdfd.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils/interpretdfd.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include    -o CMakeFiles/base.dir/__/__/external/KTX-Software/lib/dfdutils/printdfd.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils/printdfd.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils/printdfd.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include    -o CMakeFiles/base.dir/__/__/external/KTX-Software/lib/dfdutils/queries.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils/queries.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils/queries.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include    -o CMakeFiles/base.dir/__/__/external/KTX-Software/lib/dfdutils/vk2dfd.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils/vk2dfd.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils/vk2dfd.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/base",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include    -o CMakeFiles/base.dir/__/__/external/KTX-Software/lib/zstddeclib.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/zstddeclib.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/zstddeclib.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -fopenmp -std=gnu++17 -o CMakeFiles/texture.dir/texture/texture.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples/texture/texture.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples/texture/texture.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -fopenmp -std=gnu++17 -o CMakeFiles/specializationConstant.dir/specializationConstant/specializationConstant.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples/specializationConstant/specializationConstant.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples/specializationConstant/specializationConstant.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -fopenmp -std=gnu++17 -o CMakeFiles/pushConstants.dir/pushConstants/pushConstants.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples/pushConstants/pushConstants.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples/pushConstants/pushConstants.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -fopenmp -std=gnu++17 -o CMakeFiles/dynamicUniformBuffers.dir/dynamicUniformBuffers/dynamicUniformBuffers.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples/dynamicUniformBuffers/dynamicUniformBuffers.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples/dynamicUniformBuffers/dynamicUniformBuffers.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -fopenmp -std=gnu++17 -o CMakeFiles/single3DModel.dir/single3DModel/single3DModel.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples/single3DModel/single3DModel.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples/single3DModel/single3DModel.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples",
+  "command": "/usr/bin/c++  -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include   -DNOMINMAX -D_USE_MATH_DEFINES   -fopenmp -std=gnu++17 -o CMakeFiles/simpleTriangle.dir/simpleTriangle/simpleTriangle.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples/simpleTriangle/simpleTriangle.cpp",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples/simpleTriangle/simpleTriangle.cpp"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -D_GLFW_USE_CONFIG_H -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src  -fPIC   -Wall -std=gnu99 -Wdeclaration-after-statement -o CMakeFiles/glfw.dir/context.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/context.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/context.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -D_GLFW_USE_CONFIG_H -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src  -fPIC   -Wall -std=gnu99 -Wdeclaration-after-statement -o CMakeFiles/glfw.dir/init.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/init.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/init.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -D_GLFW_USE_CONFIG_H -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src  -fPIC   -Wall -std=gnu99 -Wdeclaration-after-statement -o CMakeFiles/glfw.dir/input.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/input.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/input.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -D_GLFW_USE_CONFIG_H -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src  -fPIC   -Wall -std=gnu99 -Wdeclaration-after-statement -o CMakeFiles/glfw.dir/monitor.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/monitor.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/monitor.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -D_GLFW_USE_CONFIG_H -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src  -fPIC   -Wall -std=gnu99 -Wdeclaration-after-statement -o CMakeFiles/glfw.dir/vulkan.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/vulkan.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/vulkan.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -D_GLFW_USE_CONFIG_H -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src  -fPIC   -Wall -std=gnu99 -Wdeclaration-after-statement -o CMakeFiles/glfw.dir/window.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/window.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/window.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -D_GLFW_USE_CONFIG_H -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src  -fPIC   -Wall -std=gnu99 -o CMakeFiles/glfw.dir/x11_init.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/x11_init.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/x11_init.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -D_GLFW_USE_CONFIG_H -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src  -fPIC   -Wall -std=gnu99 -o CMakeFiles/glfw.dir/x11_monitor.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/x11_monitor.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/x11_monitor.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -D_GLFW_USE_CONFIG_H -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src  -fPIC   -Wall -std=gnu99 -o CMakeFiles/glfw.dir/x11_window.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/x11_window.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/x11_window.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -D_GLFW_USE_CONFIG_H -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src  -fPIC   -Wall -std=gnu99 -o CMakeFiles/glfw.dir/xkb_unicode.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/xkb_unicode.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/xkb_unicode.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -D_GLFW_USE_CONFIG_H -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src  -fPIC   -Wall -std=gnu99 -o CMakeFiles/glfw.dir/posix_time.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/posix_time.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/posix_time.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -D_GLFW_USE_CONFIG_H -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src  -fPIC   -Wall -std=gnu99 -o CMakeFiles/glfw.dir/posix_thread.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/posix_thread.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/posix_thread.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -D_GLFW_USE_CONFIG_H -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src  -fPIC   -Wall -std=gnu99 -o CMakeFiles/glfw.dir/glx_context.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/glx_context.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/glx_context.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -D_GLFW_USE_CONFIG_H -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src  -fPIC   -Wall -std=gnu99 -Wdeclaration-after-statement -o CMakeFiles/glfw.dir/egl_context.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/egl_context.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/egl_context.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -D_GLFW_USE_CONFIG_H -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src  -fPIC   -Wall -std=gnu99 -Wdeclaration-after-statement -o CMakeFiles/glfw.dir/osmesa_context.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/osmesa_context.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/osmesa_context.c"
+},
+{
+  "directory": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src",
+  "command": "/usr/bin/cc -DVK_EXAMPLE_DATA_DIR=\\\"/home/brioche/dev/graphics/vulkan/VulkanLearning/data/\\\" -D_CRT_SECURE_NO_WARNINGS -D_GLFW_USE_CONFIG_H -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glm -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/imgui -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/stb -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/external/tinyobjloader -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include/KHR -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/other_include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/KTX-Software/lib/dfdutils -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/base -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/misc -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/window -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning/camera -I/home/brioche/dev/graphics/vulkan/VulkanLearning/include/VulkanLearning -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/include -I/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src  -fPIC   -Wall -std=gnu99 -o CMakeFiles/glfw.dir/linux_joystick.c.o   -c /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/linux_joystick.c",
+  "file": "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/src/linux_joystick.c"
+}
 ]

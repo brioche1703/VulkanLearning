@@ -1035,32 +1035,32 @@ __/__/external/KTX-Software/lib/zstddeclib.c.s:
 	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/base/CMakeFiles/base.dir/build.make src/base/CMakeFiles/base.dir/__/__/external/KTX-Software/lib/zstddeclib.c.s
 .PHONY : __/__/external/KTX-Software/lib/zstddeclib.c.s
 
-__/camera/camera.o: __/camera/camera.cpp.o
+__/camera/Camera.o: __/camera/Camera.cpp.o
 
-.PHONY : __/camera/camera.o
+.PHONY : __/camera/Camera.o
 
 # target to build an object file
-__/camera/camera.cpp.o:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/base/CMakeFiles/base.dir/build.make src/base/CMakeFiles/base.dir/__/camera/camera.cpp.o
-.PHONY : __/camera/camera.cpp.o
+__/camera/Camera.cpp.o:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/base/CMakeFiles/base.dir/build.make src/base/CMakeFiles/base.dir/__/camera/Camera.cpp.o
+.PHONY : __/camera/Camera.cpp.o
 
-__/camera/camera.i: __/camera/camera.cpp.i
+__/camera/Camera.i: __/camera/Camera.cpp.i
 
-.PHONY : __/camera/camera.i
+.PHONY : __/camera/Camera.i
 
 # target to preprocess a source file
-__/camera/camera.cpp.i:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/base/CMakeFiles/base.dir/build.make src/base/CMakeFiles/base.dir/__/camera/camera.cpp.i
-.PHONY : __/camera/camera.cpp.i
+__/camera/Camera.cpp.i:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/base/CMakeFiles/base.dir/build.make src/base/CMakeFiles/base.dir/__/camera/Camera.cpp.i
+.PHONY : __/camera/Camera.cpp.i
 
-__/camera/camera.s: __/camera/camera.cpp.s
+__/camera/Camera.s: __/camera/Camera.cpp.s
 
-.PHONY : __/camera/camera.s
+.PHONY : __/camera/Camera.s
 
 # target to generate assembly for a file
-__/camera/camera.cpp.s:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/base/CMakeFiles/base.dir/build.make src/base/CMakeFiles/base.dir/__/camera/camera.cpp.s
-.PHONY : __/camera/camera.cpp.s
+__/camera/Camera.cpp.s:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/base/CMakeFiles/base.dir/build.make src/base/CMakeFiles/base.dir/__/camera/Camera.cpp.s
+.PHONY : __/camera/Camera.cpp.s
 
 __/external/imgui/imgui.o: __/external/imgui/imgui.cpp.o
 
@@ -1414,9 +1414,9 @@ help:
 	@echo "... __/__/external/KTX-Software/lib/zstddeclib.o"
 	@echo "... __/__/external/KTX-Software/lib/zstddeclib.i"
 	@echo "... __/__/external/KTX-Software/lib/zstddeclib.s"
-	@echo "... __/camera/camera.o"
-	@echo "... __/camera/camera.i"
-	@echo "... __/camera/camera.s"
+	@echo "... __/camera/Camera.o"
+	@echo "... __/camera/Camera.i"
+	@echo "... __/camera/Camera.s"
 	@echo "... __/external/imgui/imgui.o"
 	@echo "... __/external/imgui/imgui.i"
 	@echo "... __/external/imgui/imgui.s"

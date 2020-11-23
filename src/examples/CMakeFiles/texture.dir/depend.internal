@@ -240,7 +240,7 @@ src/examples/CMakeFiles/texture.dir/texture/texture.cpp.o
  include/VulkanLearning/base/VulkanSwapChain.hpp
  include/VulkanLearning/base/VulkanSyncObjects.hpp
  include/VulkanLearning/base/VulkanTexture.hpp
- include/VulkanLearning/camera/camera.hpp
+ include/VulkanLearning/camera/Camera.hpp
  include/VulkanLearning/misc/FpsCounter.hpp
  include/VulkanLearning/misc/Inputs.hpp
  include/VulkanLearning/misc/VulkanDebug.hpp

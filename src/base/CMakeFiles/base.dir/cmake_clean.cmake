@@ -31,7 +31,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/base.dir/__/__/external/KTX-Software/lib/texture1.c.o"
   "CMakeFiles/base.dir/__/__/external/KTX-Software/lib/texture2.c.o"
   "CMakeFiles/base.dir/__/__/external/KTX-Software/lib/zstddeclib.c.o"
-  "CMakeFiles/base.dir/__/camera/camera.cpp.o"
+  "CMakeFiles/base.dir/__/camera/Camera.cpp.o"
   "CMakeFiles/base.dir/__/external/imgui/imgui.cpp.o"
   "CMakeFiles/base.dir/__/external/imgui/imgui_demo.cpp.o"
   "CMakeFiles/base.dir/__/external/imgui/imgui_draw.cpp.o"

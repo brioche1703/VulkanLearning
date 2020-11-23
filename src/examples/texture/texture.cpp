@@ -1,11 +1,11 @@
 #include "VulkanBase.h"
 
 #include "ktx.h"
+#include <cstring>
 #include <vulkan/vulkan_core.h>
 
 namespace VulkanLearning {
 
-    const std::string MODEL_PATH = "./src/models/viking_room.obj";
     const std::string TEXTURE_PATH = "./src/textures/metalplate01_rgba.ktx";
 
     struct Vertex {
@@ -83,8 +83,6 @@ namespace VulkanLearning {
                 createDepthResources();
                 createFramebuffers();
                 createTextureKTX();
-
-                loadModel();
 
                 createVertexBuffer();
                 createIndexBuffer();
@@ -361,9 +359,6 @@ namespace VulkanLearning {
                 VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
                 vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
-                auto bindingDescription = VertexTextured::getBindingDescription();
-                auto attributeDescriptions = VertexTextured::getAttributeDescriptions();
-
                 VkVertexInputBindingDescription vertexBindingDescription;
                 vertexBindingDescription.binding = 0;
                 vertexBindingDescription.stride = sizeof(Vertex);
@@ -386,14 +381,11 @@ namespace VulkanLearning {
                 vertexAttributeDescription[2].location = 2;
                 vertexAttributeDescription[2].offset = offsetof(Vertex, normal);
 
-
-
                 vertexInputInfo.vertexBindingDescriptionCount = 1;
                 vertexInputInfo.vertexAttributeDescriptionCount = 
                     static_cast<uint32_t>(vertexAttributeDescription.size());
                 vertexInputInfo.pVertexBindingDescriptions = &vertexBindingDescription;
                 vertexInputInfo.pVertexAttributeDescriptions = vertexAttributeDescription.data();
-
 
                 VkPipelineDepthStencilStateCreateInfo depthStencil{};
                 depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
@@ -455,20 +447,17 @@ namespace VulkanLearning {
                 ktx_uint8_t *ktxTextureData = ktxTexture_GetData(ktxTexture);
                 ktx_size_t ktxTextureSize = ktxTexture_GetDataSize(ktxTexture);
 
-                VkBool32 useStaging = true;
-
-                bool forceLinearTiling = false;
+                bool forceLinearTiling = true;
                 if (forceLinearTiling) {
                     VkFormatProperties formatProperties;
                     vkGetPhysicalDeviceFormatProperties(m_device->getPhysicalDevice(), format, &formatProperties);
-                    useStaging = !(formatProperties.linearTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT);
                 }
 
                 VkMemoryAllocateInfo memAllocInfo = {};
                 memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+
                 VkMemoryRequirements memReqs = {};
 
-                if (useStaging) {
                     VkBuffer stagingBuffer;
                     VkDeviceMemory stagingMemory;
 
@@ -597,8 +586,8 @@ namespace VulkanLearning {
 
                     vkCmdPipelineBarrier(
                             copyCmd.getCommandBuffer(), 
-                            VK_PIPELINE_STAGE_HOST_BIT, 
                             VK_PIPELINE_STAGE_TRANSFER_BIT, 
+                            VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 
                             0,
                             0,
                             nullptr,
@@ -609,19 +598,15 @@ namespace VulkanLearning {
 
                     texture.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-
-                    // FLUSHHHHH MEMORY!?
                     copyCmd.flushCommandBuffer(m_device, m_commandPool, true);
 
                     vkFreeMemory(m_device->getLogicalDevice(), stagingMemory, nullptr);
                     vkDestroyBuffer(m_device->getLogicalDevice(), stagingBuffer, nullptr);
-                } else {
-                    // TODO
-                }
 
                 ktxTexture_Destroy(ktxTexture);
 
                 VkSamplerCreateInfo sampler = {};
+                sampler.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
                 sampler.magFilter = VK_FILTER_LINEAR;
                 sampler.minFilter = VK_FILTER_LINEAR;
                 sampler.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
@@ -631,9 +616,14 @@ namespace VulkanLearning {
                 sampler.mipLodBias = 0.0f;
                 sampler.compareOp = VK_COMPARE_OP_NEVER;
                 sampler.minLod = 0.0f;
-                sampler.maxLod = (useStaging) ? (float)texture.mipLevels : 0.0f;
-                sampler.anisotropyEnable = VK_TRUE;
-                sampler.maxAnisotropy = 16.0f;
+                sampler.maxLod = (float)texture.mipLevels;
+                if (m_device->features.samplerAnisotropy) {
+                    sampler.anisotropyEnable = VK_TRUE;
+                    sampler.maxAnisotropy = 16.0f;
+                } else {
+                    sampler.anisotropyEnable = VK_FALSE;
+                    sampler.maxAnisotropy = 1.0f;
+                }
 
                 sampler.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
 
@@ -656,7 +646,7 @@ namespace VulkanLearning {
                 view.subresourceRange.baseMipLevel = 0;
                 view.subresourceRange.baseArrayLayer = 0;
                 view.subresourceRange.layerCount = 1;
-                view.subresourceRange.levelCount = (useStaging) ? texture.mipLevels : 1;
+                view.subresourceRange.levelCount = texture.mipLevels;
                 view.image = texture.image;
 
                 if (vkCreateImageView(m_device->getLogicalDevice(), &view, 
@@ -665,14 +655,6 @@ namespace VulkanLearning {
                 }
             }
  
-            void createTexture() override {
-                m_texture = new VulkanTexture(TEXTURE_PATH, m_device, m_swapChain,
-                        m_commandPool);
-                m_texture->createKTX();
-                m_texture->createImageView(VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
-                m_texture->createSampler();
-            }
-
             void createColorResources() override {
                 m_colorImageResource = new VulkanImageResource(m_device, 
                         m_swapChain, m_commandPool, 
@@ -909,14 +891,12 @@ namespace VulkanLearning {
 
                 ubo.proj[1][1] *= -1;
 
+                ubo.camPos = m_camera->position();
+
                 m_coordinateSystemUniformBuffers[currentImage]->map();
                 memcpy(m_coordinateSystemUniformBuffers[currentImage]->getMappedMemory(), 
                         &ubo, sizeof(ubo));
                 m_coordinateSystemUniformBuffers[currentImage]->unmap();
-            }
-
-            void loadModel() override {
-                m_model = new ModelObj(MODEL_PATH);
             }
     };
 

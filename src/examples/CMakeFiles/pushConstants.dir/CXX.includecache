@@ -1601,8 +1601,8 @@ functional
 -
 Vertex.hpp
 include/VulkanLearning/base/Vertex.hpp
-camera/camera.hpp
-include/VulkanLearning/base/camera/camera.hpp
+camera/Camera.hpp
+include/VulkanLearning/base/camera/Camera.hpp
 misc/FpsCounter.hpp
 include/VulkanLearning/base/misc/FpsCounter.hpp
 misc/VulkanDebug.hpp
@@ -1830,7 +1830,7 @@ include/VulkanLearning/base/VulkanCommandPool.hpp
 VulkanImageResource.hpp
 include/VulkanLearning/base/VulkanImageResource.hpp
 
-include/VulkanLearning/camera/camera.hpp
+include/VulkanLearning/camera/Camera.hpp
 glm/geometric.hpp
 -
 glm/trigonometric.hpp
@@ -1849,8 +1849,8 @@ GLFW/glfw3.h
 include/VulkanLearning/misc/Inputs.hpp
 GLFW/glfw3.h
 -
-camera/camera.hpp
-include/VulkanLearning/misc/camera/camera.hpp
+camera/Camera.hpp
+include/VulkanLearning/misc/camera/Camera.hpp
 misc/FpsCounter.hpp
 include/VulkanLearning/misc/misc/FpsCounter.hpp
 

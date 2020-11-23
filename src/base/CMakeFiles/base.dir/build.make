@@ -356,18 +356,18 @@ src/base/CMakeFiles/base.dir/VulkanTexture.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/base.dir/VulkanTexture.cpp.s"
 	cd /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base/VulkanTexture.cpp -o CMakeFiles/base.dir/VulkanTexture.cpp.s
 
-src/base/CMakeFiles/base.dir/__/camera/camera.cpp.o: src/base/CMakeFiles/base.dir/flags.make
-src/base/CMakeFiles/base.dir/__/camera/camera.cpp.o: src/camera/camera.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/brioche/dev/graphics/vulkan/VulkanLearning/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object src/base/CMakeFiles/base.dir/__/camera/camera.cpp.o"
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/base.dir/__/camera/camera.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/camera/camera.cpp
+src/base/CMakeFiles/base.dir/__/camera/Camera.cpp.o: src/base/CMakeFiles/base.dir/flags.make
+src/base/CMakeFiles/base.dir/__/camera/Camera.cpp.o: src/camera/Camera.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/brioche/dev/graphics/vulkan/VulkanLearning/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building CXX object src/base/CMakeFiles/base.dir/__/camera/Camera.cpp.o"
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/base.dir/__/camera/Camera.cpp.o -c /home/brioche/dev/graphics/vulkan/VulkanLearning/src/camera/Camera.cpp
 
-src/base/CMakeFiles/base.dir/__/camera/camera.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/base.dir/__/camera/camera.cpp.i"
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/brioche/dev/graphics/vulkan/VulkanLearning/src/camera/camera.cpp > CMakeFiles/base.dir/__/camera/camera.cpp.i
+src/base/CMakeFiles/base.dir/__/camera/Camera.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/base.dir/__/camera/Camera.cpp.i"
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/brioche/dev/graphics/vulkan/VulkanLearning/src/camera/Camera.cpp > CMakeFiles/base.dir/__/camera/Camera.cpp.i
 
-src/base/CMakeFiles/base.dir/__/camera/camera.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/base.dir/__/camera/camera.cpp.s"
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/brioche/dev/graphics/vulkan/VulkanLearning/src/camera/camera.cpp -o CMakeFiles/base.dir/__/camera/camera.cpp.s
+src/base/CMakeFiles/base.dir/__/camera/Camera.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/base.dir/__/camera/Camera.cpp.s"
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning/src/base && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/brioche/dev/graphics/vulkan/VulkanLearning/src/camera/Camera.cpp -o CMakeFiles/base.dir/__/camera/Camera.cpp.s
 
 src/base/CMakeFiles/base.dir/__/misc/Inputs.cpp.o: src/base/CMakeFiles/base.dir/flags.make
 src/base/CMakeFiles/base.dir/__/misc/Inputs.cpp.o: src/misc/Inputs.cpp
@@ -628,7 +628,7 @@ base_OBJECTS = \
 "CMakeFiles/base.dir/VulkanSwapChain.cpp.o" \
 "CMakeFiles/base.dir/VulkanSyncObjects.cpp.o" \
 "CMakeFiles/base.dir/VulkanTexture.cpp.o" \
-"CMakeFiles/base.dir/__/camera/camera.cpp.o" \
+"CMakeFiles/base.dir/__/camera/Camera.cpp.o" \
 "CMakeFiles/base.dir/__/misc/Inputs.cpp.o" \
 "CMakeFiles/base.dir/__/misc/model/ModelObj.cpp.o" \
 "CMakeFiles/base.dir/__/window/Window.cpp.o" \
@@ -674,7 +674,7 @@ src/base/libbase.a: src/base/CMakeFiles/base.dir/VulkanSurface.cpp.o
 src/base/libbase.a: src/base/CMakeFiles/base.dir/VulkanSwapChain.cpp.o
 src/base/libbase.a: src/base/CMakeFiles/base.dir/VulkanSyncObjects.cpp.o
 src/base/libbase.a: src/base/CMakeFiles/base.dir/VulkanTexture.cpp.o
-src/base/libbase.a: src/base/CMakeFiles/base.dir/__/camera/camera.cpp.o
+src/base/libbase.a: src/base/CMakeFiles/base.dir/__/camera/Camera.cpp.o
 src/base/libbase.a: src/base/CMakeFiles/base.dir/__/misc/Inputs.cpp.o
 src/base/libbase.a: src/base/CMakeFiles/base.dir/__/misc/model/ModelObj.cpp.o
 src/base/libbase.a: src/base/CMakeFiles/base.dir/__/window/Window.cpp.o

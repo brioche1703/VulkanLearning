@@ -36,14 +36,17 @@ namespace VulkanLearning {
             VkQueue m_graphicsQueue;
             VkQueue m_presentQueue;
 
+
             std::vector<const char*> m_deviceExtensions; 
             VkSampleCountFlagBits m_msaaSamples;
             uint32_t m_msaaSamplesMax;
 
             QueueFamilyIndices m_queueFamilyIndices;
 
-
         public:
+            VkPhysicalDeviceFeatures features;
+            VkPhysicalDeviceProperties properties;
+
             VulkanDevice(VkInstance instance, VkSurfaceKHR surface,
                     const std::vector<const char*> deviceExtensions,
                     bool enableValidationLayers,
@@ -78,5 +81,6 @@ namespace VulkanLearning {
             VkSampleCountFlagBits getMaxUsableSampleCount(); 
             bool checkDeviceExtensionSupport(VkPhysicalDevice device, const std::vector<const char*> deviceExtensions);
 
+            bool isSamplerAnisotropySupported();
     };
 }

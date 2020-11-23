@@ -33,7 +33,7 @@
 #include <functional>
 
 #include "Vertex.hpp"
-#include "camera/camera.hpp"
+#include "camera/Camera.hpp"
 #include "misc/FpsCounter.hpp"
 #include "misc/VulkanDebug.hpp"
 #include "VulkanDevice.hpp"
@@ -61,6 +61,7 @@ struct CoordinatesSystemUniformBufferObject {
     alignas(16) glm::mat4 model;
     alignas(16) glm::mat4 view;
     alignas(16) glm::mat4 proj;
+    alignas(16) glm::vec3 camPos;
 };
 
 namespace VulkanLearning {
@@ -72,8 +73,8 @@ namespace VulkanLearning {
     const int MAX_FRAMES_IN_FLIGHT = 2;
 
     const std::vector<const char*> validationLayers = {
-        //"VK_LAYER_KHRONOS_validation",
-        //"VK_LAYER_MESA_overlay",
+        "VK_LAYER_KHRONOS_validation",
+        "VK_LAYER_MESA_overlay",
     };
 
 #ifdef NDEBUG
