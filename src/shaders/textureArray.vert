@@ -3,15 +3,27 @@
 layout (location = 0) in vec3 inPos;
 layout (location = 1) in vec2 inUV;
 
-layout (binding = 0) uniform UBO 
+struct Instance
+{
+    mat4 model;
+    vec4 arrayIndex;
+};
+
+struct CoordinateUBO
 {
 	mat4 model;
 	mat4 view;
 	mat4 proj;
     vec3 camPos;
+};
+
+layout (binding = 0) uniform UBO 
+{
+    CoordinateUBO coordUbo;
+    Instance instance[8];
 } ubo;
 
-layout (location = 0) out vec2 outUV;
+layout (location = 0) out vec3 outUV;
 
 out gl_PerVertex 
 {
@@ -20,7 +32,8 @@ out gl_PerVertex
 
 void main() 
 {
-    outUV = inUV;
+    outUV = vec3(inUV, ubo.instance[gl_InstanceIndex].arrayIndex.x);
+    mat4 modelView = ubo.coordUbo.view * ubo.instance[gl_InstanceIndex].model;
 
-	gl_Position = ubo.proj * ubo.model * ubo.view * vec4(inPos.xyz, 1.0);
+	gl_Position = ubo.coordUbo.proj * modelView * vec4(inPos.xyz, 1.0);
 }

@@ -23,7 +23,7 @@ namespace VulkanLearning {
             int m_width;
             int m_height;
             uint32_t m_mipLevels;
-            uint32_t m_layourCount;
+            uint32_t m_layerCount;
             int m_channelCount;
             VkDescriptorImageInfo m_descriptor;
             VkSampler m_sampler;
@@ -35,6 +35,7 @@ namespace VulkanLearning {
             inline VkImageView getView() { return m_view; }
             inline VkSampler getSampler() { return m_sampler; }
             inline VkImageLayout getImageLayout() { return m_imageLayout; }
+            inline uint32_t getLayerCount() { return m_layerCount; }
 
             ktxResult loadKTXFile(std::string filename, ktxTexture **target);
             void destroy();
@@ -64,6 +65,17 @@ namespace VulkanLearning {
             void transitionImageLayout(VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
             void copyBufferToImage(VulkanBuffer buffer, uint32_t width, uint32_t height);
             void createSampler();
+    };
+
+    class VulkanTexture2DArray : public VulkanTexture {
+        public:
+            void loadFromKTXFile(
+                    std::string filename,
+                    VkFormat format,
+                    VulkanDevice* device,
+                    VkQueue copyQueue,
+                    VkImageUsageFlags imageUsageFlag = VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     };
 
 }

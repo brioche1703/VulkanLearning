@@ -39,11 +39,7 @@ namespace VulkanLearning {
         ktxResult result;
         ktxTexture* ktxTexture;
 
-        result = ktxTexture_CreateFromNamedFile(filename.c_str(), KTX_TEXTURE_CREATE_LOAD_IMAGE_DATA_BIT, &ktxTexture);
-
-        if (result != KTX_SUCCESS) {
-            throw std::runtime_error("KTX Texture creation failed!");
-        }
+        result = loadKTXFile(filename, &ktxTexture);
 
         m_width = ktxTexture->baseWidth;
         m_height = ktxTexture->baseHeight;
@@ -551,5 +547,201 @@ namespace VulkanLearning {
                     nullptr, &m_sampler) != VK_SUCCESS) {
             throw std::runtime_error("Sampler creation failed!");
         }
+    }
+
+    void VulkanTexture2DArray::loadFromKTXFile(std::string filename, VkFormat format, VulkanDevice* device, VkQueue copyQueue, VkImageUsageFlags imageUsageFlag, VkImageLayout imageLayout) {
+        m_device = device;
+
+        ktxTexture* ktxTexture;
+        ktxResult result = loadKTXFile(filename, &ktxTexture);
+
+        m_width = ktxTexture->baseWidth;
+        m_height = ktxTexture->baseHeight;
+        m_layerCount = ktxTexture->numLayers;
+        m_mipLevels = ktxTexture->numLevels;
+
+        ktx_uint8_t *ktxTextureData = ktxTexture_GetData(ktxTexture);
+        ktx_size_t ktxTextureSize = ktxTexture_GetDataSize(ktxTexture);
+
+        VkMemoryAllocateInfo memAllocInfo = {};
+        memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        VkMemoryRequirements memReqs;
+
+        VulkanBuffer stagingBuffer(m_device);
+        stagingBuffer.createBuffer(ktxTextureSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+        stagingBuffer.map(ktxTextureSize);
+        memcpy(stagingBuffer.getMappedMemory(), ktxTextureData, ktxTextureSize);
+        stagingBuffer.unmap();
+
+        std::vector<VkBufferImageCopy> bufferCopyRegions;
+
+        for (uint32_t layer = 0; layer < m_layerCount; layer++) {
+             for (uint32_t level = 0; level < m_mipLevels; level++) {
+                ktx_size_t offset;
+                KTX_error_code result = ktxTexture_GetImageOffset(
+                        ktxTexture, 
+                        level, 
+                        layer, 
+                        0, 
+                        &offset);
+
+                VkBufferImageCopy bufferCopyRegion = {};
+                bufferCopyRegion.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+                bufferCopyRegion.imageSubresource.mipLevel = level;
+                bufferCopyRegion.imageSubresource.baseArrayLayer = layer;
+                bufferCopyRegion.imageSubresource.layerCount = 1;
+                bufferCopyRegion.imageExtent.width = ktxTexture->baseWidth >> level;
+                bufferCopyRegion.imageExtent.height = ktxTexture->baseHeight >> level;
+                bufferCopyRegion.imageExtent.depth = 1;
+                bufferCopyRegion.bufferOffset = offset;
+
+                bufferCopyRegions.push_back(bufferCopyRegion);
+             }
+        }
+
+        VkImageCreateInfo imageCreateInfo = {};
+        imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
+        imageCreateInfo.format = format;
+        imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+        imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+        imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        imageCreateInfo.extent = { static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height), 1 };
+        imageCreateInfo.usage = imageUsageFlag;
+        if (!(imageCreateInfo.usage & VK_IMAGE_USAGE_TRANSFER_DST_BIT)) {
+            imageCreateInfo.usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+        }
+        imageCreateInfo.arrayLayers = m_layerCount;
+        imageCreateInfo.mipLevels = m_mipLevels;
+
+        if (vkCreateImage(m_device->getLogicalDevice(), &imageCreateInfo, nullptr, &m_image) != VK_SUCCESS) {
+            throw std::runtime_error("Image creation failed!");
+        }
+
+        vkGetImageMemoryRequirements(m_device->getLogicalDevice(), m_image, &memReqs);
+        memAllocInfo.allocationSize = memReqs.size;
+        memAllocInfo.memoryTypeIndex = m_device->findMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+        if (vkAllocateMemory(m_device->getLogicalDevice(), &memAllocInfo, nullptr, &m_deviceMemory) != VK_SUCCESS) {
+            throw std::runtime_error("Memory allocation failed!");
+        }
+
+        if (vkBindImageMemory(m_device->getLogicalDevice(), m_image, m_deviceMemory, 0) != VK_SUCCESS) {
+            throw std::runtime_error("Image memory binding failed!");
+        }
+
+        VulkanCommandBuffer copyCmd;
+        copyCmd.create(m_device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+
+        VkImageSubresourceRange subresourceRange = {};
+        subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        subresourceRange.baseMipLevel = 0;
+        subresourceRange.levelCount = m_mipLevels;
+        subresourceRange.layerCount = m_layerCount;
+
+        VkImageMemoryBarrier imageMemoryBarrier = {};
+        imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        imageMemoryBarrier.image = m_image;
+        imageMemoryBarrier.subresourceRange = subresourceRange;
+        imageMemoryBarrier.srcAccessMask = 0;
+        imageMemoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+
+        vkCmdPipelineBarrier(
+                copyCmd.getCommandBuffer(), 
+                VK_PIPELINE_STAGE_HOST_BIT, 
+                VK_PIPELINE_STAGE_TRANSFER_BIT, 
+                0,
+                0,
+                nullptr,
+                0,
+                nullptr,
+                1,
+                &imageMemoryBarrier);
+
+        vkCmdCopyBufferToImage(
+                copyCmd.getCommandBuffer(), 
+                stagingBuffer.getBuffer(), 
+                m_image, 
+                VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 
+                static_cast<uint32_t>(bufferCopyRegions.size()), 
+                bufferCopyRegions.data());
+
+        imageMemoryBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        imageMemoryBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+        imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+        vkCmdPipelineBarrier(
+                copyCmd.getCommandBuffer(), 
+                VK_PIPELINE_STAGE_TRANSFER_BIT, 
+                VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 
+                0,
+                0,
+                nullptr,
+                0,
+                nullptr,
+                1,
+                &imageMemoryBarrier);
+
+        m_imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+        copyCmd.flushCommandBuffer(m_device, true);
+
+        VkSamplerCreateInfo samplerCreateInfo = {};
+        samplerCreateInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+        samplerCreateInfo.magFilter = VK_FILTER_LINEAR;
+        samplerCreateInfo.minFilter = VK_FILTER_LINEAR;
+        samplerCreateInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+        samplerCreateInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+        samplerCreateInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+        samplerCreateInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+        samplerCreateInfo.mipLodBias = 0.0f;
+        if (m_device->features.samplerAnisotropy) {
+            samplerCreateInfo.anisotropyEnable = VK_TRUE;
+            samplerCreateInfo.maxAnisotropy = 16.0f;
+        } else {
+            samplerCreateInfo.anisotropyEnable = VK_FALSE;
+            samplerCreateInfo.maxAnisotropy = 1.0f;
+        }
+        samplerCreateInfo.compareOp = VK_COMPARE_OP_NEVER;
+        samplerCreateInfo.minLod = 0.0f;
+        samplerCreateInfo.maxLod = (float)m_mipLevels;
+        samplerCreateInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
+
+        if (vkCreateSampler(m_device->getLogicalDevice(), &samplerCreateInfo, 
+                    nullptr, &m_sampler) != VK_SUCCESS) {
+            throw std::runtime_error("Sampler creation failed!");
+        }
+        
+        VkImageViewCreateInfo viewCreateInfo = {};
+        viewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        viewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D_ARRAY;
+        viewCreateInfo.format = format;
+        viewCreateInfo.components = {
+            VK_COMPONENT_SWIZZLE_R,
+            VK_COMPONENT_SWIZZLE_G,
+            VK_COMPONENT_SWIZZLE_B,
+            VK_COMPONENT_SWIZZLE_A,
+        };
+        viewCreateInfo.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0 ,1, 0, 1 };
+        viewCreateInfo.subresourceRange.layerCount = m_layerCount;
+        viewCreateInfo.subresourceRange.levelCount = m_mipLevels;
+        viewCreateInfo.image = m_image;
+
+        if (vkCreateImageView(m_device->getLogicalDevice(), &viewCreateInfo, 
+                    nullptr, &m_view) != VK_SUCCESS) {
+            throw std::runtime_error("Image view creation failed!");
+        }
+
+        stagingBuffer.cleanup();
+        ktxTexture_Destroy(ktxTexture);
+
+        m_descriptor.sampler = m_sampler;
+        m_descriptor.imageView = m_view;
+        m_descriptor.imageLayout = m_imageLayout;
     }
 }

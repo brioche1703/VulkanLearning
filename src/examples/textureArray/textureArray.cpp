@@ -7,7 +7,7 @@
 
 namespace VulkanLearning {
 
-    const std::string TEXTURE_PATH = "./src/textures/metalplate01_rgba.ktx";
+    const std::string TEXTURE_PATH = "./src/textures/texturearray_rgba.ktx";
 
     struct Vertex {
         glm::vec3 pos;
@@ -18,6 +18,16 @@ namespace VulkanLearning {
 
         private:
             uint32_t m_msaaSamples = 64;
+
+            struct UboInstanceData {
+                glm::mat4 model;
+                glm::vec4 arrayIndex;
+            };
+
+            struct  {
+                CoordinatesSystemUniformBufferObject coordUbo;
+                UboInstanceData* instance;
+            } uboInstances;
 
         public:
             VulkanExample() {}
@@ -62,10 +72,15 @@ namespace VulkanLearning {
             };
 
             std::vector<uint32_t> m_indices = { 
-                0,1,2, 0,2,3, 4,7,6,  4,6,5, 10,9,8, 10,8,11, 12,13,14, 12,14,15, 16,19,18, 16,18,17, 20,21,22, 20,22,23
+                0,1,2, 0,2,3, 
+                4,7,6,  4,6,5, 
+                10,9,8, 10,8,11, 
+                12,13,14, 12,14,15, 
+                16,19,18, 16,18,17, 
+                20,21,22, 20,22,23
             };
 
-            VulkanTexture2D m_texture;
+            VulkanTexture2DArray m_texture;
 
             void initWindow() override {
                 m_window = new Window("Vulkan", WIDTH, HEIGHT);
@@ -144,7 +159,7 @@ namespace VulkanLearning {
 
                 m_syncObjects->getImagesInFlight()[imageIndex] = m_syncObjects->getInFlightFences()[currentFrame];
 
-                updateCamera(imageIndex);
+                updateUBOInstances(imageIndex);
 
                 VkSubmitInfo submitInfo{};
                 submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -465,13 +480,21 @@ namespace VulkanLearning {
             }
 
             void createCoordinateSystemUniformBuffers() override {
-                VkDeviceSize bufferSize = sizeof(CoordinatesSystemUniformBufferObject);
+                uint32_t layerCount = m_texture.getLayerCount();
+                uboInstances.instance = new UboInstanceData[layerCount];
+
+                VkDeviceSize bufferSize = sizeof(uboInstances.coordUbo) + (layerCount * sizeof(UboInstanceData));
 
                 m_coordinateSystemUniformBuffers.resize(m_swapChain->getImages().size());
 
                 for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
                     m_coordinateSystemUniformBuffers[i] = new VulkanBuffer(m_device);
-                    m_coordinateSystemUniformBuffers[i]->createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, *m_coordinateSystemUniformBuffers[i]->getBufferPointer(), *m_coordinateSystemUniformBuffers[i]->getBufferMemoryPointer());
+                    m_coordinateSystemUniformBuffers[i]->createBuffer(
+                            bufferSize, 
+                            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 
+                            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
+                            *m_coordinateSystemUniformBuffers[i]->getBufferPointer(), 
+                            *m_coordinateSystemUniformBuffers[i]->getBufferMemoryPointer());
                 }
             }
 
@@ -549,7 +572,7 @@ namespace VulkanLearning {
                     vkCmdDrawIndexed(
                             m_commandBuffers[i].getCommandBuffer(), 
                             static_cast<uint32_t>(m_indices.size()), 
-                            1, 
+                            m_texture.getLayerCount(),
                             0, 
                             0, 
                             0);
@@ -609,7 +632,7 @@ namespace VulkanLearning {
                 };
 
                 std::vector<VkDeviceSize> ubosSizes{
-                    sizeof(CoordinatesSystemUniformBufferObject)
+                    sizeof(uboInstances.coordUbo) + (m_texture.getLayerCount() * sizeof(UboInstanceData))
                 };
 
                 m_descriptorSets = new VulkanDescriptorSets(
@@ -654,24 +677,55 @@ namespace VulkanLearning {
                 }
             }
 
+
+            void updateUBOInstances(uint32_t currentImage) {
+                uint32_t layerCount = m_texture.getLayerCount();
+
+                float offset = -1.5f;
+                float center = (layerCount * offset) / 2.0f - (offset * 0.5f);
+                for (uint32_t i = 0; i < layerCount; i++) {
+                    uboInstances.instance[i].model = glm::translate(glm::mat4(1.0f), glm::vec3(i * offset - center, 0.0f, 0.0f));
+                    uboInstances.instance[i].model = glm::scale(uboInstances.instance[i].model, glm::vec3(0.5f));
+                    uboInstances.instance[i].arrayIndex.x = (float)i;
+                }
+
+                uint8_t *pData;
+                uint32_t dataOffset = sizeof(uboInstances.coordUbo);
+                uint32_t dataSize = layerCount * sizeof(UboInstanceData);
+                vkMapMemory(
+                        m_device->getLogicalDevice(), 
+                        m_coordinateSystemUniformBuffers[currentImage]->getBufferMemory(), 
+                        dataOffset, 
+                        dataSize, 
+                        0, 
+                        (void **)&pData);
+                memcpy(pData, uboInstances.instance, dataSize);
+                vkUnmapMemory(
+                        m_device->getLogicalDevice(), 
+                        m_coordinateSystemUniformBuffers[currentImage]->getBufferMemory());
+
+                // Map persistent
+                m_coordinateSystemUniformBuffers[currentImage]->map();
+
+                updateCamera(currentImage);
+            }
             void updateCamera(uint32_t currentImage) override {
-                CoordinatesSystemUniformBufferObject ubo{};
+                uboInstances.coordUbo.model = glm::mat4(1.0f);
 
-                ubo.model = glm::mat4(1.0f);
+                uboInstances.coordUbo.view = m_camera->getViewMatrix();
 
-                ubo.view = m_camera->getViewMatrix();
-
-                ubo.proj = glm::perspective(glm::radians(m_camera->getZoom()), 
+                uboInstances.coordUbo.proj = glm::perspective(glm::radians(m_camera->getZoom()), 
                         m_swapChain->getExtent().width / (float) m_swapChain->getExtent().height, 
                         0.1f,  100.0f);
+                uboInstances.coordUbo.proj[1][1] *= -1;
 
-                ubo.proj[1][1] *= -1;
+                uboInstances.coordUbo.camPos = m_camera->position();
 
-                ubo.camPos = m_camera->position();
+                memcpy(m_coordinateSystemUniformBuffers[currentImage]->getMappedMemory(),
+                        &uboInstances.coordUbo,
+                        sizeof(uboInstances.coordUbo));
 
-                m_coordinateSystemUniformBuffers[currentImage]->map();
-                memcpy(m_coordinateSystemUniformBuffers[currentImage]->getMappedMemory(), 
-                        &ubo, sizeof(ubo));
+                // Unmap because we're using multiple buffer for the multiple swap chaine images
                 m_coordinateSystemUniformBuffers[currentImage]->unmap();
             }
     };
