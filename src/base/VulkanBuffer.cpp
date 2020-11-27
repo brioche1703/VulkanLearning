@@ -8,8 +8,8 @@
 
 namespace VulkanLearning {
 
-    VulkanBuffer::VulkanBuffer(VulkanDevice* device, VulkanCommandPool* commandPool)
-        : m_device(device), m_commandPool(commandPool) {
+    VulkanBuffer::VulkanBuffer(VulkanDevice* device)
+        : m_device(device) {
     }
 
     VulkanBuffer::~VulkanBuffer() {}
@@ -75,7 +75,7 @@ namespace VulkanLearning {
 
     void VulkanBuffer::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
         VulkanCommandBuffer commandBuffer;
-        commandBuffer.create(m_device, m_commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+        commandBuffer.create(m_device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
         VkBufferCopy copyRegion{};
         copyRegion.size = size;
@@ -86,7 +86,7 @@ namespace VulkanLearning {
     
     void VulkanBuffer::copyBufferToImage(VkImage image, uint32_t width, uint32_t height) {
         VulkanCommandBuffer commandBuffer;
-        commandBuffer.create(m_device, m_commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+        commandBuffer.create(m_device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
         VkBufferImageCopy region{};
         region.bufferOffset = 0;
@@ -107,7 +107,7 @@ namespace VulkanLearning {
 
         vkCmdCopyBufferToImage(commandBuffer.getCommandBuffer(), m_buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
-        commandBuffer.flushCommandBuffer(m_device, m_commandPool, true);
+        commandBuffer.flushCommandBuffer(m_device, true);
     }
 
     void VulkanBuffer::endSingleTimeCommands(VkCommandBuffer commandBuffer) {
@@ -121,7 +121,7 @@ namespace VulkanLearning {
         vkQueueSubmit(m_device->getGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
         vkQueueWaitIdle(m_device->getGraphicsQueue());
 
-        vkFreeCommandBuffers(m_device->getLogicalDevice(), m_commandPool->getCommandPool(), 1, &commandBuffer);
+        vkFreeCommandBuffers(m_device->getLogicalDevice(), m_device->getCommandPool(), 1, &commandBuffer);
     }
 
     VkResult VulkanBuffer::map(VkDeviceSize size, VkDeviceSize offset) {

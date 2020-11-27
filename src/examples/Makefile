@@ -56,18 +56,6 @@ CMAKE_BINARY_DIR = /home/brioche/dev/graphics/vulkan/VulkanLearning
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
-
-# Special rule for the target install/strip
-install/strip/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip/fast
-
 # Special rule for the target install/local
 install/local: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
@@ -124,6 +112,18 @@ edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
 
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
 	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(CMAKE_COMMAND) -E cmake_progress_start /home/brioche/dev/graphics/vulkan/VulkanLearning/CMakeFiles /home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples/CMakeFiles/progress.marks
@@ -155,6 +155,21 @@ preinstall/fast:
 depend:
 	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
+
+# Convenience name for target.
+src/examples/CMakeFiles/textureArray.dir/rule:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/textureArray.dir/rule
+.PHONY : src/examples/CMakeFiles/textureArray.dir/rule
+
+# Convenience name for target.
+textureArray: src/examples/CMakeFiles/textureArray.dir/rule
+
+.PHONY : textureArray
+
+# fast build rule for target.
+textureArray/fast:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/build
+.PHONY : textureArray/fast
 
 # Convenience name for target.
 src/examples/CMakeFiles/texture.dir/rule:
@@ -408,18 +423,46 @@ texture/texture.cpp.s:
 	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/texture.dir/build.make src/examples/CMakeFiles/texture.dir/texture/texture.cpp.s
 .PHONY : texture/texture.cpp.s
 
+textureArray/textureArray.o: textureArray/textureArray.cpp.o
+
+.PHONY : textureArray/textureArray.o
+
+# target to build an object file
+textureArray/textureArray.cpp.o:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/textureArray/textureArray.cpp.o
+.PHONY : textureArray/textureArray.cpp.o
+
+textureArray/textureArray.i: textureArray/textureArray.cpp.i
+
+.PHONY : textureArray/textureArray.i
+
+# target to preprocess a source file
+textureArray/textureArray.cpp.i:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/textureArray/textureArray.cpp.i
+.PHONY : textureArray/textureArray.cpp.i
+
+textureArray/textureArray.s: textureArray/textureArray.cpp.s
+
+.PHONY : textureArray/textureArray.s
+
+# target to generate assembly for a file
+textureArray/textureArray.cpp.s:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/textureArray/textureArray.cpp.s
+.PHONY : textureArray/textureArray.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... install/strip"
 	@echo "... install/local"
 	@echo "... install"
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
+	@echo "... install/strip"
+	@echo "... textureArray"
 	@echo "... texture"
 	@echo "... specializationConstant"
 	@echo "... pushConstants"
@@ -444,6 +487,9 @@ help:
 	@echo "... texture/texture.o"
 	@echo "... texture/texture.i"
 	@echo "... texture/texture.s"
+	@echo "... textureArray/textureArray.o"
+	@echo "... textureArray/textureArray.i"
+	@echo "... textureArray/textureArray.s"
 .PHONY : help
 
 

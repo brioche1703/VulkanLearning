@@ -3,7 +3,6 @@
 #include <vulkan/vulkan.h>
 
 #include "VulkanDevice.hpp"
-#include "VulkanCommandPool.hpp"
 
 namespace VulkanLearning {
 
@@ -16,10 +15,9 @@ namespace VulkanLearning {
             void* m_mappedMemory = nullptr;
 
             VulkanDevice* m_device;
-            VulkanCommandPool* m_commandPool;
 
         public:
-            VulkanBuffer(VulkanDevice* device, VulkanCommandPool* commandPool);
+            VulkanBuffer(VulkanDevice* device);
             ~VulkanBuffer();
 
             inline VkBuffer getBuffer() { return m_buffer; }

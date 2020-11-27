@@ -43,6 +43,8 @@ namespace VulkanLearning {
 
             QueueFamilyIndices m_queueFamilyIndices;
 
+            VkCommandPool m_commandPool = VK_NULL_HANDLE;
+
         public:
             VkPhysicalDeviceFeatures features;
             VkPhysicalDeviceProperties properties;
@@ -61,11 +63,10 @@ namespace VulkanLearning {
             VkSampleCountFlagBits getMsaaSamples();
             size_t getMinUniformBufferOffsetAlignment();
             QueueFamilyIndices getQueueFamilyIndices();
-            
+            VkCommandPool getCommandPool();
 
             void pickPhysicalDevice(VkInstance instance, VkSurfaceKHR surface, const std::vector<const char*> deviceExtensions);
-            void createLogicalDevice(VkSurfaceKHR surface, bool enableValidationLayers, 
-                    const std::vector<const char*> validationLayers);
+            void createLogicalDevice(VkSurfaceKHR surface, bool enableValidationLayers, const std::vector<const char*> validationLayers);
 
             SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface); 
             SwapChainSupportDetails querySwapChainSupport(VkSurfaceKHR surface); 
@@ -82,5 +83,7 @@ namespace VulkanLearning {
             bool checkDeviceExtensionSupport(VkPhysicalDevice device, const std::vector<const char*> deviceExtensions);
 
             bool isSamplerAnisotropySupported();
+
+            void createCommandPool(uint32_t queueFamilyIndex, VkCommandPoolCreateFlags createFlags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT);
     };
 }

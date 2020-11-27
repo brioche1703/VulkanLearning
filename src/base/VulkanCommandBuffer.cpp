@@ -7,11 +7,11 @@ namespace VulkanLearning {
 
     VulkanCommandBuffer::~VulkanCommandBuffer() {}
 
-    void VulkanCommandBuffer::create(VulkanDevice* device, VulkanCommandPool* commandPool, VkCommandBufferLevel level, bool begin) {
+    void VulkanCommandBuffer::create(VulkanDevice* device, VkCommandBufferLevel level, bool begin) {
         VkCommandBufferAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo.level = level;
-        allocInfo.commandPool = commandPool->getCommandPool();
+        allocInfo.commandPool = device->getCommandPool();
         allocInfo.commandBufferCount = 1;
 
         vkAllocateCommandBuffers(device->getLogicalDevice(), &allocInfo, &m_commandBuffer);
@@ -23,7 +23,7 @@ namespace VulkanLearning {
         vkBeginCommandBuffer(m_commandBuffer, &beginInfo);
     }
 
-    void VulkanCommandBuffer::flushCommandBuffer(VulkanDevice* device, VulkanCommandPool* commandPool, bool free) {
+    void VulkanCommandBuffer::flushCommandBuffer(VulkanDevice* device, bool free) {
         if (m_commandBuffer == VK_NULL_HANDLE) {
             return;
         } 
@@ -57,8 +57,7 @@ namespace VulkanLearning {
 
         if (free)
         {
-            vkFreeCommandBuffers(device->getLogicalDevice(), commandPool->getCommandPool(), 1, &m_commandBuffer);
+            vkFreeCommandBuffers(device->getLogicalDevice(), device->getCommandPool(), 1, &m_commandBuffer);
         }
-
     }
 }

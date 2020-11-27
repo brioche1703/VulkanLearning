@@ -67,6 +67,7 @@ set(EXAMPLES
     pushConstants
     specializationConstant
     texture
+    textureArray
 )
 
 buildExamples()

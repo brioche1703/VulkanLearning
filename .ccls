@@ -1,8 +1,11 @@
--Iexternal/glm/
 %clang
--Wall
--Wextra
+%h -x
+%h c++-header
 %c -std=gnu11
 %cpp -pedantic
 %cpp -std=c++17
-
+-Wall
+-Wextra
+-Iexternal/KTX-Software/include
+-Iexternal/glm/
+-Iinclude/external/stb

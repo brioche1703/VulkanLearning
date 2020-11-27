@@ -64,7 +64,6 @@ namespace VulkanLearning {
 
                 createGraphicsPipeline();
 
-                createCommandPool();
                 createDepthResources();
                 createFramebuffers();
 
@@ -176,7 +175,7 @@ namespace VulkanLearning {
 
                 m_syncObjects->cleanup();
 
-                m_commandPool->cleanup();
+                vkDestroyCommandPool(m_device->getLogicalDevice(), m_device->getCommandPool(), nullptr);
 
                 vkDestroyDevice(m_device->getLogicalDevice(), nullptr);
 
@@ -227,7 +226,7 @@ namespace VulkanLearning {
                 m_swapChain->cleanFramebuffers();
 
                 vkFreeCommandBuffers(m_device->getLogicalDevice(), 
-                        m_commandPool->getCommandPool(), 
+                        m_device->getCommandPool(), 
                         static_cast<uint32_t>(
                             m_commandBuffers.size()), 
                         m_commandBuffers.data()->getCommandBufferPointer());
@@ -377,13 +376,9 @@ namespace VulkanLearning {
                     attachments);
             }
 
-            void createCommandPool() override {
-                m_commandPool = new VulkanCommandPool(m_device);
-            }
-
             void createDepthResources() override {
                 m_depthImageResource = new VulkanImageResource(m_device, 
-                        m_swapChain, m_commandPool, 
+                        m_swapChain,
                         m_device->findDepthFormat(), 
                         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
                         VK_IMAGE_ASPECT_DEPTH_BIT);
@@ -391,14 +386,14 @@ namespace VulkanLearning {
             }
 
             void createVertexBuffer() override {
-                m_vertexBuffer = new VulkanBuffer(m_device, m_commandPool);
+                m_vertexBuffer = new VulkanBuffer(m_device);
                 m_vertexBuffer->createWithStagingBuffer(m_model->getVerticies(),
                         VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
                         VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
             }
 
             void createIndexBuffer() override {
-                m_indexBuffer = new VulkanBuffer(m_device, m_commandPool);
+                m_indexBuffer = new VulkanBuffer(m_device);
                 m_indexBuffer->createWithStagingBuffer(m_model->getIndicies(),
                         VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
                         VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
@@ -410,7 +405,7 @@ namespace VulkanLearning {
                 m_coordinateSystemUniformBuffers.resize(m_swapChain->getImages().size());
 
                 for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
-                    m_coordinateSystemUniformBuffers[i] = new VulkanBuffer(m_device, m_commandPool);
+                    m_coordinateSystemUniformBuffers[i] = new VulkanBuffer(m_device);
                     m_coordinateSystemUniformBuffers[i]->createBuffer(
                             bufferSize, 
                             VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 
@@ -426,7 +421,7 @@ namespace VulkanLearning {
 
                 VkCommandBufferAllocateInfo allocInfo{};
                 allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-                allocInfo.commandPool = m_commandPool->getCommandPool();
+                allocInfo.commandPool = m_device->getCommandPool();
                 allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
                 allocInfo.commandBufferCount = (uint32_t) m_commandBuffers.size();
 

@@ -10,6 +10,8 @@ namespace VulkanLearning {
     class VulkanExample : public VulkanBase {
         private:
 
+            VulkanTexture2D m_texture;
+
             struct {
                 VkPipeline phong;
                 VkPipeline toon;
@@ -64,7 +66,6 @@ namespace VulkanLearning {
 
                 createGraphicsPipeline();
 
-                createCommandPool();
                 createColorResources();
                 createDepthResources();
                 createFramebuffers();
@@ -184,7 +185,7 @@ namespace VulkanLearning {
             void cleanup() override {
                 cleanupSwapChain();
 
-                m_texture->cleanup();
+                m_texture.destroy();
 
                 m_descriptorSetLayout->cleanup();
 
@@ -193,7 +194,7 @@ namespace VulkanLearning {
 
                 m_syncObjects->cleanup();
 
-                m_commandPool->cleanup();
+                vkDestroyCommandPool(m_device->getLogicalDevice(), m_device->getCommandPool(), nullptr);
 
                 vkDestroyDevice(m_device->getLogicalDevice(), nullptr);
 
@@ -249,7 +250,7 @@ namespace VulkanLearning {
 
                 vkFreeCommandBuffers(
                         m_device->getLogicalDevice(), 
-                        m_commandPool->getCommandPool(), 
+                        m_device->getCommandPool(), 
                         static_cast<uint32_t>(
                            m_commandBuffers.size()), 
                         m_commandBuffers.data()->getCommandBufferPointer());
@@ -563,21 +564,13 @@ namespace VulkanLearning {
                         attachments);
             }
 
-            void createCommandPool() override {
-                m_commandPool = new VulkanCommandPool(m_device);
-            }
-
             void createTexture() override {
-                m_texture = new VulkanTexture(TEXTURE_PATH, m_device, m_swapChain,
-                        m_commandPool);
-                m_texture->create();
-                m_texture->createImageView(VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
-                m_texture->createSampler();
+                m_texture.loadFromFile(TEXTURE_PATH, VK_FORMAT_R8G8B8A8_SRGB, m_device, m_device->getGraphicsQueue());
             }
 
             void createColorResources() override {
                 m_colorImageResource = new VulkanImageResource(m_device, 
-                        m_swapChain, m_commandPool, 
+                        m_swapChain, 
                         m_swapChain->getImageFormat(),  
                         VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT
                         | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, 
@@ -587,7 +580,7 @@ namespace VulkanLearning {
 
             void createDepthResources() override {
                 m_depthImageResource = new VulkanImageResource(m_device, 
-                        m_swapChain, m_commandPool, 
+                        m_swapChain,
                         m_device->findDepthFormat(), 
                         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
                         VK_IMAGE_ASPECT_DEPTH_BIT);
@@ -595,14 +588,14 @@ namespace VulkanLearning {
             }
 
             void createVertexBuffer() override {
-                m_vertexBuffer = new VulkanBuffer(m_device, m_commandPool);
+                m_vertexBuffer = new VulkanBuffer(m_device);
                 m_vertexBuffer->createWithStagingBuffer(m_model->getVerticies(), 
                         VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
                         VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
             }
 
             void createIndexBuffer() override {
-                m_indexBuffer = new VulkanBuffer(m_device, m_commandPool);
+                m_indexBuffer = new VulkanBuffer(m_device);
                 m_indexBuffer->createWithStagingBuffer(m_model->getIndicies(), 
                         VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
                         VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
@@ -614,7 +607,7 @@ namespace VulkanLearning {
                 m_coordinateSystemUniformBuffers.resize(m_swapChain->getImages().size());
 
                 for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
-                    m_coordinateSystemUniformBuffers[i] = new VulkanBuffer(m_device, m_commandPool);
+                    m_coordinateSystemUniformBuffers[i] = new VulkanBuffer(m_device);
                     m_coordinateSystemUniformBuffers[i]->createBuffer(
                             bufferSize, 
                             VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 
@@ -631,7 +624,7 @@ namespace VulkanLearning {
                 m_lightUniformBuffers.resize(m_swapChain->getImages().size());
 
                 for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
-                    m_lightUniformBuffers[i] = new VulkanBuffer(m_device, m_commandPool);
+                    m_lightUniformBuffers[i] = new VulkanBuffer(m_device);
                     m_lightUniformBuffers[i]->createBuffer(
                             bufferSize, 
                             VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 
@@ -648,7 +641,7 @@ namespace VulkanLearning {
 
                 VkCommandBufferAllocateInfo allocInfo{};
                 allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-                allocInfo.commandPool = m_commandPool->getCommandPool();
+                allocInfo.commandPool = m_device->getCommandPool();
                 allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
                 allocInfo.commandBufferCount = (uint32_t) m_commandBuffers.size();
 
@@ -889,8 +882,8 @@ namespace VulkanLearning {
 
                     VkDescriptorImageInfo imageInfo{};
                     imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                    imageInfo.imageView = m_texture->getImageView();
-                    imageInfo.sampler = m_texture->getSampler();
+                    imageInfo.imageView = m_texture.getView();
+                    imageInfo.sampler = m_texture.getSampler();
 
                     descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
                     descriptorWrites[1].dstBinding = 1;

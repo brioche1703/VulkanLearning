@@ -44,16 +44,16 @@
 #include "misc/Inputs.hpp"
 #include "window/Window.hpp"
 #include "VulkanDescriptorSetLayout.hpp"
-#include "VulkanCommandPool.hpp"
 #include "VulkanShaderModule.hpp"
 #include "VulkanBuffer.hpp"
 #include "VulkanDescriptorPool.hpp"
 #include "VulkanDescriptorSets.hpp"
 #include "VulkanSyncObjects.hpp"
-#include "VulkanImageResource.hpp"
 #include "VulkanCommandBuffer.hpp"
 #include "VulkanTexture.hpp"
 #include "VulkanGraphicsPipeline.hpp"
+#include "VulkanImageResource.hpp"
+#include "VulkanTexture.hpp"
 #include "misc/model/ModelObj.hpp"
 
 
@@ -121,8 +121,6 @@ namespace VulkanLearning {
 
             VulkanGraphicsPipeline* m_graphicsPipeline;
 
-            VulkanCommandPool* m_commandPool;
-
             ModelObj* m_model;
 
             VulkanBuffer* m_vertexBuffer;
@@ -138,6 +136,7 @@ namespace VulkanLearning {
             bool framebufferResized = false;
 
             VulkanTexture* m_texture;
+            VulkanTexture2D* m_texture2d;
 
             VulkanImageResource* m_colorImageResource;
             VulkanImageResource* m_depthImageResource;

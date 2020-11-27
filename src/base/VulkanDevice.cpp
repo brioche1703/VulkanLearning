@@ -27,6 +27,10 @@ namespace VulkanLearning {
     VkSampleCountFlagBits VulkanDevice::getMsaaSamples() { return m_msaaSamples; }
     QueueFamilyIndices VulkanDevice::getQueueFamilyIndices() { return m_queueFamilyIndices; }
 
+    VkCommandPool VulkanDevice::getCommandPool() {
+        return m_commandPool;
+    }
+
     size_t VulkanDevice::getMinUniformBufferOffsetAlignment() {
         return properties.limits.minUniformBufferOffsetAlignment;
     }
@@ -102,6 +106,9 @@ namespace VulkanLearning {
 
         vkGetDeviceQueue(m_logicalDevice, m_queueFamilyIndices.graphicsFamily.value(), 0, &m_graphicsQueue);
         vkGetDeviceQueue(m_logicalDevice, m_queueFamilyIndices.presentFamily.value(), 0, &m_presentQueue);
+
+        // Create a default Command pool
+        createCommandPool(m_queueFamilyIndices.graphicsFamily.value());
     } 
 
 
@@ -268,5 +275,16 @@ namespace VulkanLearning {
         }
 
         return requiredExtensions.empty();
+    }
+
+    void VulkanDevice::createCommandPool(uint32_t queueFamilyIndex, VkCommandPoolCreateFlags createFlags) {
+        VkCommandPoolCreateInfo poolInfo{};
+        poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+        poolInfo.queueFamilyIndex = queueFamilyIndex;
+        poolInfo.flags = createFlags;
+
+        if (vkCreateCommandPool(m_logicalDevice, &poolInfo, nullptr, &m_commandPool) != VK_SUCCESS) {
+            throw std::runtime_error("One command pool creation failed!");
+        }
     }
 }

@@ -4,9 +4,9 @@
 namespace VulkanLearning {
 
     VulkanImageResource::VulkanImageResource(VulkanDevice* device, VulkanSwapChain* swapChain,
-            VulkanCommandPool* commandPool, VkFormat format, 
+            VkFormat format, 
             VkImageUsageFlags usage, VkImageAspectFlags aspect)
-        : m_device(device), m_swapChain(swapChain), m_commandPool(commandPool), 
+        : m_device(device), m_swapChain(swapChain),
         m_format(format), m_usage(usage), m_aspect(aspect) {
         }
 
@@ -108,7 +108,7 @@ namespace VulkanLearning {
 
     void VulkanImageResource::transitionImageLayout(VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels) {
         VulkanCommandBuffer commandBuffer;
-        commandBuffer.create(m_device, m_commandPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+        commandBuffer.create(m_device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
         VkImageMemoryBarrier barrier{};
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -145,6 +145,6 @@ namespace VulkanLearning {
         vkCmdPipelineBarrier(commandBuffer.getCommandBuffer(), sourceStage, 
                 destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
-        commandBuffer.flushCommandBuffer(m_device, m_commandPool, true);
+        commandBuffer.flushCommandBuffer(m_device, true);
     }
 }

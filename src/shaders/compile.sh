@@ -29,3 +29,6 @@ $GLSLC_PATH specializationConstant.frag -o specializationConstantFrag.spv
 
 $GLSLC_PATH texture.vert -o textureVert.spv
 $GLSLC_PATH texture.frag -o textureFrag.spv
+
+$GLSLC_PATH textureArray.vert -o textureArrayVert.spv
+$GLSLC_PATH textureArray.frag -o textureArrayFrag.spv

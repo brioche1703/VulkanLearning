@@ -170,6 +170,19 @@ base/fast:
 .PHONY : base/fast
 
 #=============================================================================
+# Target rules for targets named textureArray
+
+# Build rule for target.
+textureArray: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 textureArray
+.PHONY : textureArray
+
+# fast build rule for target.
+textureArray/fast:
+	$(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/build
+.PHONY : textureArray/fast
+
+#=============================================================================
 # Target rules for targets named texture
 
 # Build rule for target.
@@ -286,6 +299,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... base"
+	@echo "... textureArray"
 	@echo "... texture"
 	@echo "... specializationConstant"
 	@echo "... pushConstants"
