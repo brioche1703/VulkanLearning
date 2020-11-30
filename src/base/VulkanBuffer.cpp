@@ -153,8 +153,8 @@ namespace VulkanLearning {
 
 
     void VulkanBuffer::cleanup() {
-        vkDestroyBuffer(m_device->getLogicalDevice(), m_buffer, nullptr);
         vkFreeMemory(m_device->getLogicalDevice(), m_bufferMemory, nullptr);
+        vkDestroyBuffer(m_device->getLogicalDevice(), m_buffer, nullptr);
     }
 
 }

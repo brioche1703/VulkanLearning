@@ -170,56 +170,17 @@ base/fast:
 .PHONY : base/fast
 
 #=============================================================================
-# Target rules for targets named textureArray
+# Target rules for targets named single3DModel
 
 # Build rule for target.
-textureArray: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 textureArray
-.PHONY : textureArray
+single3DModel: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 single3DModel
+.PHONY : single3DModel
 
 # fast build rule for target.
-textureArray/fast:
-	$(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/build
-.PHONY : textureArray/fast
-
-#=============================================================================
-# Target rules for targets named texture
-
-# Build rule for target.
-texture: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 texture
-.PHONY : texture
-
-# fast build rule for target.
-texture/fast:
-	$(MAKE) -f src/examples/CMakeFiles/texture.dir/build.make src/examples/CMakeFiles/texture.dir/build
-.PHONY : texture/fast
-
-#=============================================================================
-# Target rules for targets named specializationConstant
-
-# Build rule for target.
-specializationConstant: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 specializationConstant
-.PHONY : specializationConstant
-
-# fast build rule for target.
-specializationConstant/fast:
-	$(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/build
-.PHONY : specializationConstant/fast
-
-#=============================================================================
-# Target rules for targets named pushConstants
-
-# Build rule for target.
-pushConstants: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 pushConstants
-.PHONY : pushConstants
-
-# fast build rule for target.
-pushConstants/fast:
-	$(MAKE) -f src/examples/CMakeFiles/pushConstants.dir/build.make src/examples/CMakeFiles/pushConstants.dir/build
-.PHONY : pushConstants/fast
+single3DModel/fast:
+	$(MAKE) -f src/examples/CMakeFiles/single3DModel.dir/build.make src/examples/CMakeFiles/single3DModel.dir/build
+.PHONY : single3DModel/fast
 
 #=============================================================================
 # Target rules for targets named dynamicUniformBuffers
@@ -235,17 +196,69 @@ dynamicUniformBuffers/fast:
 .PHONY : dynamicUniformBuffers/fast
 
 #=============================================================================
-# Target rules for targets named single3DModel
+# Target rules for targets named pushConstants
 
 # Build rule for target.
-single3DModel: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 single3DModel
-.PHONY : single3DModel
+pushConstants: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 pushConstants
+.PHONY : pushConstants
 
 # fast build rule for target.
-single3DModel/fast:
-	$(MAKE) -f src/examples/CMakeFiles/single3DModel.dir/build.make src/examples/CMakeFiles/single3DModel.dir/build
-.PHONY : single3DModel/fast
+pushConstants/fast:
+	$(MAKE) -f src/examples/CMakeFiles/pushConstants.dir/build.make src/examples/CMakeFiles/pushConstants.dir/build
+.PHONY : pushConstants/fast
+
+#=============================================================================
+# Target rules for targets named specializationConstant
+
+# Build rule for target.
+specializationConstant: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 specializationConstant
+.PHONY : specializationConstant
+
+# fast build rule for target.
+specializationConstant/fast:
+	$(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/build
+.PHONY : specializationConstant/fast
+
+#=============================================================================
+# Target rules for targets named texture
+
+# Build rule for target.
+texture: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 texture
+.PHONY : texture
+
+# fast build rule for target.
+texture/fast:
+	$(MAKE) -f src/examples/CMakeFiles/texture.dir/build.make src/examples/CMakeFiles/texture.dir/build
+.PHONY : texture/fast
+
+#=============================================================================
+# Target rules for targets named textureArray
+
+# Build rule for target.
+textureArray: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 textureArray
+.PHONY : textureArray
+
+# fast build rule for target.
+textureArray/fast:
+	$(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/build
+.PHONY : textureArray/fast
+
+#=============================================================================
+# Target rules for targets named gltfloading
+
+# Build rule for target.
+gltfloading: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 gltfloading
+.PHONY : gltfloading
+
+# fast build rule for target.
+gltfloading/fast:
+	$(MAKE) -f src/examples/CMakeFiles/gltfloading.dir/build.make src/examples/CMakeFiles/gltfloading.dir/build
+.PHONY : gltfloading/fast
 
 #=============================================================================
 # Target rules for targets named simpleTriangle
@@ -299,12 +312,13 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... base"
-	@echo "... textureArray"
-	@echo "... texture"
-	@echo "... specializationConstant"
-	@echo "... pushConstants"
-	@echo "... dynamicUniformBuffers"
 	@echo "... single3DModel"
+	@echo "... dynamicUniformBuffers"
+	@echo "... pushConstants"
+	@echo "... specializationConstant"
+	@echo "... texture"
+	@echo "... textureArray"
+	@echo "... gltfloading"
 	@echo "... simpleTriangle"
 	@echo "... uninstall"
 	@echo "... glfw"

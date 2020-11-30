@@ -367,6 +367,170 @@ namespace VulkanLearning {
         m_descriptor.imageLayout = m_imageLayout;
     }
 
+    void VulkanTexture2D::loadFromBuffer(void* buffer, VkDeviceSize bufferSize, VkFormat format, uint32_t texWidth, uint32_t texHeight, VulkanDevice* device, VkQueue copyQueue, VkFilter filter, VkImageUsageFlags imageUsageFlag, VkImageLayout imageLayout) {
+        if (buffer == nullptr) {
+            throw std::runtime_error("Buffer is null in texture loading from buffer!");
+        }
+
+        m_device = device;
+        m_width = texWidth;
+        m_height = texHeight;
+    
+        VkMemoryAllocateInfo memAllocInfo = {};
+        memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        VkMemoryRequirements memReqs;
+
+        VulkanCommandBuffer copyCmd;
+        copyCmd.create(device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+
+        VulkanBuffer stagingBuffer(m_device);
+        stagingBuffer.createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        
+        stagingBuffer.map(bufferSize);
+        memcpy(stagingBuffer.getMappedMemory(), buffer, bufferSize);
+        stagingBuffer.unmap();
+
+        VkBufferImageCopy bufferCopyRegion = {};
+        bufferCopyRegion.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        bufferCopyRegion.imageSubresource.mipLevel = 0;
+        bufferCopyRegion.imageSubresource.baseArrayLayer = 0;
+        bufferCopyRegion.imageSubresource.layerCount = 1;
+        bufferCopyRegion.imageExtent.width = m_width;
+        bufferCopyRegion.imageExtent.height = m_height;
+        bufferCopyRegion.imageExtent.depth = 1;
+        bufferCopyRegion.bufferOffset = 0;
+
+        VkImageCreateInfo imageCreateInfo = {};
+        imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+         imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
+		imageCreateInfo.format = format;
+		imageCreateInfo.mipLevels = m_mipLevels;
+		imageCreateInfo.arrayLayers = 1;
+		imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+		imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+		imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        imageCreateInfo.extent = { static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height), 1 };
+		imageCreateInfo.usage = imageUsageFlag;
+        if (!(imageCreateInfo.usage & VK_IMAGE_USAGE_TRANSFER_DST_BIT)) {
+            imageCreateInfo.usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+        }
+        if (vkCreateImage(m_device->getLogicalDevice(), &imageCreateInfo, nullptr, &m_image) != VK_SUCCESS) {
+            throw std::runtime_error("Image creation failed!");
+        }
+
+        vkGetImageMemoryRequirements(m_device->getLogicalDevice(), m_image, &memReqs);
+        memAllocInfo.allocationSize = memReqs.size;
+        memAllocInfo.memoryTypeIndex = m_device->findMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+        if (vkAllocateMemory(m_device->getLogicalDevice(), &memAllocInfo, nullptr, &m_deviceMemory) != VK_SUCCESS) {
+            throw std::runtime_error("Memory allocation failed!");
+        }
+
+        if (vkBindImageMemory(m_device->getLogicalDevice(), m_image, m_deviceMemory, 0) != VK_SUCCESS) {
+            throw std::runtime_error("Image memory binding failed!");
+        }
+
+		VkImageSubresourceRange subresourceRange = {};
+		subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		subresourceRange.baseMipLevel = 0;
+		subresourceRange.levelCount = m_mipLevels;
+		subresourceRange.layerCount = 1;
+
+        VkImageMemoryBarrier imageMemoryBarrier = {};
+        imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        imageMemoryBarrier.image = m_image;
+        imageMemoryBarrier.subresourceRange = subresourceRange;
+        imageMemoryBarrier.srcAccessMask = 0;
+        imageMemoryBarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+        imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        imageMemoryBarrier.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+
+        vkCmdPipelineBarrier(
+                copyCmd.getCommandBuffer(), 
+                VK_PIPELINE_STAGE_HOST_BIT, 
+                VK_PIPELINE_STAGE_TRANSFER_BIT, 
+                0,
+                0,
+                nullptr,
+                0,
+                nullptr,
+                1,
+                &imageMemoryBarrier);
+
+        vkCmdCopyBufferToImage(
+                copyCmd.getCommandBuffer(), 
+                stagingBuffer.getBuffer(), 
+                m_image, 
+                VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 
+                1,
+                &bufferCopyRegion);
+
+        m_imageLayout = imageLayout;
+
+        imageMemoryBarrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+        imageMemoryBarrier.newLayout = imageLayout;
+
+        vkCmdPipelineBarrier(
+                copyCmd.getCommandBuffer(), 
+                VK_PIPELINE_STAGE_HOST_BIT, 
+                VK_PIPELINE_STAGE_TRANSFER_BIT, 
+                0,
+                0,
+                nullptr,
+                0,
+                nullptr,
+                1,
+                &imageMemoryBarrier);
+
+        copyCmd.flushCommandBuffer(m_device, false);
+
+        stagingBuffer.cleanup();
+
+        VkSamplerCreateInfo sampler = {};
+        sampler.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+        sampler.magFilter = filter;
+        sampler.minFilter = filter;
+        sampler.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+        sampler.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        sampler.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        sampler.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        sampler.mipLodBias = 0.0f;
+        sampler.compareOp = VK_COMPARE_OP_NEVER;
+        sampler.minLod = 0.0f;
+        sampler.maxLod = 0.0f;
+        sampler.maxAnisotropy = 1.0f;
+
+        if (vkCreateSampler(m_device->getLogicalDevice(), &sampler, 
+                    nullptr, &m_sampler) != VK_SUCCESS) {
+            throw std::runtime_error("Sampler creation failed!");
+        }
+
+        VkImageViewCreateInfo view = {};
+        view.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        view.pNext = NULL;
+        view.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        view.format = format;
+        view.components = {
+            VK_COMPONENT_SWIZZLE_R,
+            VK_COMPONENT_SWIZZLE_G,
+            VK_COMPONENT_SWIZZLE_B,
+            VK_COMPONENT_SWIZZLE_A
+        };
+        view.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
+        view.subresourceRange.levelCount = 1;
+        view.image = m_image;
+
+        if (vkCreateImageView(m_device->getLogicalDevice(), &view, 
+                    nullptr, &m_view) != VK_SUCCESS) {
+            throw std::runtime_error("Image view creation failed!");
+        }
+
+        m_descriptor.sampler = m_sampler;
+        m_descriptor.imageView = m_view;
+        m_descriptor.imageLayout = m_imageLayout;
+    }
+
     void VulkanTexture2D::generateMipmaps(VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels) {
         VkFormatProperties formatProperties;
         vkGetPhysicalDeviceFormatProperties(m_device->getPhysicalDevice(), 
@@ -516,7 +680,13 @@ namespace VulkanLearning {
             1
         };
 
-        vkCmdCopyBufferToImage(commandBuffer.getCommandBuffer(), buffer.getBuffer(), m_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+        vkCmdCopyBufferToImage(
+                commandBuffer.getCommandBuffer(), 
+                buffer.getBuffer(), 
+                m_image, 
+                VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 
+                1, 
+                &region);
 
         commandBuffer.flushCommandBuffer(m_device, true);
 
@@ -549,7 +719,7 @@ namespace VulkanLearning {
         }
     }
 
-    void VulkanTexture2DArray::loadFromKTXFile(std::string filename, VkFormat format, VulkanDevice* device, VkQueue copyQueue, VkImageUsageFlags imageUsageFlag, VkImageLayout imageLayout) {
+    void VulkanTexture2DArray::loadFromKTXFile(std::string filename, VkFormat format, VulkanDevice* device, VkQueue copyQueue, VkImageUsageFlags imageUsageFlags, VkImageLayout imageLayout) {
         m_device = device;
 
         ktxTexture* ktxTexture;
@@ -609,7 +779,7 @@ namespace VulkanLearning {
         imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
         imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         imageCreateInfo.extent = { static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height), 1 };
-        imageCreateInfo.usage = imageUsageFlag;
+        imageCreateInfo.usage = imageUsageFlags;
         if (!(imageCreateInfo.usage & VK_IMAGE_USAGE_TRANSFER_DST_BIT)) {
             imageCreateInfo.usage |= VK_IMAGE_USAGE_TRANSFER_DST_BIT;
         }

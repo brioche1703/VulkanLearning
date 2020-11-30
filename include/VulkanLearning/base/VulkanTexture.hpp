@@ -32,6 +32,7 @@ namespace VulkanLearning {
             VulkanTexture() {}
             ~VulkanTexture() {}
 
+            inline VkImage getImage() { return m_image; }
             inline VkImageView getView() { return m_view; }
             inline VkSampler getSampler() { return m_sampler; }
             inline VkImageLayout getImageLayout() { return m_imageLayout; }
@@ -57,6 +58,18 @@ namespace VulkanLearning {
                     VkFormat format,
                     VulkanDevice* device,
                     VkQueue copyQueue,
+                    VkImageUsageFlags imageUsageFlag = VK_IMAGE_USAGE_SAMPLED_BIT,
+                    VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+            void loadFromBuffer(
+                    void* buffer,
+                    VkDeviceSize bufferSize,
+                    VkFormat format,
+                    uint32_t texWidth,
+                    uint32_t texHeight,
+                    VulkanDevice* device,
+                    VkQueue copyQueue,
+                    VkFilter filter = VK_FILTER_LINEAR,
                     VkImageUsageFlags imageUsageFlag = VK_IMAGE_USAGE_SAMPLED_BIT,
                     VkImageLayout imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 

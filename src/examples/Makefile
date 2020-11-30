@@ -56,17 +56,49 @@ CMAKE_BINARY_DIR = /home/brioche/dev/graphics/vulkan/VulkanLearning
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target install/local
-install/local: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
 
-# Special rule for the target install/local
-install/local/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local/fast
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
+
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
 
 # Special rule for the target install
 install: preinstall
@@ -80,49 +112,17 @@ install/fast: preinstall/fast
 	/usr/bin/cmake -P cmake_install.cmake
 .PHONY : install/fast
 
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
 
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
-
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
-
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
-
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
-
-# Special rule for the target install/strip
-install/strip/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip/fast
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -157,64 +157,19 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-src/examples/CMakeFiles/textureArray.dir/rule:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/textureArray.dir/rule
-.PHONY : src/examples/CMakeFiles/textureArray.dir/rule
+src/examples/CMakeFiles/single3DModel.dir/rule:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/single3DModel.dir/rule
+.PHONY : src/examples/CMakeFiles/single3DModel.dir/rule
 
 # Convenience name for target.
-textureArray: src/examples/CMakeFiles/textureArray.dir/rule
+single3DModel: src/examples/CMakeFiles/single3DModel.dir/rule
 
-.PHONY : textureArray
+.PHONY : single3DModel
 
 # fast build rule for target.
-textureArray/fast:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/build
-.PHONY : textureArray/fast
-
-# Convenience name for target.
-src/examples/CMakeFiles/texture.dir/rule:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/texture.dir/rule
-.PHONY : src/examples/CMakeFiles/texture.dir/rule
-
-# Convenience name for target.
-texture: src/examples/CMakeFiles/texture.dir/rule
-
-.PHONY : texture
-
-# fast build rule for target.
-texture/fast:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/texture.dir/build.make src/examples/CMakeFiles/texture.dir/build
-.PHONY : texture/fast
-
-# Convenience name for target.
-src/examples/CMakeFiles/specializationConstant.dir/rule:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/specializationConstant.dir/rule
-.PHONY : src/examples/CMakeFiles/specializationConstant.dir/rule
-
-# Convenience name for target.
-specializationConstant: src/examples/CMakeFiles/specializationConstant.dir/rule
-
-.PHONY : specializationConstant
-
-# fast build rule for target.
-specializationConstant/fast:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/build
-.PHONY : specializationConstant/fast
-
-# Convenience name for target.
-src/examples/CMakeFiles/pushConstants.dir/rule:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/pushConstants.dir/rule
-.PHONY : src/examples/CMakeFiles/pushConstants.dir/rule
-
-# Convenience name for target.
-pushConstants: src/examples/CMakeFiles/pushConstants.dir/rule
-
-.PHONY : pushConstants
-
-# fast build rule for target.
-pushConstants/fast:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/pushConstants.dir/build.make src/examples/CMakeFiles/pushConstants.dir/build
-.PHONY : pushConstants/fast
+single3DModel/fast:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/single3DModel.dir/build.make src/examples/CMakeFiles/single3DModel.dir/build
+.PHONY : single3DModel/fast
 
 # Convenience name for target.
 src/examples/CMakeFiles/dynamicUniformBuffers.dir/rule:
@@ -232,19 +187,79 @@ dynamicUniformBuffers/fast:
 .PHONY : dynamicUniformBuffers/fast
 
 # Convenience name for target.
-src/examples/CMakeFiles/single3DModel.dir/rule:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/single3DModel.dir/rule
-.PHONY : src/examples/CMakeFiles/single3DModel.dir/rule
+src/examples/CMakeFiles/pushConstants.dir/rule:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/pushConstants.dir/rule
+.PHONY : src/examples/CMakeFiles/pushConstants.dir/rule
 
 # Convenience name for target.
-single3DModel: src/examples/CMakeFiles/single3DModel.dir/rule
+pushConstants: src/examples/CMakeFiles/pushConstants.dir/rule
 
-.PHONY : single3DModel
+.PHONY : pushConstants
 
 # fast build rule for target.
-single3DModel/fast:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/single3DModel.dir/build.make src/examples/CMakeFiles/single3DModel.dir/build
-.PHONY : single3DModel/fast
+pushConstants/fast:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/pushConstants.dir/build.make src/examples/CMakeFiles/pushConstants.dir/build
+.PHONY : pushConstants/fast
+
+# Convenience name for target.
+src/examples/CMakeFiles/specializationConstant.dir/rule:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/specializationConstant.dir/rule
+.PHONY : src/examples/CMakeFiles/specializationConstant.dir/rule
+
+# Convenience name for target.
+specializationConstant: src/examples/CMakeFiles/specializationConstant.dir/rule
+
+.PHONY : specializationConstant
+
+# fast build rule for target.
+specializationConstant/fast:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/build
+.PHONY : specializationConstant/fast
+
+# Convenience name for target.
+src/examples/CMakeFiles/texture.dir/rule:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/texture.dir/rule
+.PHONY : src/examples/CMakeFiles/texture.dir/rule
+
+# Convenience name for target.
+texture: src/examples/CMakeFiles/texture.dir/rule
+
+.PHONY : texture
+
+# fast build rule for target.
+texture/fast:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/texture.dir/build.make src/examples/CMakeFiles/texture.dir/build
+.PHONY : texture/fast
+
+# Convenience name for target.
+src/examples/CMakeFiles/textureArray.dir/rule:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/textureArray.dir/rule
+.PHONY : src/examples/CMakeFiles/textureArray.dir/rule
+
+# Convenience name for target.
+textureArray: src/examples/CMakeFiles/textureArray.dir/rule
+
+.PHONY : textureArray
+
+# fast build rule for target.
+textureArray/fast:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/build
+.PHONY : textureArray/fast
+
+# Convenience name for target.
+src/examples/CMakeFiles/gltfloading.dir/rule:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/gltfloading.dir/rule
+.PHONY : src/examples/CMakeFiles/gltfloading.dir/rule
+
+# Convenience name for target.
+gltfloading: src/examples/CMakeFiles/gltfloading.dir/rule
+
+.PHONY : gltfloading
+
+# fast build rule for target.
+gltfloading/fast:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfloading.dir/build.make src/examples/CMakeFiles/gltfloading.dir/build
+.PHONY : gltfloading/fast
 
 # Convenience name for target.
 src/examples/CMakeFiles/simpleTriangle.dir/rule:
@@ -287,6 +302,33 @@ dynamicUniformBuffers/dynamicUniformBuffers.s: dynamicUniformBuffers/dynamicUnif
 dynamicUniformBuffers/dynamicUniformBuffers.cpp.s:
 	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/dynamicUniformBuffers.dir/build.make src/examples/CMakeFiles/dynamicUniformBuffers.dir/dynamicUniformBuffers/dynamicUniformBuffers.cpp.s
 .PHONY : dynamicUniformBuffers/dynamicUniformBuffers.cpp.s
+
+gltfloading/gltfloading.o: gltfloading/gltfloading.cpp.o
+
+.PHONY : gltfloading/gltfloading.o
+
+# target to build an object file
+gltfloading/gltfloading.cpp.o:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfloading.dir/build.make src/examples/CMakeFiles/gltfloading.dir/gltfloading/gltfloading.cpp.o
+.PHONY : gltfloading/gltfloading.cpp.o
+
+gltfloading/gltfloading.i: gltfloading/gltfloading.cpp.i
+
+.PHONY : gltfloading/gltfloading.i
+
+# target to preprocess a source file
+gltfloading/gltfloading.cpp.i:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfloading.dir/build.make src/examples/CMakeFiles/gltfloading.dir/gltfloading/gltfloading.cpp.i
+.PHONY : gltfloading/gltfloading.cpp.i
+
+gltfloading/gltfloading.s: gltfloading/gltfloading.cpp.s
+
+.PHONY : gltfloading/gltfloading.s
+
+# target to generate assembly for a file
+gltfloading/gltfloading.cpp.s:
+	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfloading.dir/build.make src/examples/CMakeFiles/gltfloading.dir/gltfloading/gltfloading.cpp.s
+.PHONY : gltfloading/gltfloading.cpp.s
 
 pushConstants/pushConstants.o: pushConstants/pushConstants.cpp.o
 
@@ -456,22 +498,26 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... install/local"
-	@echo "... install"
-	@echo "... list_install_components"
-	@echo "... rebuild_cache"
-	@echo "... edit_cache"
-	@echo "... install/strip"
-	@echo "... textureArray"
-	@echo "... texture"
-	@echo "... specializationConstant"
-	@echo "... pushConstants"
-	@echo "... dynamicUniformBuffers"
 	@echo "... single3DModel"
+	@echo "... install/strip"
+	@echo "... dynamicUniformBuffers"
+	@echo "... pushConstants"
+	@echo "... specializationConstant"
+	@echo "... texture"
+	@echo "... textureArray"
+	@echo "... gltfloading"
+	@echo "... edit_cache"
+	@echo "... rebuild_cache"
+	@echo "... list_install_components"
 	@echo "... simpleTriangle"
+	@echo "... install"
+	@echo "... install/local"
 	@echo "... dynamicUniformBuffers/dynamicUniformBuffers.o"
 	@echo "... dynamicUniformBuffers/dynamicUniformBuffers.i"
 	@echo "... dynamicUniformBuffers/dynamicUniformBuffers.s"
+	@echo "... gltfloading/gltfloading.o"
+	@echo "... gltfloading/gltfloading.i"
+	@echo "... gltfloading/gltfloading.s"
 	@echo "... pushConstants/pushConstants.o"
 	@echo "... pushConstants/pushConstants.i"
 	@echo "... pushConstants/pushConstants.s"

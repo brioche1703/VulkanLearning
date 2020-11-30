@@ -68,6 +68,7 @@ set(EXAMPLES
     specializationConstant
     texture
     textureArray
+    gltfloading
 )
 
 buildExamples()
