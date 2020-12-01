@@ -8,126 +8,266 @@
 #include "ktx.h"
 #include <cstring>
 #include <vulkan/vulkan_core.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "tiny_gltf.h"
 
-
-
 namespace VulkanLearning {
 
-class VulkanglTFModel {
-    private:
-        VulkanDevice* m_device;
-        VkQueue m_copyQueue;
+    class VulkanglTFModel {
+        private:
+            VulkanDevice* m_device;
+            VkQueue m_copyQueue;
 
-        struct Vertex {
-            glm::vec3 pos;
-            glm::vec3 normal;
-            glm::vec2 uv;
-            glm::vec3 color;
-        };
+            struct Vertex {
+                glm::vec3 pos;
+                glm::vec3 normal;
+                glm::vec2 uv;
+                glm::vec3 color;
+            };
 
-        struct {
-            VkBuffer buffer;
-            VkDeviceMemory memory;
-        } vertices;
+            struct {
+                VkBuffer buffer;
+                VkDeviceMemory memory;
+            } vertices;
 
-        struct {
-            int count;
-            VkBuffer buffer;
-            VkDeviceMemory memory;
-        } indices;
+            struct {
+                int count;
+                VkBuffer buffer;
+                VkDeviceMemory memory;
+            } indices;
 
-        struct Node;
+            struct Node;
 
-        struct Primitive {
-            uint32_t firstIndex;
-            uint32_t indexCount;
-            int32_t materialIndex;
-        };
+            struct Primitive {
+                uint32_t firstIndex;
+                uint32_t indexCount;
+                int32_t materialIndex;
+            };
 
-        struct Mesh {
-            std::vector<Primitive> primitives;
-        };
+            struct Mesh {
+                std::vector<Primitive> primitives;
+            };
 
-        struct Node {
-            Node* parent;
-            std::vector<Node> children;
-            Mesh mesh;
-            glm::mat4 matrix;
-        };
+            struct Node {
+                Node* parent;
+                std::vector<Node> children;
+                Mesh mesh;
+                glm::mat4 matrix;
+            };
 
-        struct Material {
-            glm::vec4 baseColorFactor = glm::vec4(1.0f);
-            uint32_t baseColorTextureIndex;
-        };
+            struct Material {
+                glm::vec4 baseColorFactor = glm::vec4(1.0f);
+                uint32_t baseColorTextureIndex;
+            };
 
-        struct Image {
-            VulkanTexture2D texture;
-            VkDescriptorSet descriptorSet;
-        };
+            struct Image {
+                VulkanTexture2D texture;
+                VkDescriptorSet descriptorSet;
+            };
 
-        struct Texture {
-            int32_t imageIndex;
-        };
+            struct Texture {
+                int32_t imageIndex;
+            };
 
-        std::vector<Image> m_images;
-        std::vector<Texture> m_textures;
-        std::vector<Material> m_materials;
-        std::vector<Node> m_nodes;
+            std::vector<Image> m_images;
+            std::vector<Texture> m_textures;
+            std::vector<Material> m_materials;
+            std::vector<Node> m_nodes;
 
-    public:
-        ~VulkanglTFModel()
-        {
-            vkDestroyBuffer(m_device->getLogicalDevice(), vertices.buffer, nullptr);
-            vkFreeMemory(m_device->getLogicalDevice(), vertices.memory, nullptr);
-            vkDestroyBuffer(m_device->getLogicalDevice(), indices.buffer, nullptr);
-            vkFreeMemory(m_device->getLogicalDevice(), indices.memory, nullptr);
+        public:
+            ~VulkanglTFModel()
+            {
+                vkDestroyBuffer(m_device->getLogicalDevice(), vertices.buffer, nullptr);
+                vkFreeMemory(m_device->getLogicalDevice(), vertices.memory, nullptr);
+                vkDestroyBuffer(m_device->getLogicalDevice(), indices.buffer, nullptr);
+                vkFreeMemory(m_device->getLogicalDevice(), indices.memory, nullptr);
 
-            for (Image image : m_images) {
-                image.texture.destroy();
+                for (Image image : m_images) {
+                    image.texture.destroy();
+                }
             }
-        }
 
-        void loadImages(tinygltf::Model& input) {
-            m_images.resize(input.images.size());
-            for (size_t i = 0; i < input.images.size(); i++) {
-                tinygltf::Image& glTFImage = input.images[i];
-                unsigned char* buffer = nullptr;
-                VkDeviceSize bufferSize = 0;
-                bool deleteBuffer = false;
+            void loadImages(tinygltf::Model& input) {
+                m_images.resize(input.images.size());
+                for (size_t i = 0; i < input.images.size(); i++) {
+                    tinygltf::Image& glTFImage = input.images[i];
+                    unsigned char* buffer = nullptr;
+                    VkDeviceSize bufferSize = 0;
+                    bool deleteBuffer = false;
 
-                if (glTFImage.component == 3) {
-                    bufferSize = glTFImage.width * glTFImage.height * 4;
-                    buffer = new unsigned char[bufferSize];
-                    unsigned char* rgba = buffer;
-                    unsigned char* rgb = &glTFImage.image[0];
-                    for (size_t i = 0; i < glTFImage.width * glTFImage.height; ++i) {
-                        memcpy(rgba, rgb, sizeof(unsigned char) * 3);
-                        rgba += 4;
-                        rgb += 3;
+                    if (glTFImage.component == 3) {
+                        bufferSize = glTFImage.width * glTFImage.height * 4;
+                        buffer = new unsigned char[bufferSize];
+                        unsigned char* rgba = buffer;
+                        unsigned char* rgb = &glTFImage.image[0];
+                        for (size_t i = 0; i < glTFImage.width * glTFImage.height; ++i) {
+                            memcpy(rgba, rgb, sizeof(unsigned char) * 3);
+                            rgba += 4;
+                            rgb += 3;
+                        }
+                        deleteBuffer = true;
+                    } else {
+                        buffer = &glTFImage.image[0];
+                        bufferSize = glTFImage.image.size();
                     }
-                    deleteBuffer = true;
-                } else {
-                    buffer = &glTFImage.image[0];
-                    bufferSize = glTFImage.image.size();
-                }
 
-                m_images[i].texture.loadFromBuffer(
-                        buffer, 
-                        bufferSize,
-                        VK_FORMAT_R8G8B8A8_UNORM,
-                        glTFImage.width,
-                        glTFImage.height,
-                        m_device,
-                        m_copyQueue);
-                
-                if (deleteBuffer) {
-                    delete buffer;
+                    m_images[i].texture.loadFromBuffer(
+                            buffer, 
+                            bufferSize,
+                            VK_FORMAT_R8G8B8A8_UNORM,
+                            glTFImage.width,
+                            glTFImage.height,
+                            m_device,
+                            m_copyQueue);
+
+                    if (deleteBuffer) {
+                        delete buffer;
+                    }
                 }
             }
-        }
-};
+
+            void loadTextures(tinygltf::Model& input) {
+                m_textures.resize(input.textures.size());
+                for (size_t i = 0; i < input.textures.size(); i++) {
+                    m_textures[i].imageIndex = input.textures[i].source;
+                }
+            }
+
+            void loadMaterials(tinygltf::Model& input) {
+                m_materials.resize(input.materials.size());
+                for (size_t i = 0; i < input.materials.size(); i++) {
+                    tinygltf::Material glTFMaterial = input.materials[i];
+                    if (glTFMaterial.values.find("baseColorFactor") != glTFMaterial.values.end()) {
+                        m_materials[i].baseColorFactor = glm::make_vec4(glTFMaterial.values["baseColorFactor"].ColorFactor().data());
+                    }
+                    if (glTFMaterial.values.find("baseColorTexture") != glTFMaterial.values.end()) {
+                        m_materials[i].baseColorTextureIndex = glTFMaterial.values["baseColorTexture"].TextureIndex();
+                    }
+                }
+            }
+
+            void loadNode(const tinygltf::Node& inputNode, const tinygltf::Model& input, VulkanglTFModel::Node* parent, std::vector<uint32_t>& indexBuffer, std::vector<VulkanglTFModel::Vertex>& vertexBuffer) {
+                VulkanglTFModel::Node node{};
+                node.matrix = glm::mat4(1.0f);
+
+                if (inputNode.translation.size() == 3) {
+                    node.matrix = glm::translate(node.matrix, glm::vec3(glm::make_vec3(inputNode.translation.data())));
+                }
+                if (inputNode.rotation.size() == 3) {
+                    glm::quat q = glm::make_quat(inputNode.rotation.data());
+                    node.matrix *= glm::mat4(q);
+                }
+                if (inputNode.scale.size() == 3) {
+                    node.matrix = glm::scale(node.matrix, glm::vec3(glm::make_vec3(inputNode.scale.data())));
+                }
+                if (inputNode.children.size() == 16) {
+                    node.matrix = glm::make_mat4x4(inputNode.matrix.data());
+                }
+
+                if (inputNode.children.size() > 0) {
+                    for (size_t i = 0; i < inputNode.children.size(); i++) {
+                        loadNode(input.nodes[inputNode.children[i]], input, &node, indexBuffer, vertexBuffer);
+                    }
+                }
+
+                if (inputNode.mesh > -1) {
+                    const tinygltf::Mesh mesh = input.meshes[inputNode.mesh];
+                    for (size_t i = 0; i < mesh.primitives.size(); i++) {
+                        const tinygltf::Primitive& glTFPrimitive = mesh.primitives[i];
+                        uint32_t firstIndex = static_cast<uint32_t>(indexBuffer.size());
+                        uint32_t vertexStart = static_cast<uint32_t>(vertexBuffer.size());
+                        uint32_t indexCount = 0;
+
+                        // Vertices
+                        const float* positionBuffer = nullptr;
+                        const float* normalsBuffer = nullptr;
+                        const float* texCoordsBuffer = nullptr;
+                        size_t vertexCount = 0;
+
+                        if (glTFPrimitive.attributes.find("POSITION") != glTFPrimitive.attributes.end()) {
+                            const tinygltf::Accessor& accessor = input.accessors[glTFPrimitive.attributes.find("POSITION")->second];
+                            const tinygltf::BufferView& view = input.bufferViews[accessor.bufferView];
+                            positionBuffer = reinterpret_cast<const float*>(&(input.buffers[view.buffer].data[accessor.byteOffset + view.byteOffset]));
+                            vertexCount = accessor.count;
+                        }
+                        if (glTFPrimitive.attributes.find("NORMAL") != glTFPrimitive.attributes.end()) {
+                            const tinygltf::Accessor& accessor = input.accessors[glTFPrimitive.attributes.find("NORMAL")->second];
+                            const tinygltf::BufferView& view = input.bufferViews[accessor.bufferView];
+                            normalsBuffer = reinterpret_cast<const float*>(&(input.buffers[view.buffer].data[accessor.byteOffset + view.byteOffset]));
+                        }
+                        if (glTFPrimitive.attributes.find("TEXCOORD_0") != glTFPrimitive.attributes.end()) {
+                            const tinygltf::Accessor& accessor = input.accessors[glTFPrimitive.attributes.find("TEXCOORD_0")->second];
+                            const tinygltf::BufferView& view = input.bufferViews[accessor.bufferView];
+                            texCoordsBuffer = reinterpret_cast<const float*>(&(input.buffers[view.buffer].data[accessor.byteOffset + view.byteOffset]));
+                        }
+
+                        for (size_t v = 0; v < vertexCount; v++) {
+                            Vertex vert{};
+                            vert.pos = glm::vec4(glm::make_vec3(&positionBuffer[v * 3]), 1.0f);
+                            vert.normal = glm::normalize(glm::vec3(normalsBuffer ? glm::make_vec3(&normalsBuffer[v * 3]) : glm::vec3(0.0f)));
+                            vert.uv = texCoordsBuffer ? glm::make_vec2(&texCoordsBuffer[v * 2]) : glm::vec3(0.0f);
+                            vert.color = glm::vec3(1.0f);
+                            vertexBuffer.push_back(vert);
+                        }
+
+
+                        // Indices
+                        const tinygltf::Accessor& accessor = input.accessors[glTFPrimitive.indices];
+                        const tinygltf::BufferView& bufferView = input.bufferViews[accessor.bufferView];
+                        const tinygltf::Buffer& buffer = input.buffers[bufferView.buffer];
+
+                        indexCount += static_cast<uint32_t>(accessor.count);
+
+                        switch (accessor.componentType) {
+                            case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT: {
+                                uint32_t* buf = new uint32_t[accessor.count];
+                                memcpy(buf, &buffer.data[accessor.byteOffset + bufferView.byteOffset], accessor.count * sizeof(uint32_t));
+                                for (size_t index = 0; index < accessor.count; index++) {
+                                    indexBuffer.push_back(buf[index] + vertexStart);
+                                }
+                                break;
+                            }
+
+                            case TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT: {
+                                uint16_t* buf = new uint16_t[accessor.count];
+                                memcpy(buf, &buffer.data[accessor.byteOffset + bufferView.byteOffset], accessor.count * sizeof(uint16_t));
+                                for (size_t index = 0; index < accessor.count; index++) {
+                                    indexBuffer.push_back(buf[index] + vertexStart);
+                                }
+                                break;
+                            }
+
+                            case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:  {
+                                uint8_t* buf = new uint8_t[accessor.count];
+                                memcpy(buf, &buffer.data[accessor.byteOffset + bufferView.byteOffset], accessor.count * sizeof(uint8_t));
+                                for (size_t index = 0; index < accessor.count; index++) {
+                                    indexBuffer.push_back(buf[index] + vertexStart);
+                                }
+                                break;
+                            }
+
+                            default:
+                                std::cerr << "Index component type " << accessor.componentType << " not supported!" << std::endl;
+                                return;
+
+                        }
+
+                        Primitive primitive{};
+                        primitive.firstIndex = firstIndex;
+                        primitive.indexCount = indexCount;
+                        primitive.materialIndex = glTFPrimitive.material;
+                        node.mesh.primitives.push_back(primitive);
+                    }
+                }
+
+                if (parent) {
+                    parent->children.push_back(node);
+                } else {
+                    m_nodes.push_back(node);
+                }
+            }
+    };
 
 
     const std::string TEXTURE_PATH = "./src/textures/texturearray_rgba.ktx";
