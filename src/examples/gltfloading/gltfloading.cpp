@@ -15,9 +15,9 @@
 namespace VulkanLearning {
 
     class VulkanglTFModel {
-        private:
-            VulkanDevice* m_device;
-            VkQueue m_copyQueue;
+        public:
+            VulkanDevice* device;
+            VkQueue copyQueue;
 
             struct Vertex {
                 glm::vec3 pos;
@@ -27,14 +27,12 @@ namespace VulkanLearning {
             };
 
             struct {
-                VkBuffer buffer;
-                VkDeviceMemory memory;
+                VulkanBuffer* buffer;
             } vertices;
 
             struct {
                 int count;
-                VkBuffer buffer;
-                VkDeviceMemory memory;
+                VulkanBuffer* buffer;
             } indices;
 
             struct Node;
@@ -70,26 +68,29 @@ namespace VulkanLearning {
                 int32_t imageIndex;
             };
 
-            std::vector<Image> m_images;
-            std::vector<Texture> m_textures;
-            std::vector<Material> m_materials;
-            std::vector<Node> m_nodes;
+            std::vector<Image> images;
+            std::vector<Texture> textures;
+            std::vector<Material> materials;
+            std::vector<Node> nodes;
 
-        public:
+
+            VulkanglTFModel() {}
             ~VulkanglTFModel()
             {
-                vkDestroyBuffer(m_device->getLogicalDevice(), vertices.buffer, nullptr);
-                vkFreeMemory(m_device->getLogicalDevice(), vertices.memory, nullptr);
-                vkDestroyBuffer(m_device->getLogicalDevice(), indices.buffer, nullptr);
-                vkFreeMemory(m_device->getLogicalDevice(), indices.memory, nullptr);
+                vkDestroyBuffer(device->getLogicalDevice(), vertices.buffer->getBuffer(), nullptr);
+                vkFreeMemory(device->getLogicalDevice(), vertices.buffer->getBufferMemory(), nullptr);
+                vkDestroyBuffer(device->getLogicalDevice(), indices.buffer->getBuffer(), nullptr);
+                vkFreeMemory(device->getLogicalDevice(), indices.buffer->getBufferMemory(), nullptr);
 
-                for (Image image : m_images) {
+                for (Image image : images) {
                     image.texture.destroy();
                 }
             }
 
+            inline VulkanDevice* getDevice() { return device; }
+
             void loadImages(tinygltf::Model& input) {
-                m_images.resize(input.images.size());
+                images.resize(input.images.size());
                 for (size_t i = 0; i < input.images.size(); i++) {
                     tinygltf::Image& glTFImage = input.images[i];
                     unsigned char* buffer = nullptr;
@@ -112,14 +113,14 @@ namespace VulkanLearning {
                         bufferSize = glTFImage.image.size();
                     }
 
-                    m_images[i].texture.loadFromBuffer(
+                    images[i].texture.loadFromBuffer(
                             buffer, 
                             bufferSize,
                             VK_FORMAT_R8G8B8A8_UNORM,
                             glTFImage.width,
                             glTFImage.height,
-                            m_device,
-                            m_copyQueue);
+                            device,
+                            copyQueue);
 
                     if (deleteBuffer) {
                         delete buffer;
@@ -128,21 +129,21 @@ namespace VulkanLearning {
             }
 
             void loadTextures(tinygltf::Model& input) {
-                m_textures.resize(input.textures.size());
+                textures.resize(input.textures.size());
                 for (size_t i = 0; i < input.textures.size(); i++) {
-                    m_textures[i].imageIndex = input.textures[i].source;
+                    textures[i].imageIndex = input.textures[i].source;
                 }
             }
 
             void loadMaterials(tinygltf::Model& input) {
-                m_materials.resize(input.materials.size());
+                materials.resize(input.materials.size());
                 for (size_t i = 0; i < input.materials.size(); i++) {
                     tinygltf::Material glTFMaterial = input.materials[i];
                     if (glTFMaterial.values.find("baseColorFactor") != glTFMaterial.values.end()) {
-                        m_materials[i].baseColorFactor = glm::make_vec4(glTFMaterial.values["baseColorFactor"].ColorFactor().data());
+                        materials[i].baseColorFactor = glm::make_vec4(glTFMaterial.values["baseColorFactor"].ColorFactor().data());
                     }
                     if (glTFMaterial.values.find("baseColorTexture") != glTFMaterial.values.end()) {
-                        m_materials[i].baseColorTextureIndex = glTFMaterial.values["baseColorTexture"].TextureIndex();
+                        materials[i].baseColorTextureIndex = glTFMaterial.values["baseColorTexture"].TextureIndex();
                     }
                 }
             }
@@ -264,7 +265,41 @@ namespace VulkanLearning {
                 if (parent) {
                     parent->children.push_back(node);
                 } else {
-                    m_nodes.push_back(node);
+                    nodes.push_back(node);
+                }
+            }
+
+            void drawNode(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, VulkanglTFModel::Node node) {
+                if (node.mesh.primitives.size() > 0) {
+                    glm::mat4 nodeMatrix = node.matrix;
+                    VulkanglTFModel::Node* currentParent = node.parent;
+                    while (currentParent) {
+                        nodeMatrix = currentParent->matrix * nodeMatrix;
+                        currentParent = currentParent->parent;
+                    }
+
+                    vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &nodeMatrix);
+                    for (VulkanglTFModel::Primitive& primitive : node.mesh.primitives) {
+                        if (primitive.indexCount > 0) {
+                            VulkanglTFModel::Texture texture = textures[materials[primitive.materialIndex].baseColorTextureIndex];
+                            vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 1, 1, &images[texture.imageIndex].descriptorSet, 0, nullptr);
+                            vkCmdDrawIndexed(commandBuffer, primitive.indexCount, 1, primitive.firstIndex, 0, 0);
+
+                        }
+                    }
+                }
+                for (auto& child : node.children) {
+                    drawNode(commandBuffer, pipelineLayout, child);
+                }
+            }
+
+            void draw(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout) {
+                VkDeviceSize offsets[1] = { 0 };
+                vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertices.buffer->getBufferPointer(), offsets);
+                vkCmdBindIndexBuffer(commandBuffer, indices.buffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
+                for (auto& node : nodes) {
+                    drawNode(commandBuffer, pipelineLayout, node);
                 }
             }
     };
@@ -280,6 +315,9 @@ namespace VulkanLearning {
     class VulkanExample : public VulkanBase {
 
         private:
+
+            VulkanglTFModel glTFModel;
+
             uint32_t m_msaaSamples = 64;
 
             struct UboInstanceData {
@@ -301,39 +339,6 @@ namespace VulkanLearning {
             }
 
         private:
-            std::vector<Vertex> m_vertices =
-            {
-                { { -1.0f, -1.0f,  1.0f }, { 0.0f, 0.0f } },
-                { {  1.0f, -1.0f,  1.0f }, { 1.0f, 0.0f } },
-                { {  1.0f,  1.0f,  1.0f }, { 1.0f, 1.0f } },
-                { { -1.0f,  1.0f,  1.0f }, { 0.0f, 1.0f } },
-
-                { {  1.0f,  1.0f,  1.0f }, { 0.0f, 0.0f } },
-                { {  1.0f,  1.0f, -1.0f }, { 1.0f, 0.0f } },
-                { {  1.0f, -1.0f, -1.0f }, { 1.0f, 1.0f } },
-                { {  1.0f, -1.0f,  1.0f }, { 0.0f, 1.0f } },
-
-                { { -1.0f, -1.0f, -1.0f }, { 0.0f, 0.0f } },
-                { {  1.0f, -1.0f, -1.0f }, { 1.0f, 0.0f } },
-                { {  1.0f,  1.0f, -1.0f }, { 1.0f, 1.0f } },
-                { { -1.0f,  1.0f, -1.0f }, { 0.0f, 1.0f } },
-
-                { { -1.0f, -1.0f, -1.0f }, { 0.0f, 0.0f } },
-                { { -1.0f, -1.0f,  1.0f }, { 1.0f, 0.0f } },
-                { { -1.0f,  1.0f,  1.0f }, { 1.0f, 1.0f } },
-                { { -1.0f,  1.0f, -1.0f }, { 0.0f, 1.0f } },
-
-                { {  1.0f,  1.0f,  1.0f }, { 0.0f, 0.0f } },
-                { { -1.0f,  1.0f,  1.0f }, { 1.0f, 0.0f } },
-                { { -1.0f,  1.0f, -1.0f }, { 1.0f, 1.0f } },
-                { {  1.0f,  1.0f, -1.0f }, { 0.0f, 1.0f } },
-
-                { { -1.0f, -1.0f, -1.0f }, { 0.0f, 0.0f } },
-                { {  1.0f, -1.0f, -1.0f }, { 1.0f, 0.0f } },
-                { {  1.0f, -1.0f,  1.0f }, { 1.0f, 1.0f } },
-                { { -1.0f, -1.0f,  1.0f }, { 0.0f, 1.0f } },
-            };
-
             std::vector<uint32_t> m_indices = { 
                 0,1,2, 0,2,3, 
                 4,7,6,  4,6,5, 
@@ -645,9 +650,9 @@ namespace VulkanLearning {
                         m_swapChain, m_renderPass, m_descriptorSetLayout);
 
                 VulkanShaderModule vertShaderModule = 
-                    VulkanShaderModule("src/shaders/textureArrayVert.spv", m_device);
+                    VulkanShaderModule("src/shaders/glTFLoadingVert.spv", m_device);
                 VulkanShaderModule fragShaderModule = 
-                    VulkanShaderModule("src/shaders/textureArrayFrag.spv", m_device);
+                    VulkanShaderModule("src/shaders/glTFLoadingFrag.spv", m_device);
 
                 VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
                 vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -728,20 +733,6 @@ namespace VulkanLearning {
                 m_depthImageResource->create();
             }
 
-            void createVertexBuffer() override {
-                m_vertexBuffer = new VulkanBuffer(m_device); 
-                m_vertexBuffer->createWithStagingBuffer(m_vertices,
-                        VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
-                        VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-            }
-
-            void createIndexBuffer() override {
-                m_indexBuffer = new VulkanBuffer(m_device);
-                m_indexBuffer->createWithStagingBuffer(m_indices,
-                        VK_BUFFER_USAGE_TRANSFER_DST_BIT | 
-                        VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
-            }
-
             void createCoordinateSystemUniformBuffers() override {
                 uint32_t layerCount = m_texture.getLayerCount();
                 uboInstances.instance = new UboInstanceData[layerCount];
@@ -775,7 +766,7 @@ namespace VulkanLearning {
                 }
 
                 std::array<VkClearValue, 2> clearValues{};
-                clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
+                clearValues[0].color = {0.25f, 0.25f, 0.25f, 1.0f};
                 clearValues[1].depthStencil = {1.0f, 0};
 
                 for (size_t i = 0; i < m_commandBuffers.size(); i++) {
@@ -794,7 +785,6 @@ namespace VulkanLearning {
                     renderPassInfo.framebuffer = m_swapChain->getFramebuffers()[i];
                     renderPassInfo.renderArea.offset = {0, 0};
                     renderPassInfo.renderArea.extent = m_swapChain->getExtent();
-
                     renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
                     renderPassInfo.pClearValues = clearValues.data();
 
@@ -803,42 +793,25 @@ namespace VulkanLearning {
                             &renderPassInfo, 
                             VK_SUBPASS_CONTENTS_INLINE);
 
+                    vkCmdBindDescriptorSets(
+                            m_commandBuffers[i].getCommandBuffer(),
+                            VK_PIPELINE_BIND_POINT_GRAPHICS,
+                            m_graphicsPipeline->getPipelineLayout(),
+                            0,
+                            1,
+                            &m_descriptorSets->getDescriptorSets()[i],
+                            0,
+                            nullptr);
+
                     vkCmdBindPipeline(
                             m_commandBuffers[i].getCommandBuffer(), 
                             VK_PIPELINE_BIND_POINT_GRAPHICS, 
                             m_graphicsPipeline->getGraphicsPipeline());
 
-                    VkBuffer vertexBuffers[] = {m_vertexBuffer->getBuffer()};
-                    VkDeviceSize offsets[] = {0};
-                    vkCmdBindVertexBuffers(
+                    glTFModel.draw(
                             m_commandBuffers[i].getCommandBuffer(), 
-                            0, 
-                            1, 
-                            vertexBuffers, 
-                            offsets);
-                    vkCmdBindIndexBuffer(
-                            m_commandBuffers[i].getCommandBuffer(), 
-                            m_indexBuffer->getBuffer(), 
-                            0, 
-                            VK_INDEX_TYPE_UINT32);
+                            m_graphicsPipeline->getPipelineLayout());
 
-                    vkCmdBindDescriptorSets(
-                            m_commandBuffers[i].getCommandBuffer(), 
-                            VK_PIPELINE_BIND_POINT_GRAPHICS, 
-                            m_graphicsPipeline->getPipelineLayout(), 
-                            0, 
-                            1, 
-                            &m_descriptorSets->getDescriptorSets()[i], 
-                            0, 
-                            nullptr);
-
-                    vkCmdDrawIndexed(
-                            m_commandBuffers[i].getCommandBuffer(), 
-                            static_cast<uint32_t>(m_indices.size()), 
-                            m_texture.getLayerCount(),
-                            0, 
-                            0, 
-                            0);
                     vkCmdEndRenderPass(m_commandBuffers[i].getCommandBuffer());
 
                     if (vkEndCommandBuffer(m_commandBuffers[i].getCommandBuffer()) != VK_SUCCESS) {
@@ -870,7 +843,7 @@ namespace VulkanLearning {
                 samplerLayoutBinding.pImmutableSamplers = nullptr;
 
                 std::vector<VkDescriptorSetLayoutBinding> bindings = 
-                {uboLayoutBinding, samplerLayoutBinding};
+                    { uboLayoutBinding, samplerLayoutBinding };
 
                 m_descriptorSetLayout->create(bindings);
             }
@@ -883,8 +856,9 @@ namespace VulkanLearning {
                 poolSizes[0].descriptorCount = static_cast<uint32_t>(
                         m_swapChain->getImages().size());
                 poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                poolSizes[1].descriptorCount = static_cast<uint32_t>(
-                        m_swapChain->getImages().size());
+                poolSizes[1].descriptorCount = 
+                    static_cast<uint32_t>(m_swapChain->getImages().size() 
+                            * static_cast<uint32_t>(glTFModel.images.size()));
 
                 m_descriptorPool->create(poolSizes);
             }
@@ -972,6 +946,7 @@ namespace VulkanLearning {
 
                 updateCamera(currentImage);
             }
+
             void updateCamera(uint32_t currentImage) override {
                 uboInstances.coordUbo.model = glm::mat4(1.0f);
 
@@ -991,6 +966,92 @@ namespace VulkanLearning {
                 // Unmap because we're using multiple buffer for the multiple swap chaine images
                 m_coordinateSystemUniformBuffers[currentImage]->unmap();
             }
+
+            void loadglTFFile(std::string filename) {
+                tinygltf::Model glTFInput;
+                tinygltf::TinyGLTF gltfContext;
+                std::string error, warning;
+
+                bool fileLoaded = gltfContext.LoadASCIIFromFile(&glTFInput, &error, &warning, filename);
+
+                glTFModel.device = m_device;
+                glTFModel.copyQueue = m_device->getGraphicsQueue();
+                
+                std::vector<uint32_t> indexBuffer;
+                std::vector<VulkanglTFModel::Vertex> vertexBuffer;
+
+                if (fileLoaded) {
+                    glTFModel.loadImages(glTFInput);
+                    glTFModel.loadMaterials(glTFInput);
+                    glTFModel.loadTextures(glTFInput);
+
+                    const tinygltf::Scene& scene = glTFInput.scenes[0];
+                    for (size_t i = 0; i < scene.nodes.size(); i++) {
+                        const tinygltf::Node node = glTFInput.nodes[scene.nodes[i]];
+                        glTFModel.loadNode(node, glTFInput, nullptr, indexBuffer, vertexBuffer);
+                    }
+                } else {
+                    std::runtime_error("glTF file loading failed!");
+                }
+
+                size_t vertexBufferSize = vertexBuffer.size() * sizeof(VulkanglTFModel::Vertex);
+                size_t indexBufferSize = indexBuffer.size() * sizeof(uint32_t);
+                glTFModel.indices.count = static_cast<uint32_t>(indexBuffer.size());
+
+                
+                VulkanBuffer vertexStagingBuffer(m_device);
+                vertexStagingBuffer.createBuffer(
+                        vertexBufferSize, 
+                        VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
+                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+                VulkanBuffer indexStagingBuffer(m_device);
+                indexStagingBuffer.createBuffer(
+                        indexBufferSize, 
+                        VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
+                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+                glTFModel.vertices.buffer->createBuffer(
+                        vertexBufferSize, 
+                        VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+                        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+                glTFModel.indices.buffer->createBuffer(
+                        indexBufferSize, 
+                        VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+                        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+                VulkanCommandBuffer copyCmd;
+                copyCmd.create(m_device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+
+                VkBufferCopy copyRegion = {};
+                copyRegion.size = vertexBufferSize;
+                
+                vkCmdCopyBuffer(
+                        copyCmd.getCommandBuffer(), 
+                        vertexStagingBuffer.getBuffer(),
+                        glTFModel.vertices.buffer->getBuffer(),
+                        1,
+                        &copyRegion);
+
+                copyRegion.size = indexBufferSize;
+                
+                vkCmdCopyBuffer(
+                        copyCmd.getCommandBuffer(), 
+                        indexStagingBuffer.getBuffer(),
+                        glTFModel.indices.buffer->getBuffer(),
+                        1,
+                        &copyRegion);
+
+                copyCmd.flushCommandBuffer(m_device, true);
+
+                vertexStagingBuffer.cleanup();
+                indexStagingBuffer.cleanup();
+            }
+
+            void loadAssets() {
+                loadglTFFile("src/models/FlightHelmet/glTF/FlightHelmet.gltf");
+            }
+
     };
 
 }

@@ -32,3 +32,7 @@ $GLSLC_PATH texture.frag -o textureFrag.spv
 
 $GLSLC_PATH textureArray.vert -o textureArrayVert.spv
 $GLSLC_PATH textureArray.frag -o textureArrayFrag.spv
+
+$GLSLC_PATH glTFLoading.vert -o glTFLoadingVert.spv
+$GLSLC_PATH glTFLoading.frag -o glTFLoadingFrag.spv
+
