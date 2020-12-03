@@ -468,9 +468,7 @@ namespace VulkanLearning {
                         m_device, 
                         m_swapChain,
                         m_descriptorSetLayout, 
-                        m_descriptorPool,
-                        ubos,
-                        ubosSizes);
+                        m_descriptorPool);
 
                 m_descriptorSets->create();
 

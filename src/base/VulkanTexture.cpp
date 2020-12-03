@@ -1,10 +1,9 @@
-#include <cstring>
-
 #include "VulkanTexture.hpp"
-#include "VulkanCommandBuffer.hpp"
-#include "VulkanBuffer.hpp"
-#include "VulkanImageResource.hpp"
 
+#define TINYGLTF_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#define TINYGLTF_NO_STB_IMAGE_WRITE
+#include "tiny_gltf.h"
 
 namespace VulkanLearning {
 
@@ -375,6 +374,7 @@ namespace VulkanLearning {
         m_device = device;
         m_width = texWidth;
         m_height = texHeight;
+        m_mipLevels = 1;
     
         VkMemoryAllocateInfo memAllocInfo = {};
         memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;

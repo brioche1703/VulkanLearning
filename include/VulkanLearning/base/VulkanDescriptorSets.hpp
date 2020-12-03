@@ -22,7 +22,6 @@ namespace VulkanLearning {
             VulkanDescriptorPool* m_descriptorPool;
 
             std::vector<std::vector<VulkanBuffer*>> m_uniformBuffers;
-            std::vector<VkDeviceSize> m_uniformBufferSize;
 
             VulkanTexture* m_texture;
 
@@ -30,10 +29,7 @@ namespace VulkanLearning {
             VulkanDescriptorSets(VulkanDevice* device, 
                     VulkanSwapChain* swapChain, 
                     VulkanDescriptorSetLayout* descriptorSetLayout,
-                    VulkanDescriptorPool* descriptorPool,
-                    std::vector<std::vector<VulkanBuffer*>> uniformBuffers,
-                    std::vector<VkDeviceSize> uniformBufferSize,
-                    VulkanTexture* texture = nullptr);
+                    VulkanDescriptorPool* descriptorPool);
 
             ~VulkanDescriptorSets(); 
 

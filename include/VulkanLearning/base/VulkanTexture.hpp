@@ -6,10 +6,11 @@
 #include <cmath>
 
 #include "ktx.h"
-#include "stb_image.h"
 
 #include "VulkanDevice.hpp"
 #include "VulkanBuffer.hpp"
+#include "VulkanCommandBuffer.hpp"
+#include "VulkanImageResource.hpp"
 
 namespace VulkanLearning {
 
@@ -37,6 +38,8 @@ namespace VulkanLearning {
             inline VkSampler getSampler() { return m_sampler; }
             inline VkImageLayout getImageLayout() { return m_imageLayout; }
             inline uint32_t getLayerCount() { return m_layerCount; }
+            inline VkDescriptorImageInfo getDescriptor() { return m_descriptor; }
+            inline VkDescriptorImageInfo* getDescriptorPointer() { return &m_descriptor; }
 
             ktxResult loadKTXFile(std::string filename, ktxTexture **target);
             void destroy();

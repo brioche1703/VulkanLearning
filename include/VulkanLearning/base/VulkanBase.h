@@ -6,7 +6,6 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #define GLM_ENABLE_EXPERIMENTAL
 #define GLM_FORCE_SWIZZLE
-#define STB_IMAGE_IMPLEMENTATION
 
 #include <vulkan/vulkan_core.h>
 #include <GLFW/glfw3.h>
@@ -17,6 +16,7 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/gtx/hash.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
 #include <stdexcept>
@@ -31,6 +31,7 @@
 #include <unordered_map>
 #include <chrono>
 #include <functional>
+#include <cstring>
 
 #include "Vertex.hpp"
 #include "camera/Camera.hpp"
@@ -55,7 +56,6 @@
 #include "VulkanImageResource.hpp"
 #include "VulkanTexture.hpp"
 #include "misc/model/ModelObj.hpp"
-
 
 struct CoordinatesSystemUniformBufferObject {
     alignas(16) glm::mat4 model;

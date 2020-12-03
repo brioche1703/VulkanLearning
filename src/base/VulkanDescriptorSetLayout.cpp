@@ -14,8 +14,12 @@ namespace VulkanLearning {
         layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
         layoutInfo.pBindings = bindings.data();
 
-        if (vkCreateDescriptorSetLayout(m_device->getLogicalDevice(), 
-                    &layoutInfo, nullptr, &m_descriptorSetLayout) != VK_SUCCESS) {
+        if (vkCreateDescriptorSetLayout(
+                    m_device->getLogicalDevice(), 
+                    &layoutInfo, 
+                    nullptr, 
+                    &m_descriptorSetLayout) 
+                != VK_SUCCESS) {
             throw std::runtime_error("Set layout descriptor creation failed!");
         }
     }

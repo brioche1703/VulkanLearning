@@ -1,15 +1,6 @@
-#define TINYGLFT_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
-#define TINYGLFT_NO_STB_IMAGE_WRITE
-
 #include "VulkanBase.h"
-#include "VulkanTexture.hpp"
 
-#include "ktx.h"
-#include <cstring>
-#include <vulkan/vulkan_core.h>
-#include <glm/gtc/type_ptr.hpp>
-
+#define TINYGLTF_NO_STB_IMAGE_WRITE
 #include "tiny_gltf.h"
 
 namespace VulkanLearning {
@@ -307,11 +298,6 @@ namespace VulkanLearning {
 
     const std::string TEXTURE_PATH = "./src/textures/texturearray_rgba.ktx";
 
-    struct Vertex {
-        glm::vec3 pos;
-        glm::vec2 uv;
-    };
-
     class VulkanExample : public VulkanBase {
 
         private:
@@ -325,10 +311,10 @@ namespace VulkanLearning {
                 glm::vec4 arrayIndex;
             };
 
-            struct  {
-                CoordinatesSystemUniformBufferObject coordUbo;
-                UboInstanceData* instance;
-            } uboInstances;
+            struct DescriptorSetLayouts {
+                VulkanDescriptorSetLayout* matrices;
+                VulkanDescriptorSetLayout* textures;
+            } m_descriptorSetLayouts;
 
         public:
             VulkanExample() {}
@@ -339,15 +325,6 @@ namespace VulkanLearning {
             }
 
         private:
-            std::vector<uint32_t> m_indices = { 
-                0,1,2, 0,2,3, 
-                4,7,6,  4,6,5, 
-                10,9,8, 10,8,11, 
-                12,13,14, 12,14,15, 
-                16,19,18, 16,18,17, 
-                20,21,22, 20,22,23
-            };
-
             VulkanTexture2DArray m_texture;
 
             void initWindow() override {
@@ -374,6 +351,9 @@ namespace VulkanLearning {
                 createDevice();
                 createSwapChain();
                 createRenderPass();
+
+                loadAssets();
+
                 createDescriptorSetLayout();
 
                 createGraphicsPipeline();
@@ -427,7 +407,7 @@ namespace VulkanLearning {
 
                 m_syncObjects->getImagesInFlight()[imageIndex] = m_syncObjects->getInFlightFences()[currentFrame];
 
-                updateUBOInstances(imageIndex);
+                updateCamera(imageIndex);
 
                 VkSubmitInfo submitInfo{};
                 submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -659,20 +639,30 @@ namespace VulkanLearning {
 
                 VkVertexInputBindingDescription vertexBindingDescription;
                 vertexBindingDescription.binding = 0;
-                vertexBindingDescription.stride = sizeof(Vertex);
+                vertexBindingDescription.stride = sizeof(VulkanglTFModel::Vertex);
                 vertexBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
                 std::vector<VkVertexInputAttributeDescription> vertexAttributeDescription;
-                vertexAttributeDescription.resize(2);
+                vertexAttributeDescription.resize(4);
                 vertexAttributeDescription[0].binding = 0;
                 vertexAttributeDescription[0].format = VK_FORMAT_R32G32B32_SFLOAT;
                 vertexAttributeDescription[0].location = 0;
-                vertexAttributeDescription[0].offset = offsetof(Vertex, pos);
+                vertexAttributeDescription[0].offset = offsetof(VulkanglTFModel::Vertex, pos);
 
                 vertexAttributeDescription[1].binding = 0;
-                vertexAttributeDescription[1].format = VK_FORMAT_R32G32_SFLOAT;
+                vertexAttributeDescription[1].format = VK_FORMAT_R32G32B32_SFLOAT;
                 vertexAttributeDescription[1].location = 1;
-                vertexAttributeDescription[1].offset = offsetof(Vertex, uv);
+                vertexAttributeDescription[1].offset = offsetof(VulkanglTFModel::Vertex, normal);
+
+                vertexAttributeDescription[2].binding = 0;
+                vertexAttributeDescription[2].format = VK_FORMAT_R32G32B32_SFLOAT;
+                vertexAttributeDescription[2].location = 2;
+                vertexAttributeDescription[2].offset = offsetof(VulkanglTFModel::Vertex, uv);
+
+                vertexAttributeDescription[3].binding = 0;
+                vertexAttributeDescription[3].format = VK_FORMAT_R32G32B32_SFLOAT;
+                vertexAttributeDescription[3].location = 3;
+                vertexAttributeDescription[3].offset = offsetof(VulkanglTFModel::Vertex, color);
 
                 vertexInputInfo.vertexBindingDescriptionCount = 1;
                 vertexInputInfo.vertexAttributeDescriptionCount = 
@@ -688,15 +678,27 @@ namespace VulkanLearning {
                 depthStencil.depthBoundsTestEnable = VK_FALSE;
                 depthStencil.stencilTestEnable = VK_FALSE;
 
+                std::array<VkDescriptorSetLayout, 2> setLayouts = { 
+                    m_descriptorSetLayouts.matrices->getDescriptorSetLayout(), 
+                    m_descriptorSetLayouts.textures->getDescriptorSetLayout() 
+                };
+                VkPushConstantRange pushConstantRange = {};
+                pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+                pushConstantRange.size = sizeof(glm::mat4);
+                pushConstantRange.offset = 0;
+
                 VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
                 pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-                pipelineLayoutInfo.setLayoutCount = 1;
-                pipelineLayoutInfo.pSetLayouts = 
-                    m_descriptorSetLayout->getDescriptorSetLayoutPointer();
+                pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(setLayouts.size());
+                pipelineLayoutInfo.pSetLayouts = setLayouts.data();
+                pipelineLayoutInfo.pushConstantRangeCount = 1;
+                pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
                 m_graphicsPipeline->create(
-                        vertShaderModule, fragShaderModule,
-                        vertexInputInfo, pipelineLayoutInfo, 
+                        vertShaderModule, 
+                        fragShaderModule,
+                        vertexInputInfo, 
+                        pipelineLayoutInfo, 
                         &depthStencil);
             }
 
@@ -734,10 +736,7 @@ namespace VulkanLearning {
             }
 
             void createCoordinateSystemUniformBuffers() override {
-                uint32_t layerCount = m_texture.getLayerCount();
-                uboInstances.instance = new UboInstanceData[layerCount];
-
-                VkDeviceSize bufferSize = sizeof(uboInstances.coordUbo) + (layerCount * sizeof(UboInstanceData));
+                VkDeviceSize bufferSize = sizeof(CoordinatesSystemUniformBufferObject);
 
                 m_coordinateSystemUniformBuffers.resize(m_swapChain->getImages().size());
 
@@ -826,70 +825,77 @@ namespace VulkanLearning {
             }
 
             void createDescriptorSetLayout() override {
-                m_descriptorSetLayout = new VulkanDescriptorSetLayout(m_device);
+                m_descriptorSetLayouts.matrices = new VulkanDescriptorSetLayout(m_device);
+                m_descriptorSetLayouts.textures = new VulkanDescriptorSetLayout(m_device);
 
                 VkDescriptorSetLayoutBinding uboLayoutBinding{};
                 uboLayoutBinding.binding = 0;
                 uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
                 uboLayoutBinding.descriptorCount = 1;
                 uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-                uboLayoutBinding.pImmutableSamplers = nullptr;
+
+                std::vector<VkDescriptorSetLayoutBinding> matricesDescriptorSetLayoutBinding= { uboLayoutBinding };
+                m_descriptorSetLayouts.matrices->create(matricesDescriptorSetLayoutBinding);
 
                 VkDescriptorSetLayoutBinding samplerLayoutBinding{};
-                samplerLayoutBinding.binding = 1;
+                samplerLayoutBinding.binding = 0;
                 samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
                 samplerLayoutBinding.descriptorCount = 1;
                 samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
                 samplerLayoutBinding.pImmutableSamplers = nullptr;
 
-                std::vector<VkDescriptorSetLayoutBinding> bindings = 
-                    { uboLayoutBinding, samplerLayoutBinding };
+                std::vector<VkDescriptorSetLayoutBinding> samplerDescriptorSetLayoutBinding = 
+                { samplerLayoutBinding };
 
-                m_descriptorSetLayout->create(bindings);
+                m_descriptorSetLayouts.textures->create(samplerDescriptorSetLayoutBinding);
+
             }
 
             void createDescriptorPool() override {
                 m_descriptorPool = new VulkanDescriptorPool(m_device, m_swapChain);
 
                 std::vector<VkDescriptorPoolSize> poolSizes = std::vector<VkDescriptorPoolSize>(2);
+
                 poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
                 poolSizes[0].descriptorCount = static_cast<uint32_t>(
                         m_swapChain->getImages().size());
+
                 poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
                 poolSizes[1].descriptorCount = 
-                    static_cast<uint32_t>(m_swapChain->getImages().size() 
-                            * static_cast<uint32_t>(glTFModel.images.size()));
+                    static_cast<uint32_t>(m_swapChain->getImages().size())
+                            * static_cast<uint32_t>(glTFModel.images.size());
 
-                m_descriptorPool->create(poolSizes);
+                const uint32_t maxSetCount = 
+                    static_cast<uint32_t>(m_swapChain->getImages().size())
+                            * static_cast<uint32_t>(glTFModel.images.size()) + 1;
+
+                m_descriptorPool->create(poolSizes, maxSetCount);
             }
 
             void createDescriptorSets() override {
+                m_descriptorSets = new VulkanDescriptorSets(
+                        m_device, 
+                        m_swapChain,
+                        m_descriptorSetLayouts.matrices, 
+                        m_descriptorPool);
+
+                m_descriptorSets->create();
+
                 std::vector<std::vector<VulkanBuffer*>> ubos{
                     m_coordinateSystemUniformBuffers
                 };
 
                 std::vector<VkDeviceSize> ubosSizes{
-                    sizeof(uboInstances.coordUbo) + (m_texture.getLayerCount() * sizeof(UboInstanceData))
+                    sizeof(CoordinatesSystemUniformBufferObject)
                 };
 
-                m_descriptorSets = new VulkanDescriptorSets(
-                        m_device, 
-                        m_swapChain,
-                        m_descriptorSetLayout, 
-                        m_descriptorPool,
-                        ubos, 
-                        ubosSizes);
-
-                m_descriptorSets->create();
-
                 for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
+                    std::vector<VkWriteDescriptorSet> descriptorWrites(1);
+
                     VkDescriptorBufferInfo bufferInfo{};
                     bufferInfo.offset = 0;
                     bufferInfo.buffer = ubos[0][i]->getBuffer();
                     bufferInfo.range = ubosSizes[0];
-
-                    std::vector<VkWriteDescriptorSet> descriptorWrites = 
-                        std::vector<VkWriteDescriptorSet>(2);
 
                     descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
                     descriptorWrites[0].dstBinding = 0;
@@ -898,72 +904,57 @@ namespace VulkanLearning {
                     descriptorWrites[0].descriptorCount = 1;
                     descriptorWrites[0].pBufferInfo = &bufferInfo;
 
-                    VkDescriptorImageInfo imageInfo{};
-                    imageInfo.imageView = m_texture.getView();
-                    imageInfo.sampler = m_texture.getSampler();
-                    imageInfo.imageLayout = m_texture.getImageLayout();
-
-                    descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                    descriptorWrites[1].dstBinding = 1;
-                    descriptorWrites[1].dstArrayElement = 0;
-                    descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                    descriptorWrites[1].descriptorCount = 1;
-                    descriptorWrites[1].pImageInfo = &imageInfo;
-
                     m_descriptorSets->update(descriptorWrites, i);
                 }
-            }
 
+                for (auto& image : glTFModel.images) {
+                    VkDescriptorSetAllocateInfo allocInfo{};
+                    allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+                    allocInfo.descriptorPool = m_descriptorPool->getDescriptorPool();
+                    allocInfo.pSetLayouts = m_descriptorSetLayouts.textures->getDescriptorSetLayoutPointer();
+                    allocInfo.descriptorSetCount = static_cast<uint32_t>(m_swapChain->getImages().size());
 
-            void updateUBOInstances(uint32_t currentImage) {
-                uint32_t layerCount = m_texture.getLayerCount();
+                    if (vkAllocateDescriptorSets(m_device->getLogicalDevice(), &allocInfo, &image.descriptorSet) != VK_SUCCESS) {
+                        throw std::runtime_error("Descriptor set allocation failed!");
+                    }
 
-                float offset = -1.5f;
-                float center = (layerCount * offset) / 2.0f - (offset * 0.5f);
-                for (uint32_t i = 0; i < layerCount; i++) {
-                    uboInstances.instance[i].model = glm::translate(glm::mat4(1.0f), glm::vec3(i * offset - center, 0.0f, 0.0f));
-                    uboInstances.instance[i].model = glm::scale(uboInstances.instance[i].model, glm::vec3(0.5f));
-                    uboInstances.instance[i].arrayIndex.x = (float)i;
+                    for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
+                        VkWriteDescriptorSet descriptorWrite;
+                        descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                        descriptorWrite.dstSet = image.descriptorSet;
+                        descriptorWrite.dstBinding = 0;
+                        descriptorWrite.dstArrayElement = 0;
+                        descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+                        descriptorWrite.descriptorCount = 1;
+                        descriptorWrite.pImageInfo = image.texture.getDescriptorPointer();
+
+                        vkUpdateDescriptorSets(m_device->getLogicalDevice(), 
+                                1, 
+                                &descriptorWrite, 
+                                0, 
+                                nullptr);
+                    }
                 }
-
-                uint8_t *pData;
-                uint32_t dataOffset = sizeof(uboInstances.coordUbo);
-                uint32_t dataSize = layerCount * sizeof(UboInstanceData);
-                vkMapMemory(
-                        m_device->getLogicalDevice(), 
-                        m_coordinateSystemUniformBuffers[currentImage]->getBufferMemory(), 
-                        dataOffset, 
-                        dataSize, 
-                        0, 
-                        (void **)&pData);
-                memcpy(pData, uboInstances.instance, dataSize);
-                vkUnmapMemory(
-                        m_device->getLogicalDevice(), 
-                        m_coordinateSystemUniformBuffers[currentImage]->getBufferMemory());
-
-                // Map persistent
-                m_coordinateSystemUniformBuffers[currentImage]->map();
-
-                updateCamera(currentImage);
             }
 
             void updateCamera(uint32_t currentImage) override {
-                uboInstances.coordUbo.model = glm::mat4(1.0f);
+                CoordinatesSystemUniformBufferObject ubo{};
 
-                uboInstances.coordUbo.view = m_camera->getViewMatrix();
+                ubo.model = glm::mat4(1.0f);
 
-                uboInstances.coordUbo.proj = glm::perspective(glm::radians(m_camera->getZoom()), 
+                ubo.view = m_camera->getViewMatrix();
+
+                ubo.proj = glm::perspective(glm::radians(m_camera->getZoom()), 
                         m_swapChain->getExtent().width / (float) m_swapChain->getExtent().height, 
                         0.1f,  100.0f);
-                uboInstances.coordUbo.proj[1][1] *= -1;
 
-                uboInstances.coordUbo.camPos = m_camera->position();
+                ubo.proj[1][1] *= -1;
 
-                memcpy(m_coordinateSystemUniformBuffers[currentImage]->getMappedMemory(),
-                        &uboInstances.coordUbo,
-                        sizeof(uboInstances.coordUbo));
+                ubo.camPos = m_camera->position();
 
-                // Unmap because we're using multiple buffer for the multiple swap chaine images
+                m_coordinateSystemUniformBuffers[currentImage]->map();
+                memcpy(m_coordinateSystemUniformBuffers[currentImage]->getMappedMemory(), 
+                        &ubo, sizeof(ubo));
                 m_coordinateSystemUniformBuffers[currentImage]->unmap();
             }
 
@@ -976,7 +967,7 @@ namespace VulkanLearning {
 
                 glTFModel.device = m_device;
                 glTFModel.copyQueue = m_device->getGraphicsQueue();
-                
+
                 std::vector<uint32_t> indexBuffer;
                 std::vector<VulkanglTFModel::Vertex> vertexBuffer;
 
@@ -998,7 +989,6 @@ namespace VulkanLearning {
                 size_t indexBufferSize = indexBuffer.size() * sizeof(uint32_t);
                 glTFModel.indices.count = static_cast<uint32_t>(indexBuffer.size());
 
-                
                 VulkanBuffer vertexStagingBuffer(m_device);
                 vertexStagingBuffer.createBuffer(
                         vertexBufferSize, 
@@ -1011,10 +1001,13 @@ namespace VulkanLearning {
                         VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
                         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
+                glTFModel.vertices.buffer = new VulkanBuffer(m_device);
                 glTFModel.vertices.buffer->createBuffer(
                         vertexBufferSize, 
                         VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+                glTFModel.indices.buffer = new VulkanBuffer(m_device);
                 glTFModel.indices.buffer->createBuffer(
                         indexBufferSize, 
                         VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
@@ -1025,7 +1018,7 @@ namespace VulkanLearning {
 
                 VkBufferCopy copyRegion = {};
                 copyRegion.size = vertexBufferSize;
-                
+
                 vkCmdCopyBuffer(
                         copyCmd.getCommandBuffer(), 
                         vertexStagingBuffer.getBuffer(),
@@ -1034,7 +1027,7 @@ namespace VulkanLearning {
                         &copyRegion);
 
                 copyRegion.size = indexBufferSize;
-                
+
                 vkCmdCopyBuffer(
                         copyCmd.getCommandBuffer(), 
                         indexStagingBuffer.getBuffer(),
@@ -1051,6 +1044,7 @@ namespace VulkanLearning {
             void loadAssets() {
                 loadglTFFile("src/models/FlightHelmet/glTF/FlightHelmet.gltf");
             }
+
 
     };
 

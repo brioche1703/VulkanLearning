@@ -631,8 +631,7 @@ namespace VulkanLearning {
 
                 m_descriptorSets = new VulkanDescriptorSets(
                         m_device, m_swapChain,
-                        m_descriptorSetLayout, m_descriptorPool,
-                        ubos, ubosSizes);
+                        m_descriptorSetLayout, m_descriptorPool);
 
                 m_descriptorSets->create();
 

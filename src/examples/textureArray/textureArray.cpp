@@ -1,9 +1,6 @@
-#include "VulkanBase.h"
-#include "VulkanTexture.hpp"
+#define STB_IMAGE_IMPLEMENTATION
 
-#include "ktx.h"
-#include <cstring>
-#include <vulkan/vulkan_core.h>
+#include "VulkanBase.h"
 
 namespace VulkanLearning {
 
@@ -639,9 +636,7 @@ namespace VulkanLearning {
                         m_device, 
                         m_swapChain,
                         m_descriptorSetLayout, 
-                        m_descriptorPool,
-                        ubos, 
-                        ubosSizes);
+                        m_descriptorPool);
 
                 m_descriptorSets->create();
 

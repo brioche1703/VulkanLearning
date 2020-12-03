@@ -6,17 +6,14 @@ namespace VulkanLearning {
             VulkanDevice* device, 
             VulkanSwapChain* swapChain, 
             VulkanDescriptorSetLayout* descriptorSetLayout,
-            VulkanDescriptorPool* descriptorPool,
-            std::vector<std::vector<VulkanBuffer*>> uniformBuffers,
-            std::vector<VkDeviceSize> uniformBufferSize,
-            VulkanTexture* texture) :
-    m_device(device), m_swapChain(swapChain), 
-        m_descriptorSetLayout(descriptorSetLayout),
-        m_descriptorPool(descriptorPool), m_uniformBuffers(uniformBuffers),
-        m_uniformBufferSize(uniformBufferSize),
-        m_texture(texture)
-        {
-        }
+            VulkanDescriptorPool* descriptorPool) 
+        :
+            m_device(device), 
+            m_swapChain(swapChain), 
+            m_descriptorSetLayout(descriptorSetLayout),
+            m_descriptorPool(descriptorPool)
+    {
+    }
 
     VulkanDescriptorSets::~VulkanDescriptorSets() {}
 
@@ -38,8 +35,7 @@ namespace VulkanLearning {
 
     }
 
-    void VulkanDescriptorSets::update(std::vector<VkWriteDescriptorSet> descriptorWrites, 
-            uint32_t imageIndex) {
+    void VulkanDescriptorSets::update(std::vector<VkWriteDescriptorSet> descriptorWrites, uint32_t imageIndex) {
         for (int j = 0; j < descriptorWrites.size(); j++) {
             descriptorWrites[j].dstSet =
                 m_descriptorSets[imageIndex];
