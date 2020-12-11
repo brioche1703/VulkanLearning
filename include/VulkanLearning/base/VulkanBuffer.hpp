@@ -12,11 +12,13 @@ namespace VulkanLearning {
             VkDeviceMemory m_bufferMemory = VK_NULL_HANDLE;
             VkBufferUsageFlags m_usage;
             VkDeviceSize m_size;
+            VkDescriptorBufferInfo m_descriptor;
             void* m_mappedMemory = nullptr;
 
             VulkanDevice* m_device;
 
         public:
+            VulkanBuffer();
             VulkanBuffer(VulkanDevice* device);
             ~VulkanBuffer();
 
@@ -25,8 +27,10 @@ namespace VulkanLearning {
             inline VkBuffer* getBufferPointer() { return &m_buffer; }
             inline VkDeviceMemory* getBufferMemoryPointer() { return &m_bufferMemory; }
             inline VkDeviceSize getSize() { return m_size; }
+            inline VkDescriptorBufferInfo* getDescriptorPointer() { return &m_descriptor; }
             inline void* getMappedMemory() { return m_mappedMemory; }
             inline void** getMappedMemoryPointer() { return &m_mappedMemory; }
+
 
             /* Copy byffer into GPU accessible only by GPU */
             template<typename T>
@@ -52,6 +56,7 @@ namespace VulkanLearning {
 
                 vkDestroyBuffer(m_device->getLogicalDevice(), stagingBuffer, nullptr);
                 vkFreeMemory(m_device->getLogicalDevice(), stagingBufferMemory, nullptr);
+                setupDescriptor();
             }
 
             void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, 
@@ -59,6 +64,8 @@ namespace VulkanLearning {
                     VkDeviceMemory& bufferMemory);
             void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, 
                     VkMemoryPropertyFlags properties);
+            void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, 
+                VkMemoryPropertyFlags properties, void* data);
             void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
             void copyBufferToImage(VkImage image, uint32_t width, uint32_t height);
 
@@ -68,6 +75,8 @@ namespace VulkanLearning {
             void unmap();
             VkResult bind(VkDeviceSize offset = 0);
             void copyTo(void* data, VkDeviceSize size);
+
+            void setupDescriptor(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
 
             void cleanup();
     };

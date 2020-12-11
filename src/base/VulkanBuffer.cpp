@@ -8,6 +8,9 @@
 
 namespace VulkanLearning {
 
+    VulkanBuffer::VulkanBuffer() {
+    }
+
     VulkanBuffer::VulkanBuffer(VulkanDevice* device)
         : m_device(device) {
     }
@@ -41,6 +44,7 @@ namespace VulkanLearning {
         }
 
         vkBindBufferMemory(m_device->getLogicalDevice(), buffer, bufferMemory, 0);
+        setupDescriptor();
     }
 
     void VulkanBuffer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, 
@@ -70,8 +74,54 @@ namespace VulkanLearning {
         }
 
         vkBindBufferMemory(m_device->getLogicalDevice(), m_buffer, m_bufferMemory, 0);
+        setupDescriptor();
     }
 
+    void VulkanBuffer::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, 
+            VkMemoryPropertyFlags properties, void* data) {
+        VkBufferCreateInfo bufferInfo{};
+        bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+        bufferInfo.size = size;
+        bufferInfo.usage = usage;
+        bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+        if (vkCreateBuffer(m_device->getLogicalDevice(), &bufferInfo, nullptr, &m_buffer) != VK_SUCCESS) {
+            throw std::runtime_error("Buffer creation failed!");
+        }
+
+        m_size = size;
+
+        VkMemoryRequirements memRequirements;
+        vkGetBufferMemoryRequirements(m_device->getLogicalDevice(), m_buffer, &memRequirements);
+
+        VkMemoryAllocateInfo allocInfo{};
+        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        allocInfo.allocationSize = memRequirements.size;
+        allocInfo.memoryTypeIndex = m_device->findMemoryType(memRequirements.memoryTypeBits, properties);
+
+        if (vkAllocateMemory(m_device->getLogicalDevice(), &allocInfo, nullptr, &m_bufferMemory) != VK_SUCCESS) {
+            throw std::runtime_error("Memory allocation failed!");
+        }
+
+        if (data != nullptr)
+        {
+            vkMapMemory(m_device->getLogicalDevice(), m_bufferMemory, 0, size, 0, &m_mappedMemory);
+            memcpy(m_mappedMemory, data, size);
+            if ((properties & VK_MEMORY_PROPERTY_HOST_COHERENT_BIT) == 0)
+            {
+                VkMappedMemoryRange mappedRange = {};
+                mappedRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+                mappedRange.memory = m_bufferMemory;
+                mappedRange.offset = 0;
+                mappedRange.size = size;
+                vkFlushMappedMemoryRanges(m_device->getLogicalDevice(), 1, &mappedRange);
+            }
+            vkUnmapMemory(m_device->getLogicalDevice(), m_bufferMemory);
+        }
+
+        vkBindBufferMemory(m_device->getLogicalDevice(), m_buffer, m_bufferMemory, 0);
+        setupDescriptor();
+    }
 
     void VulkanBuffer::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
         VulkanCommandBuffer commandBuffer;
@@ -151,6 +201,11 @@ namespace VulkanLearning {
         memcpy(m_mappedMemory, data, size);
     }
 
+    void VulkanBuffer::setupDescriptor(VkDeviceSize size, VkDeviceSize offset) {
+        m_descriptor.offset = offset;
+        m_descriptor.buffer = m_buffer;
+        m_descriptor.range = size;
+    }
 
     void VulkanBuffer::cleanup() {
         vkFreeMemory(m_device->getLogicalDevice(), m_bufferMemory, nullptr);

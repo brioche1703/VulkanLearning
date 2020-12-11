@@ -320,7 +320,7 @@ namespace VulkanLearning {
 
             void createGraphicsPipeline() override {
                 m_graphicsPipeline = new VulkanGraphicsPipeline(m_device,
-                        m_swapChain, m_renderPass, m_descriptorSetLayout);
+                        m_swapChain, m_renderPass);
 
                 VulkanShaderModule vertShaderModule = 
                     VulkanShaderModule("src/shaders/single3DModelVert.spv", m_device);
@@ -414,7 +414,12 @@ namespace VulkanLearning {
 
                 for (size_t i = 0; i < m_swapChain->getImages().size(); i++) {
                     m_coordinateSystemUniformBuffers[i] = new VulkanBuffer(m_device);
-                    m_coordinateSystemUniformBuffers[i]->createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, *m_coordinateSystemUniformBuffers[i]->getBufferPointer(), *m_coordinateSystemUniformBuffers[i]->getBufferMemoryPointer());
+                    m_coordinateSystemUniformBuffers[i]->createBuffer(
+                            bufferSize, 
+                            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, 
+                            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
+                            *m_coordinateSystemUniformBuffers[i]->getBufferPointer(), 
+                            *m_coordinateSystemUniformBuffers[i]->getBufferMemoryPointer());
                 }
             }
 

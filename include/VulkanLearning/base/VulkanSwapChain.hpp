@@ -48,8 +48,6 @@ namespace VulkanLearning {
 
             void createFramebuffers(VkRenderPass renderPass,
                     const std::vector<VkImageView> attachments);
-            void createFramebuffersDeux(VkRenderPass renderPass,
-                    const std::vector<VkImageView> attachments);
 
             void cleanFramebuffers();
             void destroyImageViews();

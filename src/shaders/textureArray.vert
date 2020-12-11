@@ -20,7 +20,7 @@ struct CoordinateUBO
 layout (binding = 0) uniform UBO 
 {
     CoordinateUBO coordUbo;
-    Instance instance[8];
+    Instance instance[7];
 } ubo;
 
 layout (location = 0) out vec3 outUV;

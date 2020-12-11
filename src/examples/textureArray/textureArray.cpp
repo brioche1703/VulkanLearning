@@ -376,7 +376,7 @@ namespace VulkanLearning {
 
             void createGraphicsPipeline() override {
                 m_graphicsPipeline = new VulkanGraphicsPipeline(m_device,
-                        m_swapChain, m_renderPass, m_descriptorSetLayout);
+                        m_swapChain, m_renderPass);
 
                 VulkanShaderModule vertShaderModule = 
                     VulkanShaderModule("src/shaders/textureArrayVert.spv", m_device);

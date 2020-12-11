@@ -22,8 +22,7 @@ namespace VulkanLearning {
 
         public:
             VulkanGraphicsPipeline(VulkanDevice* device, 
-                    VulkanSwapChain* swapChain, VulkanRenderPass* renderPass,
-                    VulkanDescriptorSetLayout* descriptorSetLayout);
+                    VulkanSwapChain* swapChain, VulkanRenderPass* renderPass);
 
             ~VulkanGraphicsPipeline();
 
