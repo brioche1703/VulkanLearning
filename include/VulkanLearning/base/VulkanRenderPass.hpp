@@ -11,19 +11,18 @@ namespace VulkanLearning {
         private:
             VkRenderPass m_renderPass;
 
-            VulkanSwapChain* m_swapChain;
-            VulkanDevice* m_device;
+            VulkanSwapChain m_swapChain;
+            VulkanDevice m_device;
 
         public:
-            VulkanRenderPass(VulkanSwapChain* swapChain, VulkanDevice* device);
+            VulkanRenderPass();
+            VulkanRenderPass(VulkanSwapChain swapChain, VulkanDevice device);
             ~VulkanRenderPass();
 
             VkRenderPass getRenderPass();
 
-            void create();
-            void create(
-                    const std::vector<VkAttachmentDescription> attachments,
-                    VkSubpassDescription subpass);
+            void create(const std::vector<VkAttachmentDescription> attachments, VkSubpassDescription subpass);
+
         private:
     };
 

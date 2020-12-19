@@ -11,9 +11,11 @@ namespace VulkanLearning {
         private:
             VkDescriptorSetLayout m_descriptorSetLayout;
 
-            VulkanDevice* m_device;
+            VulkanDevice m_device;
         public:
-            VulkanDescriptorSetLayout(VulkanDevice* device);
+            VulkanDescriptorSetLayout();
+            VulkanDescriptorSetLayout(VulkanDevice device);
+
             ~VulkanDescriptorSetLayout();
 
             inline VkDescriptorSetLayout getDescriptorSetLayout() { return m_descriptorSetLayout; }

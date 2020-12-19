@@ -2,8 +2,9 @@
 
 namespace VulkanLearning {
 
-    VulkanSwapChain::VulkanSwapChain(Window* window, VulkanDevice* device,
-            VulkanSurface* surface) 
+    VulkanSwapChain::VulkanSwapChain() {}
+
+    VulkanSwapChain::VulkanSwapChain(Window window, VulkanDevice device, VulkanSurface surface) 
         : m_window(window), m_device(device), m_surface(surface) {
         create();
     }
@@ -18,7 +19,7 @@ namespace VulkanLearning {
     VkExtent2D VulkanSwapChain::getExtent() { return m_extent; }
 
     void VulkanSwapChain::create() {
-        SwapChainSupportDetails swapChainSupport = m_device->querySwapChainSupport(m_surface->getSurface());
+        SwapChainSupportDetails swapChainSupport = m_device.querySwapChainSupport(m_surface.getSurface());
 
         VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
         VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
@@ -33,7 +34,7 @@ namespace VulkanLearning {
 
         VkSwapchainCreateInfoKHR createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-        createInfo.surface = m_surface->getSurface();
+        createInfo.surface = m_surface.getSurface();
 
         createInfo.minImageCount = imageCount;
         createInfo.imageFormat = surfaceFormat.format;
@@ -42,7 +43,7 @@ namespace VulkanLearning {
         createInfo.imageArrayLayers = 1;
         createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-        QueueFamilyIndices indices = m_device->getQueueFamilyIndices();
+        QueueFamilyIndices indices = m_device.getQueueFamilyIndices();
 
         uint32_t queueFamilyIndices[] = {indices.graphicsFamily.value(), indices.presentFamily.value()};
         if (indices.graphicsFamily != indices.presentFamily) {
@@ -61,13 +62,13 @@ namespace VulkanLearning {
         createInfo.clipped = VK_TRUE;
         createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-        if (vkCreateSwapchainKHR(m_device->getLogicalDevice(), &createInfo, nullptr, &m_swapChain) != VK_SUCCESS) {
+        if (vkCreateSwapchainKHR(m_device.getLogicalDevice(), &createInfo, nullptr, &m_swapChain) != VK_SUCCESS) {
             throw std::runtime_error("Swap Chain creation failed!");
         }
 
-        vkGetSwapchainImagesKHR(m_device->getLogicalDevice(), m_swapChain, &imageCount, nullptr);
+        vkGetSwapchainImagesKHR(m_device.getLogicalDevice(), m_swapChain, &imageCount, nullptr);
         m_images.resize(imageCount);
-        vkGetSwapchainImagesKHR(m_device->getLogicalDevice(), m_swapChain, &imageCount, m_images.data());
+        vkGetSwapchainImagesKHR(m_device.getLogicalDevice(), m_swapChain, &imageCount, m_images.data());
 
         m_imageFormat = surfaceFormat.format;
         m_extent = extent;
@@ -99,7 +100,7 @@ namespace VulkanLearning {
         viewInfo.subresourceRange.layerCount = 1;
 
         VkImageView imageView;
-        if (vkCreateImageView(m_device->getLogicalDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
+        if (vkCreateImageView(m_device.getLogicalDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
             throw std::runtime_error("Image view creation failed!");
         }
 
@@ -122,7 +123,7 @@ namespace VulkanLearning {
             framebufferInfo.height = m_extent.height;
             framebufferInfo.layers = 1;
 
-            if (vkCreateFramebuffer(m_device->getLogicalDevice(), 
+            if (vkCreateFramebuffer(m_device.getLogicalDevice(), 
                         &framebufferInfo, nullptr, &m_framebuffers[i]) 
                     != VK_SUCCESS) {;
                 throw std::runtime_error("A framebuffer creation failed!");
@@ -159,7 +160,7 @@ namespace VulkanLearning {
             return capabilities.currentExtent;
         } else {
             int width, height;
-            glfwGetFramebufferSize(m_window->getWindow(), &width, &height);
+            glfwGetFramebufferSize(m_window.getWindow(), &width, &height);
 
             VkExtent2D actualExtent = {
                 static_cast<uint32_t>(width),
@@ -178,13 +179,13 @@ namespace VulkanLearning {
 
     void VulkanSwapChain::cleanFramebuffers() {
         for (auto framebuffer : m_framebuffers) {
-            vkDestroyFramebuffer(m_device->getLogicalDevice(), framebuffer, nullptr);
+            vkDestroyFramebuffer(m_device.getLogicalDevice(), framebuffer, nullptr);
         }
     }
 
     void VulkanSwapChain::destroyImageViews() {
         for (auto imageView : m_imagesViews) {
-            vkDestroyImageView(m_device->getLogicalDevice(), imageView, nullptr);
+            vkDestroyImageView(m_device.getLogicalDevice(), imageView, nullptr);
         }
     }
 }

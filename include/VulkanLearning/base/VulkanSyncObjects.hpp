@@ -15,14 +15,13 @@ namespace VulkanLearning {
             std::vector<VkFence> m_inFlightFences;
             std::vector<VkFence> m_imagesInFlight;
 
-            VulkanDevice* m_device;
-            VulkanSwapChain* m_swapChain;
+            VulkanDevice m_device;
+            VulkanSwapChain m_swapChain;
 
             const int m_maxFrameInFlight = 2;
 
         public:
-            VulkanSyncObjects(VulkanDevice* device, VulkanSwapChain* swapChain,
-                    int maxFrameInFlight);
+            VulkanSyncObjects(VulkanDevice device, VulkanSwapChain swapChain, const int maxFrameInFlight);
             ~VulkanSyncObjects();
 
             std::vector<VkSemaphore> getImageAvailableSemaphores() { return m_imageAvailableSemaphores; }

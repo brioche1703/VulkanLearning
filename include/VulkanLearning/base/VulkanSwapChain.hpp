@@ -27,13 +27,13 @@ namespace VulkanLearning {
             VkFormat m_imageFormat;
             VkExtent2D m_extent;
 
-            Window* m_window;
-            VulkanDevice* m_device;
-            VulkanSurface* m_surface;
+            Window m_window;
+            VulkanDevice m_device;
+            VulkanSurface m_surface;
 
         public:
-            VulkanSwapChain(Window* window, VulkanDevice* device,
-                    VulkanSurface* surface);
+            VulkanSwapChain();
+            VulkanSwapChain(Window window, VulkanDevice device, VulkanSurface surface);
 
             ~VulkanSwapChain();
 
@@ -46,25 +46,18 @@ namespace VulkanLearning {
 
             void create();
 
-            void createFramebuffers(VkRenderPass renderPass,
-                    const std::vector<VkImageView> attachments);
+            void createFramebuffers(VkRenderPass renderPass, const std::vector<VkImageView> attachments);
 
             void cleanFramebuffers();
             void destroyImageViews();
         private:
 
-            VkSurfaceFormatKHR chooseSwapSurfaceFormat(
-                    const std::vector<VkSurfaceFormatKHR>& availableFormats);
-            VkPresentModeKHR chooseSwapPresentMode(
-                    const std::vector<VkPresentModeKHR>& availablePresentModes);
-            VkExtent2D chooseSwapExtent(
-                    const VkSurfaceCapabilitiesKHR& capabilities);
+            VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+            VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+            VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 
             void createImageViews();
-            VkImageView createImageView(
-                    VkImage image, VkFormat format, 
-                    VkImageAspectFlags aspectFlags, 
-                    uint32_t mipLevels);
+            VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
 
             void cleanup();
     };

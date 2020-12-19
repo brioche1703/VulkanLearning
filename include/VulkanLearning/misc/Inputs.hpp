@@ -14,7 +14,9 @@ namespace VulkanLearning {
             static bool m_captureMouse;
             static GLFWwindow* m_window;
             static Camera* m_camera;
-            static FpsCounter* m_fpsCounter;
+            static FpsCounter *m_fpsCounter;
+
+            Inputs() {};
 
             Inputs(GLFWwindow* window, Camera* camera, FpsCounter* fpsCounter) {
                 m_captureMouse = false;
@@ -23,7 +25,7 @@ namespace VulkanLearning {
                 m_fpsCounter = fpsCounter;
             }
 
-            ~Inputs();
+            ~Inputs() {};
 
             static void keyboard_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
                 if (key == GLFW_KEY_ESCAPE) {

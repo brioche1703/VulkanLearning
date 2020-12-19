@@ -22,7 +22,6 @@ namespace VulkanLearning {
             const std::vector<const char*> m_validationLayers;
 
         public:
-            VulkanInstance();
             VulkanInstance(
                     const char* appName,
                     bool enableValidationLayers,

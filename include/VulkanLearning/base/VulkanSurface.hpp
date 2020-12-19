@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include "VulkanInstance.hpp"
+#include "VulkanTools.hpp"
 #include "window/Window.hpp"
 
 namespace VulkanLearning {
@@ -12,16 +13,12 @@ namespace VulkanLearning {
         private:
             VkSurfaceKHR m_surface;
 
-            Window* m_window;
-            VulkanInstance* m_instance;
-
         public:
-            VulkanSurface(Window* window, VulkanInstance* instance);
+            VulkanSurface();
             ~VulkanSurface();
 
             inline VkSurfaceKHR getSurface() { return m_surface; }
 
-        private:
-            void create();
+            void create(Window window, VulkanInstance instance);
     };
 }

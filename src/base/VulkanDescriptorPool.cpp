@@ -2,10 +2,13 @@
 
 namespace VulkanLearning {
 
-    VulkanDescriptorPool::VulkanDescriptorPool(VulkanDevice* device
-            , VulkanSwapChain* swapChain) 
+    VulkanDescriptorPool::VulkanDescriptorPool() {}
+
+    VulkanDescriptorPool::VulkanDescriptorPool(VulkanDevice device, VulkanSwapChain swapChain) 
         : m_device(device), m_swapChain(swapChain) {
         }
+
+    VulkanDescriptorPool::~VulkanDescriptorPool() {}
 
     void VulkanDescriptorPool::create(const std::vector<VkDescriptorPoolSize> poolSizes) {
         VkDescriptorPoolCreateInfo poolInfo{};
@@ -13,10 +16,10 @@ namespace VulkanLearning {
         poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
         poolInfo.pPoolSizes = poolSizes.data();
         poolInfo.maxSets = static_cast<uint32_t>(
-                m_swapChain->getImages().size());
+                m_swapChain.getImages().size());
         poolInfo.flags = 0;
 
-        if (vkCreateDescriptorPool(m_device->getLogicalDevice(), 
+        if (vkCreateDescriptorPool(m_device.getLogicalDevice(), 
                     &poolInfo, nullptr, &m_descriptorPool) != VK_SUCCESS) {
             throw std::runtime_error("Descriptor pool creation failed!");
         }
@@ -30,7 +33,7 @@ namespace VulkanLearning {
         poolInfo.maxSets = maxSets;
         poolInfo.flags = 0;
 
-        if (vkCreateDescriptorPool(m_device->getLogicalDevice(), 
+        if (vkCreateDescriptorPool(m_device.getLogicalDevice(), 
                     &poolInfo, nullptr, &m_descriptorPool) != VK_SUCCESS) {
             throw std::runtime_error("Descriptor pool creation failed!");
         }

@@ -273,7 +273,7 @@ namespace VulkanLearning {
             throw std::runtime_error("Texture image loading failed!");
         }
 
-        VulkanBuffer stagingBuffer(m_device);
+        VulkanBuffer stagingBuffer(*m_device);
         stagingBuffer.createBuffer(
                 imageSize, 
                 VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 
@@ -383,7 +383,7 @@ namespace VulkanLearning {
         VulkanCommandBuffer copyCmd;
         copyCmd.create(device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
-        VulkanBuffer stagingBuffer(m_device);
+        VulkanBuffer stagingBuffer(*m_device);
         stagingBuffer.createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
         
         stagingBuffer.map(bufferSize);
@@ -737,7 +737,7 @@ namespace VulkanLearning {
         memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         VkMemoryRequirements memReqs;
 
-        VulkanBuffer stagingBuffer(m_device);
+        VulkanBuffer stagingBuffer(*m_device);
         stagingBuffer.createBuffer(ktxTextureSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
         stagingBuffer.map(ktxTextureSize);

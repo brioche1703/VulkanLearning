@@ -15,14 +15,14 @@ namespace VulkanLearning {
             VkPipeline m_graphicsPipeline;
             VkPipelineLayout m_pipelineLayout;
 
-            VulkanDevice* m_device;
-            VulkanSwapChain* m_swapChain;
-            VulkanRenderPass* m_renderPass;
-            VulkanDescriptorSetLayout* m_descriptorSetLayout;
+            VulkanDevice m_device;
+            VulkanSwapChain m_swapChain;
+            VulkanRenderPass m_renderPass;
+            VulkanDescriptorSetLayout m_descriptorSetLayout;
 
         public:
-            VulkanGraphicsPipeline(VulkanDevice* device, 
-                    VulkanSwapChain* swapChain, VulkanRenderPass* renderPass);
+            VulkanGraphicsPipeline();
+            VulkanGraphicsPipeline(VulkanDevice device, VulkanSwapChain swapChain, VulkanRenderPass renderPass);
 
             ~VulkanGraphicsPipeline();
 

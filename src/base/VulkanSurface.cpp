@@ -3,20 +3,12 @@
 #include <iostream>
 
 namespace VulkanLearning {
-
-    VulkanSurface::VulkanSurface(Window* window, VulkanInstance* instance)
-        : m_window(window), m_instance(instance) {
-        create();
-    }
-
+    VulkanSurface::VulkanSurface() {}
     VulkanSurface::~VulkanSurface() {}
 
-    void VulkanSurface::create() {
-        if (glfwCreateWindowSurface(m_instance->getInstance(), 
-                    m_window->getWindow(), 
-                    nullptr, &m_surface) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create window surface!");
-        }
+    void VulkanSurface::create(Window window, VulkanInstance instance) {
+            VK_CHECK_RESULT(glfwCreateWindowSurface(instance.getInstance(), window.getWindow(), nullptr, &m_surface));
     }
 
 }
+

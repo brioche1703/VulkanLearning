@@ -49,7 +49,9 @@ namespace VulkanLearning {
             VkPhysicalDeviceFeatures features;
             VkPhysicalDeviceProperties properties;
 
-            VulkanDevice(VkInstance instance, VkSurfaceKHR surface,
+            VulkanDevice() {};
+            VulkanDevice(VkInstance instance, 
+                    VkSurfaceKHR surface,
                     const std::vector<const char*> deviceExtensions,
                     bool enableValidationLayers,
                     const std::vector<const char*> validationLayers,

@@ -2,8 +2,6 @@
 
 namespace VulkanLearning {
 
-    VulkanInstance::VulkanInstance() {}
-
     VulkanInstance::VulkanInstance(
             const char* appName,
             bool enableValidationLayers,

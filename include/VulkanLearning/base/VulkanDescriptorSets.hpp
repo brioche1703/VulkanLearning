@@ -16,20 +16,19 @@ namespace VulkanLearning {
         private:
             std::vector<VkDescriptorSet> m_descriptorSets;
 
-            VulkanDevice* m_device;
-            VulkanSwapChain* m_swapChain;
-            VulkanDescriptorSetLayout* m_descriptorSetLayout;
-            VulkanDescriptorPool* m_descriptorPool;
+            VulkanDevice m_device;
+            VulkanSwapChain m_swapChain;
+            VulkanDescriptorSetLayout m_descriptorSetLayout;
+            VulkanDescriptorPool m_descriptorPool;
 
-            std::vector<std::vector<VulkanBuffer*>> m_uniformBuffers;
-
-            VulkanTexture* m_texture;
+            VulkanTexture m_texture;
 
         public:
-            VulkanDescriptorSets(VulkanDevice* device, 
-                    VulkanSwapChain* swapChain, 
-                    VulkanDescriptorSetLayout* descriptorSetLayout,
-                    VulkanDescriptorPool* descriptorPool);
+            VulkanDescriptorSets();
+            VulkanDescriptorSets(VulkanDevice device, 
+                    VulkanSwapChain swapChain, 
+                    VulkanDescriptorSetLayout descriptorSetLayout,
+                    VulkanDescriptorPool descriptorPool);
 
             ~VulkanDescriptorSets(); 
 

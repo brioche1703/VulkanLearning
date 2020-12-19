@@ -2,7 +2,9 @@
 
 namespace VulkanLearning {
 
-    VulkanRenderPass::VulkanRenderPass(VulkanSwapChain* swapChain, VulkanDevice* device) 
+    VulkanRenderPass::VulkanRenderPass() {}
+
+    VulkanRenderPass::VulkanRenderPass(VulkanSwapChain swapChain, VulkanDevice device) 
     : m_swapChain(swapChain), m_device(device) {
     }
 
@@ -30,7 +32,7 @@ namespace VulkanLearning {
         renderPassInfo.dependencyCount = 1;
         renderPassInfo.pDependencies = &dependency;
 
-        if (vkCreateRenderPass(m_device->getLogicalDevice(), &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS) {
+        if (vkCreateRenderPass(m_device.getLogicalDevice(), &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS) {
             throw std::runtime_error("Render pass creation failed!");
         }
     }

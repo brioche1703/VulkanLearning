@@ -16,8 +16,7 @@ namespace VulkanLearning {
         updateCameraVectors();
     }
 
-    Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float upZ,
-            float yaw, float pitch)            
+    Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float upZ,float yaw, float pitch)            
         : m_Front(glm::vec3(0.0f, 0.0f, -1.0f)), m_MovementSpeed(SPEED),
         m_MouseSensitivity(SENSITIVITY), m_Zoom(ZOOM) {
             m_Position = glm::vec3(posX, posY, posZ);

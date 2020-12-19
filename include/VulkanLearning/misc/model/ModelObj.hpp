@@ -18,6 +18,7 @@ namespace VulkanLearning {
             std::vector<uint32_t> m_indices;
 
         public:
+            ModelObj();
             ModelObj(std::string modelPath);
             ~ModelObj();
 

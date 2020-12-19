@@ -13,6 +13,7 @@ namespace VulkanLearning {
 
             static bool m_framebufferResized;
         public:
+            Window() {};
             Window(std::string title, uint32_t width, uint32_t height) {
                 m_title = title;
                 m_width = width;
@@ -30,7 +31,7 @@ namespace VulkanLearning {
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
                 glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-                m_window = glfwCreateWindow(m_width, m_height, "Vulkan", nullptr, nullptr);
+                m_window = glfwCreateWindow(m_width, m_height, m_title.c_str(), nullptr, nullptr);
                 glfwSetWindowUserPointer(m_window, static_cast<void *>(this));
                 glfwSetFramebufferSizeCallback(m_window, framebufferResizeCallback);
             }

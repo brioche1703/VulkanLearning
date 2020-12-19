@@ -4,6 +4,8 @@
 
 namespace VulkanLearning {
 
+    ModelObj::ModelObj() {}
+
     ModelObj::ModelObj(std::string modelPath) : m_modelPath(modelPath) {
         load();
     }

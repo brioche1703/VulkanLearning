@@ -15,11 +15,11 @@ namespace VulkanLearning {
             VkDescriptorBufferInfo m_descriptor;
             void* m_mappedMemory = nullptr;
 
-            VulkanDevice* m_device;
+            VulkanDevice m_device;
 
         public:
             VulkanBuffer();
-            VulkanBuffer(VulkanDevice* device);
+            VulkanBuffer(VulkanDevice device);
             ~VulkanBuffer();
 
             inline VkBuffer getBuffer() { return m_buffer; }
@@ -45,17 +45,17 @@ namespace VulkanLearning {
                         stagingBuffer, stagingBufferMemory);
 
                 void* dataAux;
-                vkMapMemory(m_device->getLogicalDevice(), stagingBufferMemory, 0, bufferSize, 0, &dataAux);
+                vkMapMemory(m_device.getLogicalDevice(), stagingBufferMemory, 0, bufferSize, 0, &dataAux);
                 memcpy(dataAux, data.data(), (size_t) bufferSize);
-                vkUnmapMemory(m_device->getLogicalDevice(), stagingBufferMemory);
+                vkUnmapMemory(m_device.getLogicalDevice(), stagingBufferMemory);
 
                 createBuffer(bufferSize, usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 
                         m_buffer, m_bufferMemory);
 
                 copyBuffer(stagingBuffer, m_buffer, bufferSize);
 
-                vkDestroyBuffer(m_device->getLogicalDevice(), stagingBuffer, nullptr);
-                vkFreeMemory(m_device->getLogicalDevice(), stagingBufferMemory, nullptr);
+                vkDestroyBuffer(m_device.getLogicalDevice(), stagingBuffer, nullptr);
+                vkFreeMemory(m_device.getLogicalDevice(), stagingBufferMemory, nullptr);
                 setupDescriptor();
             }
 

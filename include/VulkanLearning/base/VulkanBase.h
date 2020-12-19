@@ -100,37 +100,38 @@ namespace VulkanLearning {
             static std::vector<const char*> args;
 
         protected:
-            Window* m_window;
-            Camera* m_camera;
-            FpsCounter* m_fpsCounter;
-            Inputs* m_input;
+            Window m_window;
+            Camera m_camera;
+            FpsCounter m_fpsCounter;
+            Inputs m_input;
 
             VulkanInstance *m_instance;
             VulkanDebug* m_debug = new VulkanDebug();
-            VulkanDevice* m_device;
-            VulkanSurface* m_surface;
 
-            VulkanSwapChain *m_swapChain;
+            VulkanDevice m_device;
+            VulkanSurface m_surface;
 
-            VulkanRenderPass* m_renderPass;
+            VulkanSwapChain m_swapChain;
 
-            VulkanDescriptorSetLayout* m_descriptorSetLayout;
-            VulkanDescriptorPool* m_descriptorPool;
+            VulkanRenderPass m_renderPass;
 
-            VulkanDescriptorSets* m_descriptorSets;
+            VulkanDescriptorSetLayout m_descriptorSetLayout;
+            VulkanDescriptorPool m_descriptorPool;
 
-            VulkanGraphicsPipeline* m_graphicsPipeline;
+            VulkanDescriptorSets m_descriptorSets;
 
-            ModelObj* m_model;
+            VulkanGraphicsPipeline m_graphicsPipeline;
 
-            VulkanBuffer* m_vertexBuffer;
-            VulkanBuffer* m_indexBuffer;
+            ModelObj m_model;
 
-            std::vector<VulkanBuffer*> m_coordinateSystemUniformBuffers;
+            VulkanBuffer m_vertexBuffer;
+            VulkanBuffer m_indexBuffer;
+
+            std::vector<VulkanBuffer> m_coordinateSystemUniformBuffers;
 
             std::vector<VulkanCommandBuffer> m_commandBuffers;
 
-            VulkanSyncObjects* m_syncObjects;
+            VulkanSyncObjects m_syncObjects;
 
             size_t currentFrame = 0;
             bool framebufferResized = false;
@@ -214,5 +215,4 @@ int main(const int argc, const char *argv[])		                \
     }\
     return 0;                                                       \
 } \
-
 

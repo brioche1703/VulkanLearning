@@ -3,10 +3,13 @@
 #include <array>
 
 namespace VulkanLearning {
-            
-    VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(VulkanDevice* device) 
+    VulkanDescriptorSetLayout::VulkanDescriptorSetLayout() {}
+
+    VulkanDescriptorSetLayout::VulkanDescriptorSetLayout(VulkanDevice device) 
         : m_device(device){
     }
+
+    VulkanDescriptorSetLayout::~VulkanDescriptorSetLayout() {}
     
     void VulkanDescriptorSetLayout::create(std::vector<VkDescriptorSetLayoutBinding> bindings) {
         VkDescriptorSetLayoutCreateInfo layoutInfo{};
@@ -15,7 +18,7 @@ namespace VulkanLearning {
         layoutInfo.pBindings = bindings.data();
 
         if (vkCreateDescriptorSetLayout(
-                    m_device->getLogicalDevice(), 
+                    m_device.getLogicalDevice(), 
                     &layoutInfo, 
                     nullptr, 
                     &m_descriptorSetLayout) 
@@ -25,7 +28,8 @@ namespace VulkanLearning {
     }
 
     void VulkanDescriptorSetLayout::cleanup() {
-        vkDestroyDescriptorSetLayout(m_device->getLogicalDevice(),
-                m_descriptorSetLayout, nullptr);
+        vkDestroyDescriptorSetLayout(m_device.getLogicalDevice(),
+                m_descriptorSetLayout, 
+                nullptr);
     }
 }

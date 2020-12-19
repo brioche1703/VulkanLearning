@@ -3,8 +3,10 @@
 
 namespace VulkanLearning {
 
-    VulkanGraphicsPipeline::VulkanGraphicsPipeline(VulkanDevice* device, 
-                    VulkanSwapChain* swapChain, VulkanRenderPass* renderPass)
+    VulkanGraphicsPipeline::VulkanGraphicsPipeline() {}
+
+    VulkanGraphicsPipeline::VulkanGraphicsPipeline(VulkanDevice device, 
+                    VulkanSwapChain swapChain, VulkanRenderPass renderPass)
         : m_device(device), m_swapChain(swapChain), m_renderPass(renderPass)
     {
     }
@@ -41,14 +43,14 @@ namespace VulkanLearning {
         VkViewport viewport{};
         viewport.x = 0.0f;
         viewport.y = 0.0f;
-        viewport.width = (float) m_swapChain->getExtent().width;
-        viewport.height = (float) m_swapChain->getExtent().height;
+        viewport.width = (float) m_swapChain.getExtent().width;
+        viewport.height = (float) m_swapChain.getExtent().height;
         viewport.minDepth = 0.0f;
         viewport.maxDepth = 1.0f;
 
         VkRect2D scissor{};
         scissor.offset = {0, 0};
-        scissor.extent = m_swapChain->getExtent();
+        scissor.extent = m_swapChain.getExtent();
 
         VkPipelineViewportStateCreateInfo viewportState{};
         viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -67,11 +69,11 @@ namespace VulkanLearning {
         rasterizer.lineWidth = 1.0f;
 
         VkPipelineMultisampleStateCreateInfo multisampling{};
-        if (m_device->getMsaaSamples() > 1) {
+        if (m_device.getMsaaSamples() > 1) {
             multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
             multisampling.sampleShadingEnable = VK_TRUE;
             multisampling.minSampleShading = 0.2f;
-            multisampling.rasterizationSamples = m_device->getMsaaSamples();
+            multisampling.rasterizationSamples = m_device.getMsaaSamples();
         } else {
             multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
             multisampling.sampleShadingEnable = VK_FALSE;
@@ -98,7 +100,7 @@ namespace VulkanLearning {
         dynamicState.dynamicStateCount = 2;
         dynamicState.flags = 0;
 
-        if (vkCreatePipelineLayout(m_device->getLogicalDevice(), &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS) {
+        if (vkCreatePipelineLayout(m_device.getLogicalDevice(), &pipelineLayoutInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS) {
             throw std::runtime_error("Pipeline layout creation failed!");
         }
 
@@ -114,17 +116,17 @@ namespace VulkanLearning {
         pipelineInfo.pDepthStencilState = depthStencil;
         pipelineInfo.pColorBlendState = &colorBlending;
         pipelineInfo.layout = m_pipelineLayout;
-        pipelineInfo.renderPass = m_renderPass->getRenderPass();
+        pipelineInfo.renderPass = m_renderPass.getRenderPass();
         pipelineInfo.subpass = 0;
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-        if (vkCreateGraphicsPipelines(m_device->getLogicalDevice(), 
+        if (vkCreateGraphicsPipelines(m_device.getLogicalDevice(), 
                     VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, 
                     &m_graphicsPipeline) != VK_SUCCESS) {
             throw std::runtime_error("Graphics pipeline creation failed!");
         }
 
-        vkDestroyShaderModule(m_device->getLogicalDevice(), vertShaderModule.getModule(), nullptr);
-        vkDestroyShaderModule(m_device->getLogicalDevice(), fragShaderModule.getModule(), nullptr);
+        vkDestroyShaderModule(m_device.getLogicalDevice(), vertShaderModule.getModule(), nullptr);
+        vkDestroyShaderModule(m_device.getLogicalDevice(), fragShaderModule.getModule(), nullptr);
     }
 }
