@@ -136,9 +136,6 @@ namespace VulkanLearning {
             size_t currentFrame = 0;
             bool framebufferResized = false;
 
-            VulkanTexture* m_texture;
-            VulkanTexture2D* m_texture2d;
-
             VulkanImageResource m_colorImageResource;
             VulkanImageResource m_depthImageResource;
 
