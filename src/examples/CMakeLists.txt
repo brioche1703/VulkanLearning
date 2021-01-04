@@ -69,6 +69,7 @@ set(EXAMPLES
     texture
     textureArray
     gltfloading
+    textureCubemap
 )
 
 buildExamples()
