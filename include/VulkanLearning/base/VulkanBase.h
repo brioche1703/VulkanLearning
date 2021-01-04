@@ -139,8 +139,8 @@ namespace VulkanLearning {
             VulkanTexture* m_texture;
             VulkanTexture2D* m_texture2d;
 
-            VulkanImageResource* m_colorImageResource;
-            VulkanImageResource* m_depthImageResource;
+            VulkanImageResource m_colorImageResource;
+            VulkanImageResource m_depthImageResource;
 
             virtual void initWindow() {}
 

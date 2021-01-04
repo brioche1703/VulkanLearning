@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/brioche/dev/graphics/vulkan/VulkanLearning
+CMAKE_SOURCE_DIR = /home/brioche/dev/VulkanLearning
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/brioche/dev/graphics/vulkan/VulkanLearning
+CMAKE_BINARY_DIR = /home/brioche/dev/VulkanLearning
 
 # Utility rule file for uninstall.
 
@@ -54,7 +54,7 @@ CMAKE_BINARY_DIR = /home/brioche/dev/graphics/vulkan/VulkanLearning
 include external/glfw-3.3.2/CMakeFiles/uninstall.dir/progress.make
 
 external/glfw-3.3.2/CMakeFiles/uninstall:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2 && /usr/bin/cmake -P /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/cmake_uninstall.cmake
+	cd /home/brioche/dev/VulkanLearning/external/glfw-3.3.2 && /usr/bin/cmake -P /home/brioche/dev/VulkanLearning/external/glfw-3.3.2/cmake_uninstall.cmake
 
 uninstall: external/glfw-3.3.2/CMakeFiles/uninstall
 uninstall: external/glfw-3.3.2/CMakeFiles/uninstall.dir/build.make
@@ -67,10 +67,10 @@ external/glfw-3.3.2/CMakeFiles/uninstall.dir/build: uninstall
 .PHONY : external/glfw-3.3.2/CMakeFiles/uninstall.dir/build
 
 external/glfw-3.3.2/CMakeFiles/uninstall.dir/clean:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2 && $(CMAKE_COMMAND) -P CMakeFiles/uninstall.dir/cmake_clean.cmake
+	cd /home/brioche/dev/VulkanLearning/external/glfw-3.3.2 && $(CMAKE_COMMAND) -P CMakeFiles/uninstall.dir/cmake_clean.cmake
 .PHONY : external/glfw-3.3.2/CMakeFiles/uninstall.dir/clean
 
 external/glfw-3.3.2/CMakeFiles/uninstall.dir/depend:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/brioche/dev/graphics/vulkan/VulkanLearning /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2 /home/brioche/dev/graphics/vulkan/VulkanLearning /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2 /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/CMakeFiles/uninstall.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/brioche/dev/VulkanLearning && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/brioche/dev/VulkanLearning /home/brioche/dev/VulkanLearning/external/glfw-3.3.2 /home/brioche/dev/VulkanLearning /home/brioche/dev/VulkanLearning/external/glfw-3.3.2 /home/brioche/dev/VulkanLearning/external/glfw-3.3.2/CMakeFiles/uninstall.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : external/glfw-3.3.2/CMakeFiles/uninstall.dir/depend
 

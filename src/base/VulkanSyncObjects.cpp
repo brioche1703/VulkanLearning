@@ -2,6 +2,8 @@
 
 namespace VulkanLearning {
 
+    VulkanSyncObjects::VulkanSyncObjects() {}
+
     VulkanSyncObjects::VulkanSyncObjects(VulkanDevice device,
             VulkanSwapChain swapChain, const int maxFrameInFlight = 2) : 
             m_device(device), m_swapChain(swapChain) , 

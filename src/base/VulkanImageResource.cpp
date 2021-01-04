@@ -3,9 +3,9 @@
 
 namespace VulkanLearning {
 
-    VulkanImageResource::VulkanImageResource(VulkanDevice* device, VulkanSwapChain* swapChain,
-            VkFormat format, 
-            VkImageUsageFlags usage, VkImageAspectFlags aspect)
+    VulkanImageResource::VulkanImageResource() {}
+
+    VulkanImageResource::VulkanImageResource(VulkanDevice device, VulkanSwapChain swapChain, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect)
         : m_device(device), m_swapChain(swapChain),
         m_format(format), m_usage(usage), m_aspect(aspect) {
         }
@@ -13,9 +13,9 @@ namespace VulkanLearning {
     VulkanImageResource::~VulkanImageResource() {}
 
     void VulkanImageResource::create() {
-        createImage(m_swapChain->getExtent().width, 
-                m_swapChain->getExtent().height, 1, 
-                m_device->getMsaaSamples(), m_format, 
+        createImage(m_swapChain.getExtent().width, 
+                m_swapChain.getExtent().height, 1, 
+                m_device.getMsaaSamples(), m_format, 
                 VK_IMAGE_TILING_OPTIMAL, 
                 m_usage,
                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
@@ -24,9 +24,9 @@ namespace VulkanLearning {
     }
 
     void VulkanImageResource::cleanup() {
-        vkDestroyImageView(m_device->getLogicalDevice(), m_imageView, nullptr);
-        vkDestroyImage(m_device->getLogicalDevice(), m_image, nullptr);
-        vkFreeMemory(m_device->getLogicalDevice(), m_imageMemory, nullptr);
+        vkDestroyImageView(m_device.getLogicalDevice(), m_imageView, nullptr);
+        vkDestroyImage(m_device.getLogicalDevice(), m_image, nullptr);
+        vkFreeMemory(m_device.getLogicalDevice(), m_imageMemory, nullptr);
     }
 
     void VulkanImageResource::createImage(uint32_t width, 
@@ -49,23 +49,23 @@ namespace VulkanLearning {
         imageInfo.usage = usage;
         imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-        if (vkCreateImage(m_device->getLogicalDevice(), &imageInfo, nullptr, &m_image) != VK_SUCCESS) {
+        if (vkCreateImage(m_device.getLogicalDevice(), &imageInfo, nullptr, &m_image) != VK_SUCCESS) {
             throw std::runtime_error("Image creation failed!");
         }
 
         VkMemoryRequirements memRequirements;
-        vkGetImageMemoryRequirements(m_device->getLogicalDevice(), m_image, &memRequirements);
+        vkGetImageMemoryRequirements(m_device.getLogicalDevice(), m_image, &memRequirements);
 
         VkMemoryAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         allocInfo.allocationSize = memRequirements.size;
-        allocInfo.memoryTypeIndex = m_device->findMemoryType(memRequirements.memoryTypeBits, properties);
+        allocInfo.memoryTypeIndex = m_device.findMemoryType(memRequirements.memoryTypeBits, properties);
 
-        if (vkAllocateMemory(m_device->getLogicalDevice(), &allocInfo, nullptr, &m_imageMemory) != VK_SUCCESS) {
+        if (vkAllocateMemory(m_device.getLogicalDevice(), &allocInfo, nullptr, &m_imageMemory) != VK_SUCCESS) {
             throw std::runtime_error("Memory allocation for an image failed!");
         }
 
-        vkBindImageMemory(m_device->getLogicalDevice(), m_image, m_imageMemory, 0);
+        vkBindImageMemory(m_device.getLogicalDevice(), m_image, m_imageMemory, 0);
     }
 
     VkImageView VulkanImageResource::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels) {
@@ -81,7 +81,7 @@ namespace VulkanLearning {
         viewInfo.subresourceRange.layerCount = 1;
 
         VkImageView imageView;
-        if (vkCreateImageView(m_device->getLogicalDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
+        if (vkCreateImageView(m_device.getLogicalDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
             throw std::runtime_error("Image view creation failed!");
         }
 
@@ -101,14 +101,14 @@ namespace VulkanLearning {
         viewInfo.subresourceRange.baseArrayLayer = 0;
         viewInfo.subresourceRange.layerCount = 1;
 
-        if (vkCreateImageView(m_device->getLogicalDevice(), &viewInfo, nullptr, &m_imageView) != VK_SUCCESS) {
+        if (vkCreateImageView(m_device.getLogicalDevice(), &viewInfo, nullptr, &m_imageView) != VK_SUCCESS) {
             throw std::runtime_error("Image view creation failed!");
         }
     }
 
     void VulkanImageResource::transitionImageLayout(VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels) {
         VulkanCommandBuffer commandBuffer;
-        commandBuffer.create(m_device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+        commandBuffer.create(&m_device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
         VkImageMemoryBarrier barrier{};
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -145,6 +145,6 @@ namespace VulkanLearning {
         vkCmdPipelineBarrier(commandBuffer.getCommandBuffer(), sourceStage, 
                 destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
-        commandBuffer.flushCommandBuffer(m_device, true);
+        commandBuffer.flushCommandBuffer(&m_device, true);
     }
 }

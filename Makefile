@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/brioche/dev/graphics/vulkan/VulkanLearning
+CMAKE_SOURCE_DIR = /home/brioche/dev/VulkanLearning
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/brioche/dev/graphics/vulkan/VulkanLearning
+CMAKE_BINARY_DIR = /home/brioche/dev/VulkanLearning
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -126,9 +126,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/brioche/dev/graphics/vulkan/VulkanLearning/CMakeFiles /home/brioche/dev/graphics/vulkan/VulkanLearning/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/brioche/dev/VulkanLearning/CMakeFiles /home/brioche/dev/VulkanLearning/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/brioche/dev/graphics/vulkan/VulkanLearning/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/brioche/dev/VulkanLearning/CMakeFiles 0
 .PHONY : all
 
 # The main clean target

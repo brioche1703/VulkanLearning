@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/brioche/dev/graphics/vulkan/VulkanLearning
+CMAKE_SOURCE_DIR = /home/brioche/dev/VulkanLearning
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/brioche/dev/graphics/vulkan/VulkanLearning
+CMAKE_BINARY_DIR = /home/brioche/dev/VulkanLearning
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -126,14 +126,14 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(CMAKE_COMMAND) -E cmake_progress_start /home/brioche/dev/graphics/vulkan/VulkanLearning/CMakeFiles /home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/CMakeFiles/progress.marks
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 external/glfw-3.3.2/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/brioche/dev/graphics/vulkan/VulkanLearning/CMakeFiles 0
+	cd /home/brioche/dev/VulkanLearning && $(CMAKE_COMMAND) -E cmake_progress_start /home/brioche/dev/VulkanLearning/CMakeFiles /home/brioche/dev/VulkanLearning/external/glfw-3.3.2/CMakeFiles/progress.marks
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 external/glfw-3.3.2/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/brioche/dev/VulkanLearning/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 external/glfw-3.3.2/clean
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 external/glfw-3.3.2/clean
 .PHONY : clean
 
 # The main clean target
@@ -143,22 +143,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 external/glfw-3.3.2/preinstall
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 external/glfw-3.3.2/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 external/glfw-3.3.2/preinstall
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 external/glfw-3.3.2/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/brioche/dev/VulkanLearning && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 external/glfw-3.3.2/CMakeFiles/uninstall.dir/rule:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 external/glfw-3.3.2/CMakeFiles/uninstall.dir/rule
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 external/glfw-3.3.2/CMakeFiles/uninstall.dir/rule
 .PHONY : external/glfw-3.3.2/CMakeFiles/uninstall.dir/rule
 
 # Convenience name for target.
@@ -168,7 +168,7 @@ uninstall: external/glfw-3.3.2/CMakeFiles/uninstall.dir/rule
 
 # fast build rule for target.
 uninstall/fast:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f external/glfw-3.3.2/CMakeFiles/uninstall.dir/build.make external/glfw-3.3.2/CMakeFiles/uninstall.dir/build
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f external/glfw-3.3.2/CMakeFiles/uninstall.dir/build.make external/glfw-3.3.2/CMakeFiles/uninstall.dir/build
 .PHONY : uninstall/fast
 
 # Help Target
@@ -195,6 +195,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/brioche/dev/VulkanLearning && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

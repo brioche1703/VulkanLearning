@@ -1,9 +1,9 @@
 
-if (NOT EXISTS "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/install_manifest.txt")
-  message(FATAL_ERROR "Cannot find install manifest: \"/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/install_manifest.txt\"")
+if (NOT EXISTS "/home/brioche/dev/VulkanLearning/external/glfw-3.3.2/install_manifest.txt")
+  message(FATAL_ERROR "Cannot find install manifest: \"/home/brioche/dev/VulkanLearning/external/glfw-3.3.2/install_manifest.txt\"")
 endif()
 
-file(READ "/home/brioche/dev/graphics/vulkan/VulkanLearning/external/glfw-3.3.2/install_manifest.txt" files)
+file(READ "/home/brioche/dev/VulkanLearning/external/glfw-3.3.2/install_manifest.txt" files)
 string(REGEX REPLACE "\n" ";" files "${files}")
 
 foreach (file ${files})

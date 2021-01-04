@@ -18,14 +18,13 @@ namespace VulkanLearning {
             VkImageUsageFlags m_usage;
             VkImageAspectFlags m_aspect;
 
-            VulkanDevice* m_device;
-            VulkanSwapChain* m_swapChain;
+            VulkanDevice m_device;
+            VulkanSwapChain m_swapChain;
 
         public:
 
-            VulkanImageResource(VulkanDevice* device, VulkanSwapChain* swapChain,
-                    VkFormat format, 
-                    VkImageUsageFlags usage, VkImageAspectFlags aspect);
+            VulkanImageResource();
+            VulkanImageResource(VulkanDevice device, VulkanSwapChain swapChain, VkFormat format, VkImageUsageFlags usage, VkImageAspectFlags aspect);
             ~VulkanImageResource();
 
             inline VkImage getImage() { return m_image; }
@@ -35,22 +34,16 @@ namespace VulkanLearning {
             void create();
             void cleanup();
 
-            void createImage(uint32_t width, uint32_t height, uint32_t mipLevels, 
-                    VkSampleCountFlagBits numSamples, VkFormat format, 
-                    VkImageTiling tiling, VkImageUsageFlags usage, 
-                    VkMemoryPropertyFlags properties);
+            void createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkSampleCountFlagBits numSamples, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties);
 
-            VkImageView createImageView(VkImage image, VkFormat format,
-                    VkImageAspectFlags aspectFlags, uint32_t mipLevels);
-            void createImageView(VkFormat format, 
-                    VkImageAspectFlags aspectFlags, uint32_t mipLevels);
+            VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
+            void createImageView(VkFormat format, VkImageAspectFlags aspectFlags, uint32_t mipLevels);
 
-            void transitionImageLayout(VkFormat format, VkImageLayout oldLayout, 
-                    VkImageLayout newLayout, uint32_t mipLevels);
+            void transitionImageLayout(VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
 
             void copyBufferToImage(VulkanBuffer buffer, uint32_t width, uint32_t height) {
                 VulkanCommandBuffer commandBuffer;
-                commandBuffer.create(m_device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
+                commandBuffer.create(&m_device, VK_COMMAND_BUFFER_LEVEL_PRIMARY, true);
 
                 VkBufferImageCopy region{};
                 region.bufferOffset = 0;
@@ -71,7 +64,7 @@ namespace VulkanLearning {
 
                 vkCmdCopyBufferToImage(commandBuffer.getCommandBuffer(), buffer.getBuffer(), m_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
-                commandBuffer.flushCommandBuffer(m_device, true);
+                commandBuffer.flushCommandBuffer(&m_device, true);
             }
     };
 

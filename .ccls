@@ -9,3 +9,4 @@
 -Iexternal/KTX-Software/include
 -Iexternal/glm/
 -Iinclude/external/stb
+-Iexternal/glfw-3.3.2/

@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/brioche/dev/graphics/vulkan/VulkanLearning
+CMAKE_SOURCE_DIR = /home/brioche/dev/VulkanLearning
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/brioche/dev/graphics/vulkan/VulkanLearning
+CMAKE_BINARY_DIR = /home/brioche/dev/VulkanLearning
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -126,14 +126,14 @@ install/local/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(CMAKE_COMMAND) -E cmake_progress_start /home/brioche/dev/graphics/vulkan/VulkanLearning/CMakeFiles /home/brioche/dev/graphics/vulkan/VulkanLearning/src/examples/CMakeFiles/progress.marks
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/brioche/dev/graphics/vulkan/VulkanLearning/CMakeFiles 0
+	cd /home/brioche/dev/VulkanLearning && $(CMAKE_COMMAND) -E cmake_progress_start /home/brioche/dev/VulkanLearning/CMakeFiles /home/brioche/dev/VulkanLearning/src/examples/CMakeFiles/progress.marks
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/brioche/dev/VulkanLearning/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/clean
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/clean
 .PHONY : clean
 
 # The main clean target
@@ -143,22 +143,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/preinstall
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/preinstall
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/brioche/dev/VulkanLearning && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 src/examples/CMakeFiles/single3DModel.dir/rule:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/single3DModel.dir/rule
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/single3DModel.dir/rule
 .PHONY : src/examples/CMakeFiles/single3DModel.dir/rule
 
 # Convenience name for target.
@@ -168,12 +168,12 @@ single3DModel: src/examples/CMakeFiles/single3DModel.dir/rule
 
 # fast build rule for target.
 single3DModel/fast:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/single3DModel.dir/build.make src/examples/CMakeFiles/single3DModel.dir/build
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/single3DModel.dir/build.make src/examples/CMakeFiles/single3DModel.dir/build
 .PHONY : single3DModel/fast
 
 # Convenience name for target.
 src/examples/CMakeFiles/dynamicUniformBuffers.dir/rule:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/dynamicUniformBuffers.dir/rule
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/dynamicUniformBuffers.dir/rule
 .PHONY : src/examples/CMakeFiles/dynamicUniformBuffers.dir/rule
 
 # Convenience name for target.
@@ -183,12 +183,12 @@ dynamicUniformBuffers: src/examples/CMakeFiles/dynamicUniformBuffers.dir/rule
 
 # fast build rule for target.
 dynamicUniformBuffers/fast:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/dynamicUniformBuffers.dir/build.make src/examples/CMakeFiles/dynamicUniformBuffers.dir/build
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/dynamicUniformBuffers.dir/build.make src/examples/CMakeFiles/dynamicUniformBuffers.dir/build
 .PHONY : dynamicUniformBuffers/fast
 
 # Convenience name for target.
 src/examples/CMakeFiles/pushConstants.dir/rule:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/pushConstants.dir/rule
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/pushConstants.dir/rule
 .PHONY : src/examples/CMakeFiles/pushConstants.dir/rule
 
 # Convenience name for target.
@@ -198,12 +198,12 @@ pushConstants: src/examples/CMakeFiles/pushConstants.dir/rule
 
 # fast build rule for target.
 pushConstants/fast:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/pushConstants.dir/build.make src/examples/CMakeFiles/pushConstants.dir/build
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/pushConstants.dir/build.make src/examples/CMakeFiles/pushConstants.dir/build
 .PHONY : pushConstants/fast
 
 # Convenience name for target.
 src/examples/CMakeFiles/specializationConstant.dir/rule:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/specializationConstant.dir/rule
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/specializationConstant.dir/rule
 .PHONY : src/examples/CMakeFiles/specializationConstant.dir/rule
 
 # Convenience name for target.
@@ -213,12 +213,12 @@ specializationConstant: src/examples/CMakeFiles/specializationConstant.dir/rule
 
 # fast build rule for target.
 specializationConstant/fast:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/build
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/build
 .PHONY : specializationConstant/fast
 
 # Convenience name for target.
 src/examples/CMakeFiles/texture.dir/rule:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/texture.dir/rule
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/texture.dir/rule
 .PHONY : src/examples/CMakeFiles/texture.dir/rule
 
 # Convenience name for target.
@@ -228,12 +228,12 @@ texture: src/examples/CMakeFiles/texture.dir/rule
 
 # fast build rule for target.
 texture/fast:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/texture.dir/build.make src/examples/CMakeFiles/texture.dir/build
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/texture.dir/build.make src/examples/CMakeFiles/texture.dir/build
 .PHONY : texture/fast
 
 # Convenience name for target.
 src/examples/CMakeFiles/textureArray.dir/rule:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/textureArray.dir/rule
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/textureArray.dir/rule
 .PHONY : src/examples/CMakeFiles/textureArray.dir/rule
 
 # Convenience name for target.
@@ -243,12 +243,12 @@ textureArray: src/examples/CMakeFiles/textureArray.dir/rule
 
 # fast build rule for target.
 textureArray/fast:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/build
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/build
 .PHONY : textureArray/fast
 
 # Convenience name for target.
 src/examples/CMakeFiles/gltfloading.dir/rule:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/gltfloading.dir/rule
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/gltfloading.dir/rule
 .PHONY : src/examples/CMakeFiles/gltfloading.dir/rule
 
 # Convenience name for target.
@@ -258,12 +258,12 @@ gltfloading: src/examples/CMakeFiles/gltfloading.dir/rule
 
 # fast build rule for target.
 gltfloading/fast:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfloading.dir/build.make src/examples/CMakeFiles/gltfloading.dir/build
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfloading.dir/build.make src/examples/CMakeFiles/gltfloading.dir/build
 .PHONY : gltfloading/fast
 
 # Convenience name for target.
 src/examples/CMakeFiles/simpleTriangle.dir/rule:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/simpleTriangle.dir/rule
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/simpleTriangle.dir/rule
 .PHONY : src/examples/CMakeFiles/simpleTriangle.dir/rule
 
 # Convenience name for target.
@@ -273,7 +273,7 @@ simpleTriangle: src/examples/CMakeFiles/simpleTriangle.dir/rule
 
 # fast build rule for target.
 simpleTriangle/fast:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/simpleTriangle.dir/build.make src/examples/CMakeFiles/simpleTriangle.dir/build
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/simpleTriangle.dir/build.make src/examples/CMakeFiles/simpleTriangle.dir/build
 .PHONY : simpleTriangle/fast
 
 dynamicUniformBuffers/dynamicUniformBuffers.o: dynamicUniformBuffers/dynamicUniformBuffers.cpp.o
@@ -282,7 +282,7 @@ dynamicUniformBuffers/dynamicUniformBuffers.o: dynamicUniformBuffers/dynamicUnif
 
 # target to build an object file
 dynamicUniformBuffers/dynamicUniformBuffers.cpp.o:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/dynamicUniformBuffers.dir/build.make src/examples/CMakeFiles/dynamicUniformBuffers.dir/dynamicUniformBuffers/dynamicUniformBuffers.cpp.o
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/dynamicUniformBuffers.dir/build.make src/examples/CMakeFiles/dynamicUniformBuffers.dir/dynamicUniformBuffers/dynamicUniformBuffers.cpp.o
 .PHONY : dynamicUniformBuffers/dynamicUniformBuffers.cpp.o
 
 dynamicUniformBuffers/dynamicUniformBuffers.i: dynamicUniformBuffers/dynamicUniformBuffers.cpp.i
@@ -291,7 +291,7 @@ dynamicUniformBuffers/dynamicUniformBuffers.i: dynamicUniformBuffers/dynamicUnif
 
 # target to preprocess a source file
 dynamicUniformBuffers/dynamicUniformBuffers.cpp.i:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/dynamicUniformBuffers.dir/build.make src/examples/CMakeFiles/dynamicUniformBuffers.dir/dynamicUniformBuffers/dynamicUniformBuffers.cpp.i
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/dynamicUniformBuffers.dir/build.make src/examples/CMakeFiles/dynamicUniformBuffers.dir/dynamicUniformBuffers/dynamicUniformBuffers.cpp.i
 .PHONY : dynamicUniformBuffers/dynamicUniformBuffers.cpp.i
 
 dynamicUniformBuffers/dynamicUniformBuffers.s: dynamicUniformBuffers/dynamicUniformBuffers.cpp.s
@@ -300,7 +300,7 @@ dynamicUniformBuffers/dynamicUniformBuffers.s: dynamicUniformBuffers/dynamicUnif
 
 # target to generate assembly for a file
 dynamicUniformBuffers/dynamicUniformBuffers.cpp.s:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/dynamicUniformBuffers.dir/build.make src/examples/CMakeFiles/dynamicUniformBuffers.dir/dynamicUniformBuffers/dynamicUniformBuffers.cpp.s
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/dynamicUniformBuffers.dir/build.make src/examples/CMakeFiles/dynamicUniformBuffers.dir/dynamicUniformBuffers/dynamicUniformBuffers.cpp.s
 .PHONY : dynamicUniformBuffers/dynamicUniformBuffers.cpp.s
 
 gltfloading/gltfloading.o: gltfloading/gltfloading.cpp.o
@@ -309,7 +309,7 @@ gltfloading/gltfloading.o: gltfloading/gltfloading.cpp.o
 
 # target to build an object file
 gltfloading/gltfloading.cpp.o:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfloading.dir/build.make src/examples/CMakeFiles/gltfloading.dir/gltfloading/gltfloading.cpp.o
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfloading.dir/build.make src/examples/CMakeFiles/gltfloading.dir/gltfloading/gltfloading.cpp.o
 .PHONY : gltfloading/gltfloading.cpp.o
 
 gltfloading/gltfloading.i: gltfloading/gltfloading.cpp.i
@@ -318,7 +318,7 @@ gltfloading/gltfloading.i: gltfloading/gltfloading.cpp.i
 
 # target to preprocess a source file
 gltfloading/gltfloading.cpp.i:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfloading.dir/build.make src/examples/CMakeFiles/gltfloading.dir/gltfloading/gltfloading.cpp.i
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfloading.dir/build.make src/examples/CMakeFiles/gltfloading.dir/gltfloading/gltfloading.cpp.i
 .PHONY : gltfloading/gltfloading.cpp.i
 
 gltfloading/gltfloading.s: gltfloading/gltfloading.cpp.s
@@ -327,7 +327,7 @@ gltfloading/gltfloading.s: gltfloading/gltfloading.cpp.s
 
 # target to generate assembly for a file
 gltfloading/gltfloading.cpp.s:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfloading.dir/build.make src/examples/CMakeFiles/gltfloading.dir/gltfloading/gltfloading.cpp.s
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfloading.dir/build.make src/examples/CMakeFiles/gltfloading.dir/gltfloading/gltfloading.cpp.s
 .PHONY : gltfloading/gltfloading.cpp.s
 
 pushConstants/pushConstants.o: pushConstants/pushConstants.cpp.o
@@ -336,7 +336,7 @@ pushConstants/pushConstants.o: pushConstants/pushConstants.cpp.o
 
 # target to build an object file
 pushConstants/pushConstants.cpp.o:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/pushConstants.dir/build.make src/examples/CMakeFiles/pushConstants.dir/pushConstants/pushConstants.cpp.o
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/pushConstants.dir/build.make src/examples/CMakeFiles/pushConstants.dir/pushConstants/pushConstants.cpp.o
 .PHONY : pushConstants/pushConstants.cpp.o
 
 pushConstants/pushConstants.i: pushConstants/pushConstants.cpp.i
@@ -345,7 +345,7 @@ pushConstants/pushConstants.i: pushConstants/pushConstants.cpp.i
 
 # target to preprocess a source file
 pushConstants/pushConstants.cpp.i:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/pushConstants.dir/build.make src/examples/CMakeFiles/pushConstants.dir/pushConstants/pushConstants.cpp.i
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/pushConstants.dir/build.make src/examples/CMakeFiles/pushConstants.dir/pushConstants/pushConstants.cpp.i
 .PHONY : pushConstants/pushConstants.cpp.i
 
 pushConstants/pushConstants.s: pushConstants/pushConstants.cpp.s
@@ -354,7 +354,7 @@ pushConstants/pushConstants.s: pushConstants/pushConstants.cpp.s
 
 # target to generate assembly for a file
 pushConstants/pushConstants.cpp.s:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/pushConstants.dir/build.make src/examples/CMakeFiles/pushConstants.dir/pushConstants/pushConstants.cpp.s
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/pushConstants.dir/build.make src/examples/CMakeFiles/pushConstants.dir/pushConstants/pushConstants.cpp.s
 .PHONY : pushConstants/pushConstants.cpp.s
 
 simpleTriangle/simpleTriangle.o: simpleTriangle/simpleTriangle.cpp.o
@@ -363,7 +363,7 @@ simpleTriangle/simpleTriangle.o: simpleTriangle/simpleTriangle.cpp.o
 
 # target to build an object file
 simpleTriangle/simpleTriangle.cpp.o:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/simpleTriangle.dir/build.make src/examples/CMakeFiles/simpleTriangle.dir/simpleTriangle/simpleTriangle.cpp.o
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/simpleTriangle.dir/build.make src/examples/CMakeFiles/simpleTriangle.dir/simpleTriangle/simpleTriangle.cpp.o
 .PHONY : simpleTriangle/simpleTriangle.cpp.o
 
 simpleTriangle/simpleTriangle.i: simpleTriangle/simpleTriangle.cpp.i
@@ -372,7 +372,7 @@ simpleTriangle/simpleTriangle.i: simpleTriangle/simpleTriangle.cpp.i
 
 # target to preprocess a source file
 simpleTriangle/simpleTriangle.cpp.i:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/simpleTriangle.dir/build.make src/examples/CMakeFiles/simpleTriangle.dir/simpleTriangle/simpleTriangle.cpp.i
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/simpleTriangle.dir/build.make src/examples/CMakeFiles/simpleTriangle.dir/simpleTriangle/simpleTriangle.cpp.i
 .PHONY : simpleTriangle/simpleTriangle.cpp.i
 
 simpleTriangle/simpleTriangle.s: simpleTriangle/simpleTriangle.cpp.s
@@ -381,7 +381,7 @@ simpleTriangle/simpleTriangle.s: simpleTriangle/simpleTriangle.cpp.s
 
 # target to generate assembly for a file
 simpleTriangle/simpleTriangle.cpp.s:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/simpleTriangle.dir/build.make src/examples/CMakeFiles/simpleTriangle.dir/simpleTriangle/simpleTriangle.cpp.s
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/simpleTriangle.dir/build.make src/examples/CMakeFiles/simpleTriangle.dir/simpleTriangle/simpleTriangle.cpp.s
 .PHONY : simpleTriangle/simpleTriangle.cpp.s
 
 single3DModel/single3DModel.o: single3DModel/single3DModel.cpp.o
@@ -390,7 +390,7 @@ single3DModel/single3DModel.o: single3DModel/single3DModel.cpp.o
 
 # target to build an object file
 single3DModel/single3DModel.cpp.o:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/single3DModel.dir/build.make src/examples/CMakeFiles/single3DModel.dir/single3DModel/single3DModel.cpp.o
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/single3DModel.dir/build.make src/examples/CMakeFiles/single3DModel.dir/single3DModel/single3DModel.cpp.o
 .PHONY : single3DModel/single3DModel.cpp.o
 
 single3DModel/single3DModel.i: single3DModel/single3DModel.cpp.i
@@ -399,7 +399,7 @@ single3DModel/single3DModel.i: single3DModel/single3DModel.cpp.i
 
 # target to preprocess a source file
 single3DModel/single3DModel.cpp.i:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/single3DModel.dir/build.make src/examples/CMakeFiles/single3DModel.dir/single3DModel/single3DModel.cpp.i
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/single3DModel.dir/build.make src/examples/CMakeFiles/single3DModel.dir/single3DModel/single3DModel.cpp.i
 .PHONY : single3DModel/single3DModel.cpp.i
 
 single3DModel/single3DModel.s: single3DModel/single3DModel.cpp.s
@@ -408,7 +408,7 @@ single3DModel/single3DModel.s: single3DModel/single3DModel.cpp.s
 
 # target to generate assembly for a file
 single3DModel/single3DModel.cpp.s:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/single3DModel.dir/build.make src/examples/CMakeFiles/single3DModel.dir/single3DModel/single3DModel.cpp.s
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/single3DModel.dir/build.make src/examples/CMakeFiles/single3DModel.dir/single3DModel/single3DModel.cpp.s
 .PHONY : single3DModel/single3DModel.cpp.s
 
 specializationConstant/specializationConstant.o: specializationConstant/specializationConstant.cpp.o
@@ -417,7 +417,7 @@ specializationConstant/specializationConstant.o: specializationConstant/speciali
 
 # target to build an object file
 specializationConstant/specializationConstant.cpp.o:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/specializationConstant/specializationConstant.cpp.o
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/specializationConstant/specializationConstant.cpp.o
 .PHONY : specializationConstant/specializationConstant.cpp.o
 
 specializationConstant/specializationConstant.i: specializationConstant/specializationConstant.cpp.i
@@ -426,7 +426,7 @@ specializationConstant/specializationConstant.i: specializationConstant/speciali
 
 # target to preprocess a source file
 specializationConstant/specializationConstant.cpp.i:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/specializationConstant/specializationConstant.cpp.i
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/specializationConstant/specializationConstant.cpp.i
 .PHONY : specializationConstant/specializationConstant.cpp.i
 
 specializationConstant/specializationConstant.s: specializationConstant/specializationConstant.cpp.s
@@ -435,7 +435,7 @@ specializationConstant/specializationConstant.s: specializationConstant/speciali
 
 # target to generate assembly for a file
 specializationConstant/specializationConstant.cpp.s:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/specializationConstant/specializationConstant.cpp.s
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/specializationConstant/specializationConstant.cpp.s
 .PHONY : specializationConstant/specializationConstant.cpp.s
 
 texture/texture.o: texture/texture.cpp.o
@@ -444,7 +444,7 @@ texture/texture.o: texture/texture.cpp.o
 
 # target to build an object file
 texture/texture.cpp.o:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/texture.dir/build.make src/examples/CMakeFiles/texture.dir/texture/texture.cpp.o
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/texture.dir/build.make src/examples/CMakeFiles/texture.dir/texture/texture.cpp.o
 .PHONY : texture/texture.cpp.o
 
 texture/texture.i: texture/texture.cpp.i
@@ -453,7 +453,7 @@ texture/texture.i: texture/texture.cpp.i
 
 # target to preprocess a source file
 texture/texture.cpp.i:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/texture.dir/build.make src/examples/CMakeFiles/texture.dir/texture/texture.cpp.i
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/texture.dir/build.make src/examples/CMakeFiles/texture.dir/texture/texture.cpp.i
 .PHONY : texture/texture.cpp.i
 
 texture/texture.s: texture/texture.cpp.s
@@ -462,7 +462,7 @@ texture/texture.s: texture/texture.cpp.s
 
 # target to generate assembly for a file
 texture/texture.cpp.s:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/texture.dir/build.make src/examples/CMakeFiles/texture.dir/texture/texture.cpp.s
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/texture.dir/build.make src/examples/CMakeFiles/texture.dir/texture/texture.cpp.s
 .PHONY : texture/texture.cpp.s
 
 textureArray/textureArray.o: textureArray/textureArray.cpp.o
@@ -471,7 +471,7 @@ textureArray/textureArray.o: textureArray/textureArray.cpp.o
 
 # target to build an object file
 textureArray/textureArray.cpp.o:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/textureArray/textureArray.cpp.o
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/textureArray/textureArray.cpp.o
 .PHONY : textureArray/textureArray.cpp.o
 
 textureArray/textureArray.i: textureArray/textureArray.cpp.i
@@ -480,7 +480,7 @@ textureArray/textureArray.i: textureArray/textureArray.cpp.i
 
 # target to preprocess a source file
 textureArray/textureArray.cpp.i:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/textureArray/textureArray.cpp.i
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/textureArray/textureArray.cpp.i
 .PHONY : textureArray/textureArray.cpp.i
 
 textureArray/textureArray.s: textureArray/textureArray.cpp.s
@@ -489,7 +489,7 @@ textureArray/textureArray.s: textureArray/textureArray.cpp.s
 
 # target to generate assembly for a file
 textureArray/textureArray.cpp.s:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/textureArray/textureArray.cpp.s
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/textureArray/textureArray.cpp.s
 .PHONY : textureArray/textureArray.cpp.s
 
 # Help Target
@@ -547,6 +547,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/brioche/dev/graphics/vulkan/VulkanLearning && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/brioche/dev/VulkanLearning && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

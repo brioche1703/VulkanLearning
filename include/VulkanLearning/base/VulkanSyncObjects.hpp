@@ -18,9 +18,10 @@ namespace VulkanLearning {
             VulkanDevice m_device;
             VulkanSwapChain m_swapChain;
 
-            const int m_maxFrameInFlight = 2;
+            int m_maxFrameInFlight = 2;
 
         public:
+            VulkanSyncObjects();
             VulkanSyncObjects(VulkanDevice device, VulkanSwapChain swapChain, const int maxFrameInFlight);
             ~VulkanSyncObjects();
 

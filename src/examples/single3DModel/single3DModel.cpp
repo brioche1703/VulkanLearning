@@ -207,8 +207,8 @@ namespace VulkanLearning {
             }
 
             void cleanupSwapChain() override {
-                m_colorImageResource->cleanup();
-                m_depthImageResource->cleanup();
+                m_colorImageResource.cleanup();
+                m_depthImageResource.cleanup();
 
                 m_swapChain.cleanFramebuffers();
 
@@ -363,8 +363,8 @@ namespace VulkanLearning {
 
             void createFramebuffers() override {
                 const std::vector<VkImageView> attachments {
-                    m_colorImageResource->getImageView(),
-                    m_depthImageResource->getImageView()
+                    m_colorImageResource.getImageView(),
+                    m_depthImageResource.getImageView()
                 };
 
                 m_swapChain.createFramebuffers(m_renderPass.getRenderPass(), 
@@ -376,22 +376,22 @@ namespace VulkanLearning {
             }
 
             void createColorResources() override {
-                m_colorImageResource = new VulkanImageResource(&m_device, 
-                        &m_swapChain,
+                m_colorImageResource = VulkanImageResource(m_device, 
+                        m_swapChain,
                         m_swapChain.getImageFormat(),  
                         VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT
                         | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, 
                         VK_IMAGE_ASPECT_COLOR_BIT);
-                m_colorImageResource->create();
+                m_colorImageResource.create();
             }
 
             void createDepthResources() override {
-                m_depthImageResource = new VulkanImageResource(&m_device, 
-                        &m_swapChain,
+                m_depthImageResource = VulkanImageResource(m_device, 
+                        m_swapChain,
                         m_device.findDepthFormat(), 
                         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
                         VK_IMAGE_ASPECT_DEPTH_BIT);
-                m_depthImageResource->create();
+                m_depthImageResource.create();
             }
 
             void createVertexBuffer() override {
