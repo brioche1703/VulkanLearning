@@ -17,6 +17,7 @@ namespace VulkanLearning {
 
         public:
             VulkanDescriptorPool();
+            VulkanDescriptorPool(VulkanDevice device);
             VulkanDescriptorPool(VulkanDevice device, VulkanSwapChain swapChain);
             ~VulkanDescriptorPool(); 
 

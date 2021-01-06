@@ -327,9 +327,9 @@ namespace VulkanLearning {
                         m_swapChain, m_renderPass);
 
                 VulkanShaderModule vertShaderModule = 
-                    VulkanShaderModule("src/shaders/glTFLoadingVert.spv", &m_device);
+                    VulkanShaderModule("src/shaders/glTFLoadingVert.spv", &m_device, VK_SHADER_STAGE_VERTEX_BIT);
                 VulkanShaderModule fragShaderModule = 
-                    VulkanShaderModule("src/shaders/glTFLoadingFrag.spv", &m_device);
+                    VulkanShaderModule("src/shaders/glTFLoadingFrag.spv", &m_device, VK_SHADER_STAGE_FRAGMENT_BIT);
 
                 VkVertexInputBindingDescription vertexInputBindingDescription = {};
                 vertexInputBindingDescription.binding = 0;
@@ -500,6 +500,7 @@ namespace VulkanLearning {
 
 
                     glTFModel.draw(m_commandBuffers[i].getCommandBuffer(), m_graphicsPipeline.getPipelineLayout());
+
                     vkCmdEndRenderPass(m_commandBuffers[i].getCommandBuffer());
                     if (vkEndCommandBuffer(m_commandBuffers[i].getCommandBuffer()) != VK_SUCCESS) {
                         throw std::runtime_error("Recording of a command buffer failed!");
@@ -563,11 +564,10 @@ namespace VulkanLearning {
             void createDescriptorSets() override {
                 m_descriptorSets = VulkanDescriptorSets(
                         m_device, 
-                        m_swapChain,
                         *m_descriptorSetLayouts.matrices, 
                         m_descriptorPool);
 
-                m_descriptorSets.create();
+                m_descriptorSets.create(static_cast<uint32_t>(m_swapChain.getImages().size()));
 
                 for (size_t i = 0; i < m_swapChain.getImages().size(); i++) {
                     std::vector<VkWriteDescriptorSet> descriptorWrites(1);

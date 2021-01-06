@@ -19,7 +19,7 @@ namespace VulkanLearning {
             VulkanRenderPass(VulkanSwapChain swapChain, VulkanDevice device);
             ~VulkanRenderPass();
 
-            VkRenderPass getRenderPass();
+            VkRenderPass getRenderPass() const;
 
             void create(const std::vector<VkAttachmentDescription> attachments, VkSubpassDescription subpass);
 

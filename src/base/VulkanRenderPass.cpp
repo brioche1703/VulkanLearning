@@ -10,7 +10,7 @@ namespace VulkanLearning {
 
     VulkanRenderPass::~VulkanRenderPass() {}
 
-    VkRenderPass VulkanRenderPass::getRenderPass() { return m_renderPass; }
+    VkRenderPass VulkanRenderPass::getRenderPass() const { return m_renderPass; }
 
     void VulkanRenderPass::create(
             const std::vector<VkAttachmentDescription> attachments,

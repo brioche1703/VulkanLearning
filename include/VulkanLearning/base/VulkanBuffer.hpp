@@ -78,6 +78,7 @@ namespace VulkanLearning {
 
             void setupDescriptor(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
 
+            void flush(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
             void cleanup();
     };
 }

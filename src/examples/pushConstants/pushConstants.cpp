@@ -326,9 +326,9 @@ namespace VulkanLearning {
                         m_swapChain, m_renderPass);
 
                 VulkanShaderModule vertShaderModule = 
-                    VulkanShaderModule("src/shaders/pushConstantsVert.spv", &m_device);
+                    VulkanShaderModule("src/shaders/pushConstantsVert.spv", &m_device, VK_SHADER_STAGE_VERTEX_BIT);
                 VulkanShaderModule fragShaderModule = 
-                    VulkanShaderModule("src/shaders/pushConstantsFrag.spv", &m_device);
+                    VulkanShaderModule("src/shaders/pushConstantsFrag.spv", &m_device, VK_SHADER_STAGE_FRAGMENT_BIT);
 
                 VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
                 vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -536,10 +536,11 @@ namespace VulkanLearning {
                 };
 
                 m_descriptorSets = VulkanDescriptorSets(
-                        m_device, m_swapChain,
-                        m_descriptorSetLayout, m_descriptorPool);
+                        m_device,
+                        m_descriptorSetLayout, 
+                        m_descriptorPool);
 
-                m_descriptorSets.create();
+                m_descriptorSets.create(static_cast<uint32_t>(m_swapChain.getImages().size()));
 
                 for (size_t i = 0; i < m_swapChain.getImages().size(); i++) {
                     std::vector<VkWriteDescriptorSet> descriptorWrites = 

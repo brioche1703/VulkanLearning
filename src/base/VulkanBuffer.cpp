@@ -205,6 +205,14 @@ namespace VulkanLearning {
         m_descriptor.range = size;
     }
 
+    void VulkanBuffer::flush(VkDeviceSize size, VkDeviceSize offset) {
+        VkMappedMemoryRange memoryRange = {};
+        memoryRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+        memoryRange.memory = m_bufferMemory;
+        memoryRange.offset = offset;
+        memoryRange.size = size;
+    }
+
     void VulkanBuffer::cleanup() {
         vkFreeMemory(m_device.getLogicalDevice(), m_bufferMemory, nullptr);
         vkDestroyBuffer(m_device.getLogicalDevice(), m_buffer, nullptr);

@@ -6,12 +6,10 @@ namespace VulkanLearning {
 
     VulkanDescriptorSets::VulkanDescriptorSets(
             VulkanDevice device, 
-            VulkanSwapChain swapChain, 
             VulkanDescriptorSetLayout descriptorSetLayout,
             VulkanDescriptorPool descriptorPool) 
         :
             m_device(device), 
-            m_swapChain(swapChain), 
             m_descriptorSetLayout(descriptorSetLayout),
             m_descriptorPool(descriptorPool)
     {
@@ -19,21 +17,22 @@ namespace VulkanLearning {
 
     VulkanDescriptorSets::~VulkanDescriptorSets() {}
 
-    void VulkanDescriptorSets::create() {
-        std::vector<VkDescriptorSetLayout> layouts(m_swapChain.getImages().size(), 
+    void VulkanDescriptorSets::create(uint32_t descriptorSetCount) {
+        std::vector<VkDescriptorSetLayout> layouts(descriptorSetCount,
                 m_descriptorSetLayout.getDescriptorSetLayout());
+
+        m_descriptorSets.resize(descriptorSetCount);
 
         VkDescriptorSetAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
         allocInfo.descriptorPool = m_descriptorPool.getDescriptorPool();
-        allocInfo.descriptorSetCount = static_cast<uint32_t>(m_swapChain.getImages().size());
+        allocInfo.descriptorSetCount = descriptorSetCount;
         allocInfo.pSetLayouts = layouts.data();
 
-        m_descriptorSets.resize(m_swapChain.getImages().size());
-
-        if (vkAllocateDescriptorSets(m_device.getLogicalDevice(), &allocInfo, m_descriptorSets.data()) != VK_SUCCESS) {
-            throw std::runtime_error("Descriptor set allocation failed!");
-        }
+        VK_CHECK_RESULT(vkAllocateDescriptorSets(
+                    m_device.getLogicalDevice(), 
+                    &allocInfo, 
+                    m_descriptorSets.data()));
 
     }
 

@@ -21,6 +21,7 @@ namespace VulkanLearning {
                 VulkanBase::run();
             }
         private:
+            bool m_wireframe = false;
 
             void initWindow() override {
                 m_window = Window("Simple Triangle", WIDTH, HEIGHT);
@@ -59,7 +60,7 @@ namespace VulkanLearning {
                 createCoordinateSystemUniformBuffers();
                 createDescriptorPool();
                 createDescriptorSets();
-                
+               
                 createCommandBuffers();
                 createSyncObjects();
             }
@@ -69,6 +70,7 @@ namespace VulkanLearning {
                     glfwPollEvents();
                     m_input.processKeyboardInput();
                     m_fpsCounter.update();
+                    updateUI();
                     drawFrame();
                 }
 
@@ -284,9 +286,9 @@ namespace VulkanLearning {
                         m_swapChain, m_renderPass);
 
                 VulkanShaderModule vertShaderModule = 
-                    VulkanShaderModule("src/shaders/simpleTriangleShaderVert.spv", &m_device);
+                    VulkanShaderModule("src/shaders/simpleTriangleShaderVert.spv", &m_device, VK_SHADER_STAGE_VERTEX_BIT);
                 VulkanShaderModule fragShaderModule = 
-                    VulkanShaderModule("src/shaders/simpleTriangleShaderFrag.spv", &m_device);
+                    VulkanShaderModule("src/shaders/simpleTriangleShaderFrag.spv", &m_device, VK_SHADER_STAGE_FRAGMENT_BIT);
 
                 VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
                 vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -306,8 +308,11 @@ namespace VulkanLearning {
                 pipelineLayoutInfo.pSetLayouts = 
                     m_descriptorSetLayout.getDescriptorSetLayoutPointer();
 
-                m_graphicsPipeline.create(vertShaderModule, fragShaderModule, 
-                        vertexInputInfo, pipelineLayoutInfo);
+                m_graphicsPipeline.create(
+                        vertShaderModule, 
+                        fragShaderModule, 
+                        vertexInputInfo, 
+                        pipelineLayoutInfo);
             }
 
             void createFramebuffers() override {
@@ -362,6 +367,18 @@ namespace VulkanLearning {
                 std::array<VkClearValue, 1> clearValues{};
                 clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
 
+                VkViewport viewport = {};
+                viewport.width = m_swapChain.getExtent().width;
+                viewport.height = m_swapChain.getExtent().height;
+                viewport.minDepth = 0.0f;
+                viewport.maxDepth = 1.0f;
+
+                VkRect2D scissor = {};
+                scissor.extent.width = m_swapChain.getExtent().width;
+                scissor.extent.height = m_swapChain.getExtent().height;
+                scissor.offset.x = 0;
+                scissor.offset.y = 0;
+
                 for (size_t i = 0; i < m_commandBuffers.size(); i++) {
                     VkCommandBufferBeginInfo beginInfo{};
                     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -383,6 +400,8 @@ namespace VulkanLearning {
                     renderPassInfo.pClearValues = clearValues.data();
 
                     vkCmdBeginRenderPass(m_commandBuffers[i].getCommandBuffer(), &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+                    vkCmdSetViewport(m_commandBuffers[i].getCommandBuffer(), 0, 1, &viewport);
+                    vkCmdSetScissor(m_commandBuffers[i].getCommandBuffer(), 0, 1, &scissor);
 
                     vkCmdBindPipeline(m_commandBuffers[i].getCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_graphicsPipeline.getGraphicsPipeline());
 
@@ -417,6 +436,9 @@ namespace VulkanLearning {
                             0, 
                             0, 
                             0);
+
+                    m_ui.draw(m_commandBuffers[i]);
+
                     vkCmdEndRenderPass(m_commandBuffers[i].getCommandBuffer());
 
                     if (vkEndCommandBuffer(m_commandBuffers[i].getCommandBuffer()) != VK_SUCCESS) {
@@ -467,11 +489,10 @@ namespace VulkanLearning {
 
                 m_descriptorSets = VulkanDescriptorSets(
                         m_device, 
-                        m_swapChain,
                         m_descriptorSetLayout, 
                         m_descriptorPool);
 
-                m_descriptorSets.create();
+                m_descriptorSets.create(static_cast<uint32_t>(m_swapChain.getImages().size()));
 
                 for (size_t i = 0; i < m_swapChain.getImages().size(); i++) {
                     VkDescriptorBufferInfo bufferInfo{};
@@ -515,6 +536,13 @@ namespace VulkanLearning {
                 m_coordinateSystemUniformBuffers[currentImage].unmap();
             }
 
+            void OnUpdateUI (UI *ui) override {
+                if (ui->header("Settings")) {
+                    if (ui->checkBox("Wireframe", &m_wireframe)) {
+                        createCommandBuffers();
+                    }
+                }
+            }
     };
 
 }

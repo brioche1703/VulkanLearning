@@ -382,9 +382,9 @@ namespace VulkanLearning {
                 }
 
                 VulkanShaderModule vertShaderModule = 
-                    VulkanShaderModule("src/shaders/specializationConstantVert.spv", &m_device);
+                    VulkanShaderModule("src/shaders/specializationConstantVert.spv", &m_device, VK_SHADER_STAGE_VERTEX_BIT);
                 VulkanShaderModule fragShaderModule = 
-                    VulkanShaderModule("src/shaders/specializationConstantFrag.spv", &m_device);
+                    VulkanShaderModule("src/shaders/specializationConstantFrag.spv", &m_device, VK_SHADER_STAGE_FRAGMENT_BIT);
 
                 auto bindingDescription = VertexTextured::getBindingDescription();
                 auto attributeDescriptions = VertexTextured::getAttributeDescriptions();
@@ -528,7 +528,10 @@ namespace VulkanLearning {
                 specializationData.lightingModel = 0;
                 if (vkCreateGraphicsPipelines(
                             m_device.getLogicalDevice(), 
-                            VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, 
+                            VK_NULL_HANDLE, 
+                            1, 
+                            &pipelineInfo, 
+                            nullptr, 
                             &m_pipelines.phong) != VK_SUCCESS) {
                     throw std::runtime_error("Graphics pipeline creation failed!");
                 }
@@ -778,6 +781,8 @@ namespace VulkanLearning {
                             0, 
                             0);
 
+                    drawUI(m_commandBuffers[i]);
+
                     vkCmdEndRenderPass(m_commandBuffers[i].getCommandBuffer());
 
                     if (vkEndCommandBuffer(m_commandBuffers[i].getCommandBuffer()) != VK_SUCCESS) {
@@ -854,11 +859,10 @@ namespace VulkanLearning {
 
                 m_descriptorSets = VulkanDescriptorSets(
                         m_device, 
-                        m_swapChain,
                         m_descriptorSetLayout, 
                         m_descriptorPool);
 
-                m_descriptorSets.create();
+                m_descriptorSets.create(static_cast<uint32_t>(m_swapChain.getImages().size()));
                 
                 for (size_t i = 0; i < m_swapChain.getImages().size(); i++) {
                     std::vector<VkWriteDescriptorSet> descriptorWrites = 

@@ -60,4 +60,42 @@ namespace VulkanLearning {
             vkFreeCommandBuffers(device->getLogicalDevice(), device->getCommandPool(), 1, &m_commandBuffer);
         }
     }
+
+    void VulkanCommandBuffer::flushCommandBuffer(VulkanDevice* device, VkQueue queue, bool free) {
+        if (m_commandBuffer == VK_NULL_HANDLE) {
+            return;
+        } 
+
+        if (vkEndCommandBuffer(m_commandBuffer) != VK_SUCCESS) {
+            throw std::runtime_error("Command buffer end failed!");
+        }
+
+        VkSubmitInfo submitInfo = {};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &m_commandBuffer;
+
+        VkFenceCreateInfo fenceInfo = {};
+        fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+
+        VkFence fence;
+        if (vkCreateFence(device->getLogicalDevice(), &fenceInfo, nullptr, &fence) != VK_SUCCESS) {
+            throw std::runtime_error("Fence creation failed!");
+        }
+
+        if (vkQueueSubmit(queue, 1, &submitInfo, fence) != VK_SUCCESS) {
+            throw std::runtime_error("Fence submition to queue failed!");
+        }
+
+        if (vkWaitForFences(device->getLogicalDevice(), 1, &fence, VK_TRUE, UINT64_MAX) != VK_SUCCESS) {
+            throw std::runtime_error("Waiting for fence failed!");
+        }
+
+        vkDestroyFence(device->getLogicalDevice(), fence, nullptr);
+
+        if (free)
+        {
+            vkFreeCommandBuffers(device->getLogicalDevice(), device->getCommandPool(), 1, &m_commandBuffer);
+        }
+    }
 }

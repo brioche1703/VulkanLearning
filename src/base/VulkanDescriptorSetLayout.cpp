@@ -1,4 +1,5 @@
 #include "VulkanDescriptorSetLayout.hpp"
+#include "VulkanTools.hpp"
 
 #include <array>
 
@@ -17,14 +18,11 @@ namespace VulkanLearning {
         layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
         layoutInfo.pBindings = bindings.data();
 
-        if (vkCreateDescriptorSetLayout(
+        VK_CHECK_RESULT(vkCreateDescriptorSetLayout(
                     m_device.getLogicalDevice(), 
                     &layoutInfo, 
                     nullptr, 
-                    &m_descriptorSetLayout) 
-                != VK_SUCCESS) {
-            throw std::runtime_error("Set layout descriptor creation failed!");
-        }
+                    &m_descriptorSetLayout));
     }
 
     void VulkanDescriptorSetLayout::cleanup() {

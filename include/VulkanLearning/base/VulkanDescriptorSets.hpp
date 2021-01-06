@@ -17,16 +17,12 @@ namespace VulkanLearning {
             std::vector<VkDescriptorSet> m_descriptorSets;
 
             VulkanDevice m_device;
-            VulkanSwapChain m_swapChain;
             VulkanDescriptorSetLayout m_descriptorSetLayout;
             VulkanDescriptorPool m_descriptorPool;
-
-            VulkanTexture m_texture;
 
         public:
             VulkanDescriptorSets();
             VulkanDescriptorSets(VulkanDevice device, 
-                    VulkanSwapChain swapChain, 
                     VulkanDescriptorSetLayout descriptorSetLayout,
                     VulkanDescriptorPool descriptorPool);
 
@@ -38,6 +34,6 @@ namespace VulkanLearning {
             void update(std::vector<VkWriteDescriptorSet> descriptorWrites, 
                     uint32_t imageIndex);
 
-            void create();
+            void create(uint32_t descriptorSetCount);
     };
 }

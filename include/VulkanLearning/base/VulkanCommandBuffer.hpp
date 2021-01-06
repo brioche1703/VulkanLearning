@@ -14,11 +14,12 @@ namespace VulkanLearning {
             VulkanCommandBuffer();
             ~VulkanCommandBuffer();
 
-            inline VkCommandBuffer getCommandBuffer() { return m_commandBuffer; }
+            inline VkCommandBuffer getCommandBuffer() const { return m_commandBuffer; }
             inline VkCommandBuffer* getCommandBufferPointer() { return &m_commandBuffer; }
 
             void create(VulkanDevice* device, VkCommandBufferLevel level, bool begin);
 
             void flushCommandBuffer(VulkanDevice* device, bool free);
+            void flushCommandBuffer(VulkanDevice* device, VkQueue queue, bool free);
     };
 }

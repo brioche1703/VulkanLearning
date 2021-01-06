@@ -55,6 +55,7 @@
 #include "VulkanGraphicsPipeline.hpp"
 #include "VulkanImageResource.hpp"
 #include "VulkanTexture.hpp"
+#include "UI.hpp"
 #include "misc/model/ModelObj.hpp"
 
 struct CoordinatesSystemUniformBufferObject {
@@ -74,7 +75,6 @@ namespace VulkanLearning {
 
     const std::vector<const char*> validationLayers = {
         "VK_LAYER_KHRONOS_validation",
-        "VK_LAYER_MESA_overlay",
     };
 
 #ifdef NDEBUG
@@ -93,6 +93,7 @@ namespace VulkanLearning {
                 initWindow();
                 initCore();
                 initVulkan();
+                initUI();
                 mainLoop();
                 cleanup();
             }
@@ -104,6 +105,7 @@ namespace VulkanLearning {
             Camera m_camera;
             FpsCounter m_fpsCounter;
             Inputs m_input;
+            UI m_ui;
 
             VulkanInstance *m_instance;
             VulkanDebug* m_debug = new VulkanDebug();
@@ -144,6 +146,61 @@ namespace VulkanLearning {
             virtual void initCore() {}
 
             virtual void initVulkan() {}
+
+            virtual void initUI() {
+                m_ui.create(m_device, m_renderPass);
+            }
+
+            virtual void updateUI() {
+                ImGuiIO& io = ImGui::GetIO();
+
+                io.DisplaySize = ImVec2((float)m_swapChain.getExtent().width, (float)m_swapChain.getExtent().height);
+                //io.DeltaTime = frameTimer;
+
+                /* io.MousePos = ImVec2(mousePos.x, mousePos.y); */
+                /* io.MouseDown[0] = mouseButtons.left; */
+                /* io.MouseDown[1] = mouseButtons.right; */
+
+                ImGui::NewFrame();
+
+                ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+                ImGui::SetNextWindowPos(ImVec2(10, 10));
+                ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+                ImGui::Begin("Vulkan Example", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+                //ImGui::TextUnformatted(title.c_str());
+                //ImGui::TextUnformatted(deviceProperties.deviceName);
+                //ImGui::Text("%.2f ms/frame (%.1d fps)", (1000.0f / lastFPS), lastFPS);
+
+                ImGui::PushItemWidth(110.0f * m_ui.scale);
+                OnUpdateUI(&m_ui);
+                ImGui::PopItemWidth();
+
+                ImGui::End();
+                ImGui::PopStyleVar();
+                ImGui::Render();
+
+                if (m_ui.update() || m_ui.updated) {
+                    m_ui.updated = false;
+                }
+            }
+
+            virtual void drawUI(VulkanCommandBuffer commandBuffer) {
+                VkViewport viewport = {};
+                viewport.width = m_swapChain.getExtent().width;
+                viewport.height = m_swapChain.getExtent().height;
+                viewport.minDepth = 0.0f;
+                viewport.maxDepth = 1.0f;
+
+                VkRect2D scissor = {};
+                scissor.extent.width = m_swapChain.getExtent().width;
+                scissor.extent.height = m_swapChain.getExtent().height;
+                scissor.offset.x = 0;
+                scissor.offset.y = 0;
+                vkCmdSetViewport(commandBuffer.getCommandBuffer(), 0, 1, &viewport);
+                vkCmdSetScissor(commandBuffer.getCommandBuffer(), 0, 1, &scissor);
+
+                m_ui.draw(commandBuffer);
+            }
 
             virtual void mainLoop() {}
 
@@ -193,6 +250,8 @@ namespace VulkanLearning {
             virtual void createDescriptorSets() {}
             virtual void updateCamera(uint32_t currentImage) {}
             virtual void loadModel() {}
+
+            virtual void OnUpdateUI(UI *ui) {}
     };
 
 }

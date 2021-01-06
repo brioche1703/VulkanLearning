@@ -2,7 +2,8 @@ OS="`uname`"
 
 case $OS in
     'Linux')
-        GLSLC_PATH="$HOME/dev/graphics/lib/VulkanSDK/1.2.148.1/x86_64/bin/glslc"
+        #GLSLC_PATH="$HOME/dev/graphics/lib/VulkanSDK/1.2.148.1/x86_64/bin/glslc"
+        GLSLC_PATH="/home/brioche/dev/lib/vulkan_1.2.162.0/x86_64/bin/glslc"
         ;;
     'Darwin')
         GLSLC_PATH="$HOME/dev/lib/vulkan_macos_1.2.148.1/macOS/bin/glslc"
@@ -36,3 +37,5 @@ $GLSLC_PATH textureArray.frag -o textureArrayFrag.spv
 $GLSLC_PATH glTFLoading.vert -o glTFLoadingVert.spv
 $GLSLC_PATH glTFLoading.frag -o glTFLoadingFrag.spv
 
+$GLSLC_PATH ui.vert -o uiVert.spv
+$GLSLC_PATH ui.frag -o uiFrag.spv
