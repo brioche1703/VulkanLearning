@@ -10,6 +10,7 @@ namespace VulkanLearning {
 
         private:
             VulkanglTFModel glTFModel;
+            VkPipeline wireframePipeline = VK_NULL_HANDLE;
 
             uint32_t m_msaaSamples = 64;
 
@@ -48,6 +49,7 @@ namespace VulkanLearning {
 
                 glfwSetKeyCallback(m_window.getWindow() , m_input.keyboard_callback);
                 glfwSetScrollCallback(m_window.getWindow() , m_input.scroll_callback);
+                glfwSetCursorPosCallback(m_window.getWindow() , m_input.mouse_callback);
                 glfwSetMouseButtonCallback(m_window.getWindow() , m_input.mouse_button_callback);
 
                 glfwSetInputMode(m_window.getWindow() , GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -400,6 +402,7 @@ namespace VulkanLearning {
                         fragShaderModule,
                         vertexInputInfo, 
                         pipelineLayoutInfo, 
+                        &wireframePipeline,
                         &depthStencil);
             }
 
@@ -504,7 +507,7 @@ namespace VulkanLearning {
                     vkCmdBindPipeline(
                             m_commandBuffers[i].getCommandBuffer(), 
                             VK_PIPELINE_BIND_POINT_GRAPHICS, 
-                            m_graphicsPipeline.getGraphicsPipeline());
+                            m_wireframe ? wireframePipeline : m_graphicsPipeline.getGraphicsPipeline());
 
                     vkCmdBindDescriptorSets(m_commandBuffers[i].getCommandBuffer(), 
                             VK_PIPELINE_BIND_POINT_GRAPHICS, 

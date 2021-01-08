@@ -36,6 +36,14 @@ namespace VulkanLearning {
                     VkPipelineVertexInputStateCreateInfo vertexInputInfo,
                     VkPipelineLayoutCreateInfo pipelineLayoutInfo,
                     VkPipelineDepthStencilStateCreateInfo *depthStencil = nullptr);
+
+            void create(
+                    VulkanShaderModule vertShaderModule,
+                    VulkanShaderModule fragShaderModule,
+                    VkPipelineVertexInputStateCreateInfo vertexInputInfo,
+                    VkPipelineLayoutCreateInfo pipelineLayoutInfo,
+                    VkPipeline *otherPipeline = nullptr,
+                    VkPipelineDepthStencilStateCreateInfo *depthStencil = nullptr);
     };
 
 }
