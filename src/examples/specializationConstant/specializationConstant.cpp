@@ -1,6 +1,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 
-#include "VulkanBase.h"
+#include "VulkanBase.hpp"
 
 namespace VulkanLearning {
 
@@ -46,7 +46,7 @@ namespace VulkanLearning {
             void initCore() override {
                 m_camera = Camera(glm::vec3(0.0f, 0.0f, 7.0f));
                 m_fpsCounter = FpsCounter();
-                m_input = Inputs(m_window.getWindow(), &m_camera, &m_fpsCounter);
+                m_input = Inputs(m_window.getWindow(), &m_camera, &m_fpsCounter, &m_ui);
 
                 glfwSetKeyCallback(m_window.getWindow() , m_input.keyboard_callback);
                 glfwSetScrollCallback(m_window.getWindow() , m_input.scroll_callback);
@@ -88,6 +88,7 @@ namespace VulkanLearning {
                     glfwPollEvents();
                     m_input.processKeyboardInput();
                     m_fpsCounter.update();
+                    updateUI();
                     drawFrame();
                 }
 
@@ -193,6 +194,7 @@ namespace VulkanLearning {
                 m_indexBuffer.cleanup();
 
                 m_syncObjects.cleanup();
+                m_ui.freeResources();
 
                 vkDestroyCommandPool(m_device.getLogicalDevice(), m_device.getCommandPool(), nullptr);
 
@@ -241,6 +243,7 @@ namespace VulkanLearning {
                 createDescriptorPool();
                 createDescriptorSets();
                 createCommandBuffers();
+                m_ui.resize(m_swapChain.getExtent().width, m_swapChain.getExtent().height);
             }
 
             void cleanupSwapChain() override {
@@ -781,7 +784,7 @@ namespace VulkanLearning {
                             0, 
                             0);
 
-                    drawUI(m_commandBuffers[i]);
+                    drawUI(m_commandBuffers[i].getCommandBuffer());
 
                     vkCmdEndRenderPass(m_commandBuffers[i].getCommandBuffer());
 

@@ -28,7 +28,7 @@ namespace VulkanLearning {
             int32_t m_vertexCount = 0;
             int32_t m_indexCount = 0;
 
-            std::vector<VkPipelineShaderStageCreateInfo> m_shaders;
+            std::vector<VulkanShaderModule> m_shaders;
 
             VulkanDescriptorPool m_descriptorPool;
             VulkanDescriptorSetLayout m_descriptorSetLayout;
@@ -62,7 +62,7 @@ namespace VulkanLearning {
             void prepareResources();
 
             bool update();
-            void draw(const VulkanCommandBuffer commandBuffer);
+            void draw(const VkCommandBuffer commandBuffer);
             void resize(uint32_t width, uint32_t height);
 
             void  freeResources();
@@ -76,5 +76,6 @@ namespace VulkanLearning {
             bool comboBox(const char* caption, int32_t* itemIndex, std::vector<std::string> items);
             bool button(const char* caption);
             void text(const char *formatstr, ...);
+
     };
 }

@@ -21,5 +21,6 @@ namespace VulkanLearning {
             }
 
             inline float getDeltaTime() { return m_deltaTime; }
+            inline float getLastFrameTime() { return m_lastFrameTime; }
     };
 }

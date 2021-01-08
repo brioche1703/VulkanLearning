@@ -1,4 +1,4 @@
-#include "VulkanBase.h"
+#include "VulkanBase.hpp"
 #include <cstring>
 #include <glm/ext/matrix_transform.hpp>
 #include <vulkan/vulkan_core.h>
@@ -78,14 +78,16 @@ namespace VulkanLearning {
             void initCore() override {
                 m_camera = Camera(glm::vec3(0.0f, 0.0f, 20.0f));
                 m_fpsCounter = FpsCounter();
-                m_input = Inputs(m_window.getWindow(), &m_camera, &m_fpsCounter);
+                m_input = Inputs(m_window.getWindow(), &m_camera, &m_fpsCounter, &m_ui);
 
                 glfwSetKeyCallback(m_window.getWindow() , m_input.keyboard_callback);
                 glfwSetScrollCallback(m_window.getWindow() , m_input.scroll_callback);
                 glfwSetCursorPosCallback(m_window.getWindow() , m_input.mouse_callback);
+                glfwSetMouseButtonCallback(m_window.getWindow() , m_input.mouse_button_callback);
 
                 glfwSetInputMode(m_window.getWindow() , GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             }
+
             void initVulkan() override {
                 createInstance();
                 createDebug();
@@ -119,6 +121,7 @@ namespace VulkanLearning {
                     glfwPollEvents();
                     m_input.processKeyboardInput();
                     m_fpsCounter.update();
+                    updateUI();
                     drawFrame();
                 }
 
@@ -206,6 +209,7 @@ namespace VulkanLearning {
                 m_indexBuffer.cleanup();
 
                 m_syncObjects.cleanup();
+                m_ui.freeResources();
                 
                 vkDestroyCommandPool(m_device.getLogicalDevice(), m_device.getCommandPool(), nullptr);
 
@@ -252,6 +256,7 @@ namespace VulkanLearning {
                 createDescriptorPool();
                 createDescriptorSets();
                 createCommandBuffers();
+                m_ui.resize(m_swapChain.getExtent().width, m_swapChain.getExtent().height);
             }
 
             void cleanupSwapChain() override {
@@ -505,6 +510,18 @@ namespace VulkanLearning {
                 clearValues[1].color = {0.0f, 0.0f, 0.0f, 1.0f};
                 clearValues[0].depthStencil = {1.0f, 0};
 
+                VkViewport viewport = {};
+                viewport.width = m_swapChain.getExtent().width;
+                viewport.height = m_swapChain.getExtent().height;
+                viewport.minDepth = 0.0f;
+                viewport.maxDepth = 1.0f;
+
+                VkRect2D scissor = {};
+                scissor.extent.width = m_swapChain.getExtent().width;
+                scissor.extent.height = m_swapChain.getExtent().height;
+                scissor.offset.x = 0;
+                scissor.offset.y = 0;
+
                 for (size_t i = 0; i < m_commandBuffers.size(); i++) {
                     VkCommandBufferBeginInfo beginInfo{};
                     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -529,6 +546,9 @@ namespace VulkanLearning {
                             m_commandBuffers[i].getCommandBuffer(), 
                             &renderPassInfo, 
                             VK_SUBPASS_CONTENTS_INLINE);
+
+                    vkCmdSetViewport(m_commandBuffers[i].getCommandBuffer(), 0, 1, &viewport);
+                    vkCmdSetScissor(m_commandBuffers[i].getCommandBuffer(), 0, 1, &scissor);
 
                     vkCmdBindPipeline(
                             m_commandBuffers[i].getCommandBuffer(), 
@@ -567,6 +587,8 @@ namespace VulkanLearning {
                                 0, 
                                 0, 
                                 0);
+
+                        drawUI(m_commandBuffers[i].getCommandBuffer());
                     }
 
                     vkCmdEndRenderPass(m_commandBuffers[i].getCommandBuffer());
@@ -722,6 +744,14 @@ namespace VulkanLearning {
                         uboDataDynamic.model, 
                         m_dynUbos[currentImage].getSize());
                 m_dynUbos[currentImage].unmap();
+            }
+                        
+            void OnUpdateUI (UI *ui) override {
+                if (ui->header("Settings")) {
+                    if (ui->checkBox("Wireframe", &m_wireframe)) {
+                        createCommandBuffers();
+                    }
+                }
             }
     };
 

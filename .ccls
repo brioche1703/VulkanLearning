@@ -12,3 +12,7 @@
 -Iexternal/glfw-3.3.2
 -Iexternal/glfw-3.3.2/include
 -Iinclude/external/imgui
+-Iinclude/VulkanLearning/camera
+-Iinclude/VulkanLearning/base
+-Iinclude/VulkanLearning/misc
+-Iinclude/VulkanLearning/window

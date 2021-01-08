@@ -44,5 +44,8 @@ namespace VulkanLearning {
 
                 return buffer;
             }
+
+        public:
+            void cleanup(VulkanDevice* device);
     };
 }

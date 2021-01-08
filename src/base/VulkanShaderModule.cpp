@@ -38,4 +38,8 @@ namespace VulkanLearning {
 
         return shaderModule;
     }
+
+    void VulkanShaderModule::cleanup(VulkanDevice* device) {
+        vkDestroyShaderModule(device->getLogicalDevice(), m_module, nullptr);
+    }
 }

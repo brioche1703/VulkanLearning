@@ -5,4 +5,7 @@ namespace VulkanLearning {
     FpsCounter* Inputs::m_fpsCounter = new FpsCounter();
     bool Inputs::m_captureMouse = false;
     GLFWwindow* Inputs::m_window = nullptr;
+    UI* Inputs::m_ui = nullptr;
+    Inputs::MousePos* Inputs::m_mousePos = new MousePos();
+    Inputs::MouseButtons* Inputs::m_mouseButtons = new MouseButtons();
 }

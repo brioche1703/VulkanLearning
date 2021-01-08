@@ -3,27 +3,11 @@
 namespace VulkanLearning {
 
     UI::UI() {
+        IMGUI_CHECKVERSION();
         ImGui::CreateContext();
-        ImGuiStyle& style = ImGui::GetStyle();
-        style.Colors[ImGuiCol_TitleBg] = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
-        style.Colors[ImGuiCol_TitleBgActive] = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
-        style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(1.0f, 0.0f, 0.0f, 0.1f);
-        style.Colors[ImGuiCol_MenuBarBg] = ImVec4(1.0f, 0.0f, 0.0f, 0.4f);
-        style.Colors[ImGuiCol_Header] = ImVec4(0.8f, 0.0f, 0.0f, 0.4f);
-        style.Colors[ImGuiCol_HeaderActive] = ImVec4(1.0f, 0.0f, 0.0f, 0.4f);
-        style.Colors[ImGuiCol_HeaderHovered] = ImVec4(1.0f, 0.0f, 0.0f, 0.4f);
-        style.Colors[ImGuiCol_FrameBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.8f);
-        style.Colors[ImGuiCol_CheckMark] = ImVec4(1.0f, 0.0f, 0.0f, 0.8f);
-        style.Colors[ImGuiCol_SliderGrab] = ImVec4(1.0f, 0.0f, 0.0f, 0.4f);
-        style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(1.0f, 0.0f, 0.0f, 0.8f);
-        style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(1.0f, 1.0f, 1.0f, 0.1f);
-        style.Colors[ImGuiCol_FrameBgActive] = ImVec4(1.0f, 1.0f, 1.0f, 0.2f);
-        style.Colors[ImGuiCol_Button] = ImVec4(1.0f, 0.0f, 0.0f, 0.4f);
-        style.Colors[ImGuiCol_ButtonHovered] = ImVec4(1.0f, 0.0f, 0.0f, 0.6f);
-        style.Colors[ImGuiCol_ButtonActive] = ImVec4(1.0f, 0.0f, 0.0f, 0.8f);
-        // Dimensions
+        ImGui::StyleColorsDark();
         ImGuiIO& io = ImGui::GetIO();
-        io.FontGlobalScale = scale;
+		io.FontGlobalScale = scale;
     }
 
     UI::~UI() {}
@@ -32,12 +16,16 @@ namespace VulkanLearning {
         m_device = device;
         m_queue = m_device.getGraphicsQueue();
 
+        m_vertexBuffer = VulkanBuffer(m_device);
+        m_indexBuffer = VulkanBuffer(m_device);
+
         VulkanShaderModule vertShaderModule = 
             VulkanShaderModule("src/shaders/uiVert.spv", &m_device, VK_SHADER_STAGE_VERTEX_BIT);
         VulkanShaderModule fragShaderModule = 
             VulkanShaderModule("src/shaders/uiFrag.spv", &m_device, VK_SHADER_STAGE_FRAGMENT_BIT);
 
-        m_shaders = {vertShaderModule.getStageCreateInfo(), fragShaderModule.getStageCreateInfo()};
+        m_shaders.push_back(vertShaderModule);
+        m_shaders.push_back(fragShaderModule);
 
         prepareResources();
         preparePipeline(nullptr, renderPass);
@@ -51,7 +39,7 @@ namespace VulkanLearning {
         int texWidth, texHeight;
 
         const std::string filename = "src/fonts/Roboto-Medium.ttf";
-        io.Fonts->AddFontFromFileTTF(filename.c_str(), 16.0f);
+        io.Fonts->AddFontFromFileTTF(filename.c_str(), 14.0f);
         io.Fonts->GetTexDataAsRGBA32(&fontData, &texWidth, &texHeight);
         VkDeviceSize uploadSize = texWidth*texHeight * 4 * sizeof(char);
 
@@ -333,7 +321,12 @@ namespace VulkanLearning {
         pipelineCreateInfo.pDepthStencilState = &depthStencilState;
         pipelineCreateInfo.pDynamicState = &dynamicState;
         pipelineCreateInfo.stageCount = static_cast<uint32_t>(m_shaders.size());
-        pipelineCreateInfo.pStages = m_shaders.data();
+        std::vector<VkPipelineShaderStageCreateInfo> shadersData;
+        std::transform(
+                m_shaders.begin(), m_shaders.end(), 
+                std::back_inserter(shadersData), 
+                [](VulkanShaderModule s) -> VkPipelineShaderStageCreateInfo {return s.getStageCreateInfo();});
+        pipelineCreateInfo.pStages = shadersData.data();
         pipelineCreateInfo.subpass = m_subpass;
 
         std::vector<VkVertexInputBindingDescription> vertexInputBindings = 
@@ -391,13 +384,10 @@ namespace VulkanLearning {
 
         // Vertex buffer
         if ((m_vertexBuffer.getBuffer() == VK_NULL_HANDLE) || (m_vertexCount != imDrawData->TotalVtxCount)) {
-            m_vertexBuffer = VulkanBuffer(m_device);
-            m_vertexBuffer.createBuffer(vertexBufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
             m_vertexBuffer.unmap();
             m_vertexBuffer.cleanup();
             m_vertexBuffer.createBuffer(vertexBufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
             m_vertexCount = imDrawData->TotalVtxCount;
-            m_vertexBuffer.unmap();
             m_vertexBuffer.map();
             updateCmdBuffers = true;
         }
@@ -405,8 +395,6 @@ namespace VulkanLearning {
         // Index buffer
         VkDeviceSize indexSize = imDrawData->TotalIdxCount * sizeof(ImDrawIdx);
         if ((m_indexBuffer.getBuffer() == VK_NULL_HANDLE) || (m_indexCount < imDrawData->TotalIdxCount)) {
-            m_indexBuffer = VulkanBuffer(m_device);
-            m_indexBuffer.createBuffer(indexBufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
             m_indexBuffer.unmap();
             m_indexBuffer.cleanup();
             m_indexBuffer.createBuffer(indexBufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
@@ -434,7 +422,7 @@ namespace VulkanLearning {
         return updateCmdBuffers;
     }
 
-    void UI::draw(const VulkanCommandBuffer commandBuffer)
+    void UI::draw(const VkCommandBuffer commandBuffer)
     {
         ImDrawData* imDrawData = ImGui::GetDrawData();
         int32_t vertexOffset = 0;
@@ -446,16 +434,16 @@ namespace VulkanLearning {
 
         ImGuiIO& io = ImGui::GetIO();
 
-        vkCmdBindPipeline(commandBuffer.getCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
-        vkCmdBindDescriptorSets(commandBuffer.getCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineLayout, 0, 1, &m_descriptorSet, 0, NULL);
+        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipelineLayout, 0, 1, &m_descriptorSet, 0, NULL);
 
         pushConstBlock.scale = glm::vec2(2.0f / io.DisplaySize.x, 2.0f / io.DisplaySize.y);
         pushConstBlock.translate = glm::vec2(-1.0f);
-        vkCmdPushConstants(commandBuffer.getCommandBuffer(), m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(PushConstBlock), &pushConstBlock);
+        vkCmdPushConstants(commandBuffer, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(PushConstBlock), &pushConstBlock);
 
         VkDeviceSize offsets[1] = { 0 };
-        vkCmdBindVertexBuffers(commandBuffer.getCommandBuffer(), 0, 1, m_vertexBuffer.getBufferPointer(), offsets);
-        vkCmdBindIndexBuffer(commandBuffer.getCommandBuffer(), m_indexBuffer.getBuffer(), 0, VK_INDEX_TYPE_UINT16);
+        vkCmdBindVertexBuffers(commandBuffer, 0, 1, m_vertexBuffer.getBufferPointer(), offsets);
+        vkCmdBindIndexBuffer(commandBuffer, m_indexBuffer.getBuffer(), 0, VK_INDEX_TYPE_UINT16);
 
         for (int32_t i = 0; i < imDrawData->CmdListsCount; i++)
         {
@@ -468,8 +456,8 @@ namespace VulkanLearning {
                 scissorRect.offset.y = std::max((int32_t)(pcmd->ClipRect.y), 0);
                 scissorRect.extent.width = (uint32_t)(pcmd->ClipRect.z - pcmd->ClipRect.x);
                 scissorRect.extent.height = (uint32_t)(pcmd->ClipRect.w - pcmd->ClipRect.y);
-                vkCmdSetScissor(commandBuffer.getCommandBuffer(), 0, 1, &scissorRect);
-                vkCmdDrawIndexed(commandBuffer.getCommandBuffer(), pcmd->ElemCount, 1, indexOffset, vertexOffset, 0);
+                vkCmdSetScissor(commandBuffer, 0, 1, &scissorRect);
+                vkCmdDrawIndexed(commandBuffer, pcmd->ElemCount, 1, indexOffset, vertexOffset, 0);
                 indexOffset += pcmd->ElemCount;
             }
             vertexOffset += cmd_list->VtxBuffer.Size;
@@ -479,7 +467,7 @@ namespace VulkanLearning {
     void UI::resize(uint32_t width, uint32_t height)
     {
         ImGuiIO& io = ImGui::GetIO();
-        io.DisplaySize = ImVec2((float)(width), (float)(height));
+        io.DisplaySize = ImVec2((float)width, (float)height);
     }
 
     void UI::freeResources()
@@ -487,6 +475,9 @@ namespace VulkanLearning {
         ImGui::DestroyContext();
         m_vertexBuffer.cleanup();
         m_indexBuffer.cleanup();
+        for (VulkanShaderModule shader : m_shaders) {
+            shader.cleanup(&m_device);
+        }
         vkDestroyImageView(m_device.getLogicalDevice(), m_fontView, nullptr);
         vkDestroyImage(m_device.getLogicalDevice(), m_fontImage, nullptr);
         vkFreeMemory(m_device.getLogicalDevice(), m_fontMemory, nullptr);

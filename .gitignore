@@ -56,3 +56,4 @@ _deps
 
 # Other
 .ccls-cache
+imgui.ini

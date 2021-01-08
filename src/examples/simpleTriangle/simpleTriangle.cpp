@@ -1,4 +1,4 @@
-#include "VulkanBase.h"
+#include "VulkanBase.hpp"
 
 namespace VulkanLearning {
 
@@ -21,7 +21,6 @@ namespace VulkanLearning {
                 VulkanBase::run();
             }
         private:
-            bool m_wireframe = false;
 
             void initWindow() override {
                 m_window = Window("Simple Triangle", WIDTH, HEIGHT);
@@ -31,13 +30,14 @@ namespace VulkanLearning {
             void initCore() override {
                 m_camera = Camera(glm::vec3(0.0f, 0.0f, 5.0f));
                 m_fpsCounter = FpsCounter();
-                m_input = Inputs(m_window.getWindow(), &m_camera, &m_fpsCounter);
+                m_input = Inputs(m_window.getWindow(), &m_camera, &m_fpsCounter, &m_ui);
 
                 glfwSetKeyCallback(m_window.getWindow() , m_input.keyboard_callback);
                 glfwSetScrollCallback(m_window.getWindow() , m_input.scroll_callback);
                 glfwSetCursorPosCallback(m_window.getWindow() , m_input.mouse_callback);
+                glfwSetMouseButtonCallback(m_window.getWindow() , m_input.mouse_button_callback);
 
-                glfwSetInputMode(m_window.getWindow() , GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                glfwSetInputMode(m_window.getWindow() , GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             }
 
             void initVulkan() override {
@@ -152,6 +152,7 @@ namespace VulkanLearning {
                 m_indexBuffer.cleanup();
 
                 m_syncObjects.cleanup();
+                m_ui.freeResources();
 
                 vkDestroyCommandPool(m_device.getLogicalDevice(), m_device.getCommandPool(), nullptr);
 
@@ -196,6 +197,7 @@ namespace VulkanLearning {
                 createDescriptorPool();
                 createDescriptorSets();
                 createCommandBuffers();
+                m_ui.resize(m_swapChain.getExtent().width, m_swapChain.getExtent().height);
             }
 
             void cleanupSwapChain() override {
@@ -400,6 +402,7 @@ namespace VulkanLearning {
                     renderPassInfo.pClearValues = clearValues.data();
 
                     vkCmdBeginRenderPass(m_commandBuffers[i].getCommandBuffer(), &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+                    
                     vkCmdSetViewport(m_commandBuffers[i].getCommandBuffer(), 0, 1, &viewport);
                     vkCmdSetScissor(m_commandBuffers[i].getCommandBuffer(), 0, 1, &scissor);
 
@@ -437,13 +440,11 @@ namespace VulkanLearning {
                             0, 
                             0);
 
-                    m_ui.draw(m_commandBuffers[i]);
+                    drawUI(m_commandBuffers[i].getCommandBuffer());
 
                     vkCmdEndRenderPass(m_commandBuffers[i].getCommandBuffer());
 
-                    if (vkEndCommandBuffer(m_commandBuffers[i].getCommandBuffer()) != VK_SUCCESS) {
-                        throw std::runtime_error("Recording of a command buffer failed!");
-                    }
+                    VK_CHECK_RESULT(vkEndCommandBuffer(m_commandBuffers[i].getCommandBuffer()));
                 }
             }
 

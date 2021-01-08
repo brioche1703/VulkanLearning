@@ -34,16 +34,15 @@
 #include <cstring>
 
 #include "Vertex.hpp"
-#include "camera/Camera.hpp"
-#include "misc/FpsCounter.hpp"
-#include "misc/VulkanDebug.hpp"
+#include "Camera.hpp"
+#include "VulkanDebug.hpp"
 #include "VulkanDevice.hpp"
 #include "VulkanInstance.hpp"
 #include "VulkanSwapChain.hpp"
 #include "VulkanSurface.hpp"
 #include "VulkanRenderPass.hpp"
-#include "misc/Inputs.hpp"
-#include "window/Window.hpp"
+#include "Inputs.hpp"
+#include "Window.hpp"
 #include "VulkanDescriptorSetLayout.hpp"
 #include "VulkanShaderModule.hpp"
 #include "VulkanBuffer.hpp"
@@ -56,7 +55,8 @@
 #include "VulkanImageResource.hpp"
 #include "VulkanTexture.hpp"
 #include "UI.hpp"
-#include "misc/model/ModelObj.hpp"
+#include "model/ModelObj.hpp"
+#include "FpsCounter.hpp"
 
 struct CoordinatesSystemUniformBufferObject {
     alignas(16) glm::mat4 model;
@@ -86,14 +86,16 @@ namespace VulkanLearning {
     class VulkanBase {
         public:
 
+            bool m_wireframe = false;
             VulkanBase() {}
-            virtual ~VulkanBase() {}
+            virtual ~VulkanBase() {
+            }
 
             void run() {
                 initWindow();
                 initCore();
                 initVulkan();
-                initUI();
+                createUI();
                 mainLoop();
                 cleanup();
             }
@@ -147,59 +149,49 @@ namespace VulkanLearning {
 
             virtual void initVulkan() {}
 
-            virtual void initUI() {
+            virtual void createUI() {
+                ImGuiIO& io = ImGui::GetIO();
+                io.DisplaySize = ImVec2((float)m_swapChain.getExtent().width, (float)m_swapChain.getExtent().height);
                 m_ui.create(m_device, m_renderPass);
             }
 
             virtual void updateUI() {
+                vkDeviceWaitIdle(m_device.getLogicalDevice());
                 ImGuiIO& io = ImGui::GetIO();
 
                 io.DisplaySize = ImVec2((float)m_swapChain.getExtent().width, (float)m_swapChain.getExtent().height);
-                //io.DeltaTime = frameTimer;
+                //io.DeltaTime = m_fpsCounter.getDeltaTime();
 
-                /* io.MousePos = ImVec2(mousePos.x, mousePos.y); */
-                /* io.MouseDown[0] = mouseButtons.left; */
-                /* io.MouseDown[1] = mouseButtons.right; */
+                io.MousePos = ImVec2(m_input.m_mousePos->x, m_input.m_mousePos->y);
+                io.MouseDown[0] = m_input.m_mouseButtons->left;
+                io.MouseDown[1] = m_input.m_mouseButtons->right;
 
                 ImGui::NewFrame();
 
-                ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
-                ImGui::SetNextWindowPos(ImVec2(10, 10));
-                ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-                ImGui::Begin("Vulkan Example", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
-                //ImGui::TextUnformatted(title.c_str());
-                //ImGui::TextUnformatted(deviceProperties.deviceName);
-                //ImGui::Text("%.2f ms/frame (%.1d fps)", (1000.0f / lastFPS), lastFPS);
+                ImGui::Begin("Vulkan Base");
+                ImGui::TextUnformatted(m_window.getTitle().c_str());
 
-                ImGui::PushItemWidth(110.0f * m_ui.scale);
+                //ImGui::TextUnformatted(deviceProperties.deviceName);
+                //ImGui::Text("%.2f ms/frame (%.1d fps)", (1000.0f / m_fpsCounter.getLastFrameTime()), m_fpsCounter.getLastFrameTime());
+
+                //ImGui::PushItemWidth(110.0f * m_ui.scale);
                 OnUpdateUI(&m_ui);
-                ImGui::PopItemWidth();
+                //ImGui::PopItemWidth();
 
                 ImGui::End();
-                ImGui::PopStyleVar();
                 ImGui::Render();
+                ImGui::EndFrame();
 
                 if (m_ui.update() || m_ui.updated) {
+                    createCommandBuffers();
                     m_ui.updated = false;
                 }
             }
 
-            virtual void drawUI(VulkanCommandBuffer commandBuffer) {
-                VkViewport viewport = {};
-                viewport.width = m_swapChain.getExtent().width;
-                viewport.height = m_swapChain.getExtent().height;
-                viewport.minDepth = 0.0f;
-                viewport.maxDepth = 1.0f;
-
-                VkRect2D scissor = {};
-                scissor.extent.width = m_swapChain.getExtent().width;
-                scissor.extent.height = m_swapChain.getExtent().height;
-                scissor.offset.x = 0;
-                scissor.offset.y = 0;
-                vkCmdSetViewport(commandBuffer.getCommandBuffer(), 0, 1, &viewport);
-                vkCmdSetScissor(commandBuffer.getCommandBuffer(), 0, 1, &scissor);
-
-                m_ui.draw(commandBuffer);
+            virtual void drawUI(VkCommandBuffer commandBuffer) {
+                if (m_ui.visible) {
+                    m_ui.draw(commandBuffer);
+                }
             }
 
             virtual void mainLoop() {}
