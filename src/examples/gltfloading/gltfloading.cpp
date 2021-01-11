@@ -12,6 +12,7 @@ namespace VulkanLearning {
             VulkanglTFModel glTFModel;
 
             uint32_t m_msaaSamples = 64;
+            VkPipeline m_wireframePipeline = VK_NULL_HANDLE;
 
             struct ubo {
                 VulkanBuffer buffer;
@@ -402,7 +403,8 @@ namespace VulkanLearning {
                         fragShaderModule,
                         vertexInputInfo, 
                         pipelineLayoutInfo, 
-                        &depthStencil);
+                        &depthStencil,
+                        &m_wireframePipeline);
             }
 
             void createFramebuffers() override {
@@ -507,6 +509,11 @@ namespace VulkanLearning {
                             m_commandBuffers[i].getCommandBuffer(), 
                             VK_PIPELINE_BIND_POINT_GRAPHICS, 
                             m_graphicsPipeline.getGraphicsPipeline());
+
+                    vkCmdBindPipeline(
+                            m_commandBuffers[i].getCommandBuffer(), 
+                            VK_PIPELINE_BIND_POINT_GRAPHICS, 
+                            m_wireframe ? m_wireframePipeline : m_graphicsPipeline.getGraphicsPipeline());
 
                     vkCmdBindDescriptorSets(m_commandBuffers[i].getCommandBuffer(), 
                             VK_PIPELINE_BIND_POINT_GRAPHICS, 

@@ -190,6 +190,7 @@ namespace VulkanLearning {
 
             virtual void drawUI(VkCommandBuffer commandBuffer) {
                 if (m_ui.visible) {
+                    std::cout << "DRAW UI" << std::endl;
                     m_ui.draw(commandBuffer);
                 }
             }
@@ -206,13 +207,13 @@ namespace VulkanLearning {
 
             virtual void cleanupSwapChain() {}
 
-            virtual void  createInstance() {}
+            virtual void createInstance() {}
 
-            virtual void  createDebug() {}
+            virtual void createDebug() {}
 
-            virtual void  createDevice() {}
+            virtual void createDevice() {}
 
-            virtual void  createSwapChain() {}
+            virtual void createSwapChain() {}
 
             virtual void createRenderPass() {}
 

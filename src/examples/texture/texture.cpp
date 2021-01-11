@@ -18,6 +18,7 @@ namespace VulkanLearning {
 
         private:
             uint32_t m_msaaSamples = 64;
+            VkPipeline m_wireframePipeline = VK_NULL_HANDLE;
 
         public:
             VulkanExample() {}
@@ -406,9 +407,12 @@ namespace VulkanLearning {
                     m_descriptorSetLayout.getDescriptorSetLayoutPointer();
 
                 m_graphicsPipeline.create(
-                        vertShaderModule, fragShaderModule,
-                        vertexInputInfo, pipelineLayoutInfo, 
-                        &depthStencil);
+                        vertShaderModule, 
+                        fragShaderModule,
+                        vertexInputInfo, 
+                        pipelineLayoutInfo, 
+                        &depthStencil,
+                        &m_wireframePipeline);
             }
 
             void createFramebuffers() override {
@@ -758,7 +762,7 @@ namespace VulkanLearning {
                     vkCmdBindPipeline(
                             m_commandBuffers[i].getCommandBuffer(), 
                             VK_PIPELINE_BIND_POINT_GRAPHICS, 
-                            m_graphicsPipeline.getGraphicsPipeline());
+                            m_wireframe ? m_wireframePipeline : m_graphicsPipeline.getGraphicsPipeline());
 
                     VkBuffer vertexBuffers[] = {m_vertexBuffer.getBuffer()};
                     VkDeviceSize offsets[] = {0};

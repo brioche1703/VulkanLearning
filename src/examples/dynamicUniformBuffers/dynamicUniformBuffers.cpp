@@ -60,6 +60,8 @@ namespace VulkanLearning {
             glm::vec3 m_rotations[NUM_OBJ];
             glm::vec3 m_rotationsSpeeds[NUM_OBJ];
 
+            VkPipeline m_wireframePipeline = VK_NULL_HANDLE;
+
         public:
             VulkanExample() {
             }
@@ -401,8 +403,12 @@ namespace VulkanLearning {
                     m_descriptorSetLayout.getDescriptorSetLayoutPointer();
 
                 m_graphicsPipeline.create(
-                        vertShaderModule, fragShaderModule, 
-                        vertexInputInfo, pipelineLayoutInfo, &depthStencil);
+                        vertShaderModule, 
+                        fragShaderModule,
+                        vertexInputInfo, 
+                        pipelineLayoutInfo, 
+                        &depthStencil,
+                        &m_wireframePipeline);
             }
 
             void createFramebuffers() override {
@@ -567,6 +573,11 @@ namespace VulkanLearning {
                             m_indexBuffer.getBuffer(), 
                             0, 
                             VK_INDEX_TYPE_UINT32);
+
+                    vkCmdBindPipeline(
+                            m_commandBuffers[i].getCommandBuffer(), 
+                            VK_PIPELINE_BIND_POINT_GRAPHICS, 
+                            m_wireframe ? m_wireframePipeline : m_graphicsPipeline.getGraphicsPipeline());
 
                     for (uint32_t j = 0; j < NUM_OBJ; j++) {
                         uint32_t dynamicOffset = j * static_cast<uint32_t>(m_dynamicAlignment);

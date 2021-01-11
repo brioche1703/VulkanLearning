@@ -388,6 +388,7 @@ namespace VulkanLearning {
             m_vertexBuffer.cleanup();
             m_vertexBuffer.createBuffer(vertexBufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
             m_vertexCount = imDrawData->TotalVtxCount;
+            m_vertexBuffer.unmap();
             m_vertexBuffer.map();
             updateCmdBuffers = true;
         }

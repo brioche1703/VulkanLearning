@@ -17,6 +17,7 @@ namespace VulkanLearning {
 
     class VulkanExample : public VulkanBase {
         private:
+            VkPipeline m_wireframePipeline = VK_NULL_HANDLE;
 
         public:
             VulkanExample() {
@@ -369,8 +370,12 @@ namespace VulkanLearning {
                 pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
                 m_graphicsPipeline.create(
-                        vertShaderModule, fragShaderModule, 
-                        vertexInputInfo, pipelineLayoutInfo, &depthStencil);
+                        vertShaderModule, 
+                        fragShaderModule,
+                        vertexInputInfo, 
+                        pipelineLayoutInfo, 
+                        &depthStencil,
+                        &m_wireframePipeline);
             }
 
             void createFramebuffers() override {
@@ -475,16 +480,18 @@ namespace VulkanLearning {
                             &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
                     vkCmdSetViewport(m_commandBuffers[i].getCommandBuffer(), 0, 1, &viewport);
                     vkCmdSetScissor(m_commandBuffers[i].getCommandBuffer(), 0, 1, &scissor);
-
-                    vkCmdBindPipeline(m_commandBuffers[i].getCommandBuffer(), 
-                            VK_PIPELINE_BIND_POINT_GRAPHICS, m_graphicsPipeline.getGraphicsPipeline());
-
                     VkBuffer vertexBuffers[] = { m_vertexBuffer.getBuffer() };
                     VkDeviceSize offsets[] = {0};
                     vkCmdBindVertexBuffers(m_commandBuffers[i].getCommandBuffer(), 
                             0, 1, vertexBuffers, offsets);
                     vkCmdBindIndexBuffer(m_commandBuffers[i].getCommandBuffer(), 
                             m_indexBuffer.getBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
+                    vkCmdBindPipeline(
+                            m_commandBuffers[i].getCommandBuffer(), 
+                            VK_PIPELINE_BIND_POINT_GRAPHICS, 
+                            m_wireframe ? m_wireframePipeline : m_graphicsPipeline.getGraphicsPipeline());
+
 
                     vkCmdBindDescriptorSets(m_commandBuffers[i].getCommandBuffer(), 
                             VK_PIPELINE_BIND_POINT_GRAPHICS, 

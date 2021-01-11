@@ -15,6 +15,7 @@ namespace VulkanLearning {
 
         private:
             uint32_t m_msaaSamples = 64;
+            VkPipeline m_wireframePipeline = VK_NULL_HANDLE;
 
             struct UboInstanceData {
                 glm::mat4 model;
@@ -429,9 +430,12 @@ namespace VulkanLearning {
                     m_descriptorSetLayout.getDescriptorSetLayoutPointer();
 
                 m_graphicsPipeline.create(
-                        vertShaderModule, fragShaderModule,
-                        vertexInputInfo, pipelineLayoutInfo, 
-                        &depthStencil);
+                        vertShaderModule, 
+                        fragShaderModule, 
+                        vertexInputInfo, 
+                        pipelineLayoutInfo,
+                        &depthStencil,
+                        &m_wireframePipeline);
             }
 
             void createFramebuffers() override {
@@ -575,6 +579,11 @@ namespace VulkanLearning {
                             m_indexBuffer.getBuffer(), 
                             0, 
                             VK_INDEX_TYPE_UINT32);
+
+                    vkCmdBindPipeline(
+                            m_commandBuffers[i].getCommandBuffer(), 
+                            VK_PIPELINE_BIND_POINT_GRAPHICS, 
+                            m_wireframe ? m_wireframePipeline : m_graphicsPipeline.getGraphicsPipeline());
 
                     vkCmdBindDescriptorSets(
                             m_commandBuffers[i].getCommandBuffer(), 

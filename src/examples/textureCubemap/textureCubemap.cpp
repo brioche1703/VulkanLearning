@@ -10,7 +10,7 @@ namespace VulkanLearning {
 
         private:
             VulkanglTFModel glTFModel;
-            VkPipeline wireframePipeline = VK_NULL_HANDLE;
+            VkPipeline m_wireframePipeline = VK_NULL_HANDLE;
 
             uint32_t m_msaaSamples = 64;
 
@@ -201,6 +201,7 @@ namespace VulkanLearning {
                     glfwWaitEvents();
                 }
 
+                std::cout << " RESIZED" << std::endl;
                 vkDeviceWaitIdle(m_device.getLogicalDevice());
 
                 cleanupSwapChain();
@@ -402,8 +403,8 @@ namespace VulkanLearning {
                         fragShaderModule,
                         vertexInputInfo, 
                         pipelineLayoutInfo, 
-                        &wireframePipeline,
-                        &depthStencil);
+                        &depthStencil,
+                        &m_wireframePipeline);
             }
 
             void createFramebuffers() override {
@@ -507,7 +508,7 @@ namespace VulkanLearning {
                     vkCmdBindPipeline(
                             m_commandBuffers[i].getCommandBuffer(), 
                             VK_PIPELINE_BIND_POINT_GRAPHICS, 
-                            m_wireframe ? wireframePipeline : m_graphicsPipeline.getGraphicsPipeline());
+                            m_wireframe ? m_wireframePipeline : m_graphicsPipeline.getGraphicsPipeline());
 
                     vkCmdBindDescriptorSets(m_commandBuffers[i].getCommandBuffer(), 
                             VK_PIPELINE_BIND_POINT_GRAPHICS, 
