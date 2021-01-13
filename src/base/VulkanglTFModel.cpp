@@ -5,10 +5,8 @@ namespace VulkanLearning {
 
     VulkanglTFModel::~VulkanglTFModel()
     {
-        vkDestroyBuffer(device->getLogicalDevice(), vertices.buffer->getBuffer(), nullptr);
-        vkFreeMemory(device->getLogicalDevice(), vertices.buffer->getBufferMemory(), nullptr);
-        vkDestroyBuffer(device->getLogicalDevice(), indices.buffer->getBuffer(), nullptr);
-        vkFreeMemory(device->getLogicalDevice(), indices.buffer->getBufferMemory(), nullptr);
+        vertices.buffer->cleanup();
+        indices.buffer->cleanup();
 
         for (Image image : images) {
             image.texture.destroy();

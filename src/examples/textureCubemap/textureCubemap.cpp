@@ -164,14 +164,17 @@ namespace VulkanLearning {
             void cleanup() override {
                 cleanupSwapChain();
 
-
                 m_descriptorSetLayouts.matrices->cleanup();
                 m_descriptorSetLayouts.textures->cleanup();
 
-                ubo.buffer.cleanup();
                 glTFModel.~VulkanglTFModel();
 
                 m_syncObjects.cleanup();
+                m_ui.freeResources();
+
+                if (m_wireframe) {
+                    vkDestroyPipeline(m_device.getLogicalDevice(), m_wireframePipeline, nullptr);
+                }
 
                 vkDestroyCommandPool(m_device.getLogicalDevice(), m_device.getCommandPool(), nullptr);
 
@@ -236,6 +239,10 @@ namespace VulkanLearning {
 
                 vkDestroyPipeline(m_device.getLogicalDevice(), 
                         m_graphicsPipeline.getGraphicsPipeline(), nullptr);
+                if (m_wireframePipeline) {
+                    vkDestroyPipeline(m_device.getLogicalDevice(), 
+                            m_wireframePipeline, nullptr);
+                }
                 vkDestroyPipelineLayout(m_device.getLogicalDevice(), 
                         m_graphicsPipeline.getPipelineLayout(), nullptr);
                 vkDestroyRenderPass(m_device.getLogicalDevice(), 
@@ -244,6 +251,7 @@ namespace VulkanLearning {
                 m_swapChain.destroyImageViews();
                 vkDestroySwapchainKHR(m_device.getLogicalDevice(), m_swapChain.getSwapChain(), nullptr);
 
+                ubo.buffer.cleanup();
                 vkDestroyDescriptorPool(m_device.getLogicalDevice(), 
                         m_descriptorPool.getDescriptorPool(), nullptr);
             }

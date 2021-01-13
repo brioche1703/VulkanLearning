@@ -280,6 +280,10 @@ namespace VulkanLearning {
 
                 vkDestroyPipeline(m_device.getLogicalDevice(), 
                         m_graphicsPipeline.getGraphicsPipeline(), nullptr);
+                if (m_wireframePipeline) {
+                    vkDestroyPipeline(m_device.getLogicalDevice(), 
+                            m_wireframePipeline, nullptr);
+                }
                 vkDestroyPipelineLayout(m_device.getLogicalDevice(), 
                         m_graphicsPipeline.getPipelineLayout(), nullptr);
                 vkDestroyRenderPass(m_device.getLogicalDevice(), 
