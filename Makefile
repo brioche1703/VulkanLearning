@@ -170,6 +170,19 @@ base/fast:
 .PHONY : base/fast
 
 #=============================================================================
+# Target rules for targets named single3DModel
+
+# Build rule for target.
+single3DModel: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 single3DModel
+.PHONY : single3DModel
+
+# fast build rule for target.
+single3DModel/fast:
+	$(MAKE) -f src/examples/CMakeFiles/single3DModel.dir/build.make src/examples/CMakeFiles/single3DModel.dir/build
+.PHONY : single3DModel/fast
+
+#=============================================================================
 # Target rules for targets named dynamicUniformBuffers
 
 # Build rule for target.
@@ -248,32 +261,6 @@ gltfloading/fast:
 .PHONY : gltfloading/fast
 
 #=============================================================================
-# Target rules for targets named single3DModel
-
-# Build rule for target.
-single3DModel: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 single3DModel
-.PHONY : single3DModel
-
-# fast build rule for target.
-single3DModel/fast:
-	$(MAKE) -f src/examples/CMakeFiles/single3DModel.dir/build.make src/examples/CMakeFiles/single3DModel.dir/build
-.PHONY : single3DModel/fast
-
-#=============================================================================
-# Target rules for targets named textureCubemap
-
-# Build rule for target.
-textureCubemap: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 textureCubemap
-.PHONY : textureCubemap
-
-# fast build rule for target.
-textureCubemap/fast:
-	$(MAKE) -f src/examples/CMakeFiles/textureCubemap.dir/build.make src/examples/CMakeFiles/textureCubemap.dir/build
-.PHONY : textureCubemap/fast
-
-#=============================================================================
 # Target rules for targets named simpleTriangle
 
 # Build rule for target.
@@ -325,14 +312,13 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... base"
+	@echo "... single3DModel"
 	@echo "... dynamicUniformBuffers"
 	@echo "... pushConstants"
 	@echo "... specializationConstant"
 	@echo "... texture"
 	@echo "... textureArray"
 	@echo "... gltfloading"
-	@echo "... single3DModel"
-	@echo "... textureCubemap"
 	@echo "... simpleTriangle"
 	@echo "... uninstall"
 	@echo "... glfw"

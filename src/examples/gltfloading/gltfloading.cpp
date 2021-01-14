@@ -43,7 +43,8 @@ namespace VulkanLearning {
             }
 
             void initCore() override {
-                m_camera = Camera(glm::vec3(0.0f, 0.0f, 5.0f));
+                m_camera = Camera(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0, 1.0, 0.0), 90, 0);
+                
                 m_fpsCounter = FpsCounter();
                 m_input = Inputs(m_window.getWindow(), &m_camera, &m_fpsCounter, &m_ui);
 

@@ -169,6 +169,8 @@ namespace VulkanLearning {
                 ImGui::NewFrame();
 
                 ImGui::Begin("Vulkan Base");
+                ImGui::SetWindowSize(ImVec2(0.0f, 0.0f));
+                ImGui::SetWindowPos(ImVec2(10.0f, 10.0f));
                 ImGui::TextUnformatted(m_window.getTitle().c_str());
 
                 //ImGui::TextUnformatted(deviceProperties.deviceName);

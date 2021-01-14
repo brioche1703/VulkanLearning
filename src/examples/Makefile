@@ -56,18 +56,6 @@ CMAKE_BINARY_DIR = /home/brioche/dev/VulkanLearning
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target install/local
-install/local: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local
-
-# Special rule for the target install/local
-install/local/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local/fast
-
 # Special rule for the target install/strip
 install/strip: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
@@ -124,6 +112,18 @@ install/fast: preinstall/fast
 	/usr/bin/cmake -P cmake_install.cmake
 .PHONY : install/fast
 
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
 # The main all target
 all: cmake_check_build_system
 	cd /home/brioche/dev/VulkanLearning && $(CMAKE_COMMAND) -E cmake_progress_start /home/brioche/dev/VulkanLearning/CMakeFiles /home/brioche/dev/VulkanLearning/src/examples/CMakeFiles/progress.marks
@@ -155,6 +155,21 @@ preinstall/fast:
 depend:
 	cd /home/brioche/dev/VulkanLearning && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
+
+# Convenience name for target.
+src/examples/CMakeFiles/single3DModel.dir/rule:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/single3DModel.dir/rule
+.PHONY : src/examples/CMakeFiles/single3DModel.dir/rule
+
+# Convenience name for target.
+single3DModel: src/examples/CMakeFiles/single3DModel.dir/rule
+
+.PHONY : single3DModel
+
+# fast build rule for target.
+single3DModel/fast:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/single3DModel.dir/build.make src/examples/CMakeFiles/single3DModel.dir/build
+.PHONY : single3DModel/fast
 
 # Convenience name for target.
 src/examples/CMakeFiles/dynamicUniformBuffers.dir/rule:
@@ -245,36 +260,6 @@ gltfloading: src/examples/CMakeFiles/gltfloading.dir/rule
 gltfloading/fast:
 	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfloading.dir/build.make src/examples/CMakeFiles/gltfloading.dir/build
 .PHONY : gltfloading/fast
-
-# Convenience name for target.
-src/examples/CMakeFiles/single3DModel.dir/rule:
-	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/single3DModel.dir/rule
-.PHONY : src/examples/CMakeFiles/single3DModel.dir/rule
-
-# Convenience name for target.
-single3DModel: src/examples/CMakeFiles/single3DModel.dir/rule
-
-.PHONY : single3DModel
-
-# fast build rule for target.
-single3DModel/fast:
-	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/single3DModel.dir/build.make src/examples/CMakeFiles/single3DModel.dir/build
-.PHONY : single3DModel/fast
-
-# Convenience name for target.
-src/examples/CMakeFiles/textureCubemap.dir/rule:
-	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/textureCubemap.dir/rule
-.PHONY : src/examples/CMakeFiles/textureCubemap.dir/rule
-
-# Convenience name for target.
-textureCubemap: src/examples/CMakeFiles/textureCubemap.dir/rule
-
-.PHONY : textureCubemap
-
-# fast build rule for target.
-textureCubemap/fast:
-	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureCubemap.dir/build.make src/examples/CMakeFiles/textureCubemap.dir/build
-.PHONY : textureCubemap/fast
 
 # Convenience name for target.
 src/examples/CMakeFiles/simpleTriangle.dir/rule:
@@ -507,40 +492,13 @@ textureArray/textureArray.cpp.s:
 	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureArray.dir/build.make src/examples/CMakeFiles/textureArray.dir/textureArray/textureArray.cpp.s
 .PHONY : textureArray/textureArray.cpp.s
 
-textureCubemap/textureCubemap.o: textureCubemap/textureCubemap.cpp.o
-
-.PHONY : textureCubemap/textureCubemap.o
-
-# target to build an object file
-textureCubemap/textureCubemap.cpp.o:
-	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureCubemap.dir/build.make src/examples/CMakeFiles/textureCubemap.dir/textureCubemap/textureCubemap.cpp.o
-.PHONY : textureCubemap/textureCubemap.cpp.o
-
-textureCubemap/textureCubemap.i: textureCubemap/textureCubemap.cpp.i
-
-.PHONY : textureCubemap/textureCubemap.i
-
-# target to preprocess a source file
-textureCubemap/textureCubemap.cpp.i:
-	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureCubemap.dir/build.make src/examples/CMakeFiles/textureCubemap.dir/textureCubemap/textureCubemap.cpp.i
-.PHONY : textureCubemap/textureCubemap.cpp.i
-
-textureCubemap/textureCubemap.s: textureCubemap/textureCubemap.cpp.s
-
-.PHONY : textureCubemap/textureCubemap.s
-
-# target to generate assembly for a file
-textureCubemap/textureCubemap.cpp.s:
-	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureCubemap.dir/build.make src/examples/CMakeFiles/textureCubemap.dir/textureCubemap/textureCubemap.cpp.s
-.PHONY : textureCubemap/textureCubemap.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... install/local"
+	@echo "... single3DModel"
 	@echo "... install/strip"
 	@echo "... dynamicUniformBuffers"
 	@echo "... pushConstants"
@@ -548,13 +506,12 @@ help:
 	@echo "... texture"
 	@echo "... textureArray"
 	@echo "... gltfloading"
-	@echo "... single3DModel"
-	@echo "... textureCubemap"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... list_install_components"
 	@echo "... simpleTriangle"
 	@echo "... install"
+	@echo "... install/local"
 	@echo "... dynamicUniformBuffers/dynamicUniformBuffers.o"
 	@echo "... dynamicUniformBuffers/dynamicUniformBuffers.i"
 	@echo "... dynamicUniformBuffers/dynamicUniformBuffers.s"
@@ -579,9 +536,6 @@ help:
 	@echo "... textureArray/textureArray.o"
 	@echo "... textureArray/textureArray.i"
 	@echo "... textureArray/textureArray.s"
-	@echo "... textureCubemap/textureCubemap.o"
-	@echo "... textureCubemap/textureCubemap.i"
-	@echo "... textureCubemap/textureCubemap.s"
 .PHONY : help
 
 

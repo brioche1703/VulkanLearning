@@ -60,7 +60,7 @@ namespace VulkanLearning {
                 if (key == GLFW_KEY_F1) {
                     if (action == GLFW_PRESS) {
                         m_ui->visible = !m_ui->visible;
-                        //m_ui->updated = true;
+                        m_ui->updated = true;
                     }
                 }
             }
