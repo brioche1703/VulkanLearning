@@ -56,6 +56,18 @@ CMAKE_BINARY_DIR = /home/brioche/dev/VulkanLearning
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
 # Special rule for the target install/strip
 install/strip: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
@@ -67,28 +79,6 @@ install/strip/fast: preinstall/fast
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
 	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
 .PHONY : install/strip/fast
-
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
-
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
 
 # Special rule for the target list_install_components
 list_install_components:
@@ -112,17 +102,27 @@ install/fast: preinstall/fast
 	/usr/bin/cmake -P cmake_install.cmake
 .PHONY : install/fast
 
-# Special rule for the target install/local
-install/local: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
 
-# Special rule for the target install/local
-install/local/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local/fast
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
+
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -262,6 +262,21 @@ gltfloading/fast:
 .PHONY : gltfloading/fast
 
 # Convenience name for target.
+src/examples/CMakeFiles/gltfSkinning.dir/rule:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/gltfSkinning.dir/rule
+.PHONY : src/examples/CMakeFiles/gltfSkinning.dir/rule
+
+# Convenience name for target.
+gltfSkinning: src/examples/CMakeFiles/gltfSkinning.dir/rule
+
+.PHONY : gltfSkinning
+
+# fast build rule for target.
+gltfSkinning/fast:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfSkinning.dir/build.make src/examples/CMakeFiles/gltfSkinning.dir/build
+.PHONY : gltfSkinning/fast
+
+# Convenience name for target.
 src/examples/CMakeFiles/simpleTriangle.dir/rule:
 	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/simpleTriangle.dir/rule
 .PHONY : src/examples/CMakeFiles/simpleTriangle.dir/rule
@@ -302,6 +317,33 @@ dynamicUniformBuffers/dynamicUniformBuffers.s: dynamicUniformBuffers/dynamicUnif
 dynamicUniformBuffers/dynamicUniformBuffers.cpp.s:
 	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/dynamicUniformBuffers.dir/build.make src/examples/CMakeFiles/dynamicUniformBuffers.dir/dynamicUniformBuffers/dynamicUniformBuffers.cpp.s
 .PHONY : dynamicUniformBuffers/dynamicUniformBuffers.cpp.s
+
+gltfSkinning/gltfSkinning.o: gltfSkinning/gltfSkinning.cpp.o
+
+.PHONY : gltfSkinning/gltfSkinning.o
+
+# target to build an object file
+gltfSkinning/gltfSkinning.cpp.o:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfSkinning.dir/build.make src/examples/CMakeFiles/gltfSkinning.dir/gltfSkinning/gltfSkinning.cpp.o
+.PHONY : gltfSkinning/gltfSkinning.cpp.o
+
+gltfSkinning/gltfSkinning.i: gltfSkinning/gltfSkinning.cpp.i
+
+.PHONY : gltfSkinning/gltfSkinning.i
+
+# target to preprocess a source file
+gltfSkinning/gltfSkinning.cpp.i:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfSkinning.dir/build.make src/examples/CMakeFiles/gltfSkinning.dir/gltfSkinning/gltfSkinning.cpp.i
+.PHONY : gltfSkinning/gltfSkinning.cpp.i
+
+gltfSkinning/gltfSkinning.s: gltfSkinning/gltfSkinning.cpp.s
+
+.PHONY : gltfSkinning/gltfSkinning.s
+
+# target to generate assembly for a file
+gltfSkinning/gltfSkinning.cpp.s:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfSkinning.dir/build.make src/examples/CMakeFiles/gltfSkinning.dir/gltfSkinning/gltfSkinning.cpp.s
+.PHONY : gltfSkinning/gltfSkinning.cpp.s
 
 gltfloading/gltfloading.o: gltfloading/gltfloading.cpp.o
 
@@ -498,6 +540,7 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... install/local"
 	@echo "... single3DModel"
 	@echo "... install/strip"
 	@echo "... dynamicUniformBuffers"
@@ -506,15 +549,18 @@ help:
 	@echo "... texture"
 	@echo "... textureArray"
 	@echo "... gltfloading"
-	@echo "... edit_cache"
-	@echo "... rebuild_cache"
+	@echo "... gltfSkinning"
 	@echo "... list_install_components"
 	@echo "... simpleTriangle"
 	@echo "... install"
-	@echo "... install/local"
+	@echo "... rebuild_cache"
+	@echo "... edit_cache"
 	@echo "... dynamicUniformBuffers/dynamicUniformBuffers.o"
 	@echo "... dynamicUniformBuffers/dynamicUniformBuffers.i"
 	@echo "... dynamicUniformBuffers/dynamicUniformBuffers.s"
+	@echo "... gltfSkinning/gltfSkinning.o"
+	@echo "... gltfSkinning/gltfSkinning.i"
+	@echo "... gltfSkinning/gltfSkinning.s"
 	@echo "... gltfloading/gltfloading.o"
 	@echo "... gltfloading/gltfloading.i"
 	@echo "... gltfloading/gltfloading.s"

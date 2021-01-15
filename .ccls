@@ -9,6 +9,7 @@
 -Iexternal/KTX-Software/include
 -Iexternal/glm/
 -Iinclude/external/stb
+-Iexternal/tinygltf
 -Iexternal/glfw-3.3.2
 -Iexternal/glfw-3.3.2/include
 -Iinclude/external/imgui
