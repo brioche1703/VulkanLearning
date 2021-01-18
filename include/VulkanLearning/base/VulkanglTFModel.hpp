@@ -1,9 +1,5 @@
 #pragma once
 
-#include "VulkanDevice.hpp"
-#include "VulkanBuffer.hpp"
-#include "VulkanTexture.hpp"
-
 #include <vulkan/vulkan.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -15,6 +11,8 @@
 
 #define TINYGLTF_NO_STB_IMAGE_WRITE
 #include "tiny_gltf.h"
+
+#include "VulkanBase.hpp"
 
 namespace VulkanLearning {
     class VulkanglTFModel {

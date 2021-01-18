@@ -1,3 +1,4 @@
+//#define TINYGLTF_IMPLEMENTATION
 #include "VulkanglTFModel.hpp"
 
 namespace VulkanLearning {

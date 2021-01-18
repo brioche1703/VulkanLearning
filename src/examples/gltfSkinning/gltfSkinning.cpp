@@ -1,8 +1,6 @@
+#define TINYGLTF_IMPLEMENTATION
 #include "VulkanBase.hpp"
 #include "VulkanglTFScene.hpp"
-
-#define TINYGLTF_NO_STB_IMAGE_WRITE
-#include "tiny_gltf.h"
 
 namespace VulkanLearning {
 
@@ -10,6 +8,8 @@ namespace VulkanLearning {
 
         private:
             VulkanglTFScene glTFScene;
+
+            VkPipelineLayout m_pipelineLayout;
 
             uint32_t m_msaaSamples = 64;
             VkPipeline m_wireframePipeline = VK_NULL_HANDLE;
@@ -338,9 +338,14 @@ namespace VulkanLearning {
                         m_swapChain, m_renderPass);
 
                 VulkanShaderModule vertShaderModule = 
-                    VulkanShaderModule("src/shaders/glTFLoadingVert.spv", &m_device, VK_SHADER_STAGE_VERTEX_BIT);
+                    VulkanShaderModule("src/shaders/glTFSceneVert.spv", &m_device, VK_SHADER_STAGE_VERTEX_BIT);
                 VulkanShaderModule fragShaderModule = 
-                    VulkanShaderModule("src/shaders/glTFLoadingFrag.spv", &m_device, VK_SHADER_STAGE_FRAGMENT_BIT);
+                    VulkanShaderModule("src/shaders/glTFSceneFrag.spv", &m_device, VK_SHADER_STAGE_FRAGMENT_BIT);
+
+                std::vector<VkPipelineShaderStageCreateInfo> shaderStages = {
+                    vertShaderModule.getStageCreateInfo(), 
+                    fragShaderModule.getStageCreateInfo()
+                };
 
                 VkVertexInputBindingDescription vertexInputBindingDescription = {};
                 vertexInputBindingDescription.binding = 0;
@@ -409,13 +414,137 @@ namespace VulkanLearning {
                 pipelineLayoutInfo.pushConstantRangeCount = 1;
                 pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
-                m_graphicsPipeline.create(
-                        vertShaderModule, 
-                        fragShaderModule,
-                        vertexInputInfo, 
-                        pipelineLayoutInfo, 
-                        &depthStencil,
-                        &m_wireframePipeline);
+                VK_CHECK_RESULT(vkCreatePipelineLayout(
+                            m_device.getLogicalDevice(), 
+                            &pipelineLayoutInfo, 
+                            nullptr, 
+                            &m_pipelineLayout));
+
+                VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
+                inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+                inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+                inputAssembly.flags = 0;
+                inputAssembly.primitiveRestartEnable = VK_FALSE;
+
+                VkPipelineRasterizationStateCreateInfo rasterizer{};
+                rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+                rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+                rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+                rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+                rasterizer.flags = 0;
+                rasterizer.depthClampEnable = VK_FALSE;
+                rasterizer.lineWidth = 1.0f;
+
+                VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+                colorBlendAttachment.colorWriteMask = 0xf;
+                colorBlendAttachment.blendEnable = VK_FALSE;
+
+                VkPipelineColorBlendStateCreateInfo colorBlending{};
+                colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+                colorBlending.attachmentCount = 1;
+                colorBlending.pAttachments = &colorBlendAttachment;
+
+                VkPipelineMultisampleStateCreateInfo multisampling{};
+                if (m_device.getMsaaSamples() > 1) {
+                    multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+                    multisampling.sampleShadingEnable = VK_TRUE;
+                    multisampling.minSampleShading = 0.2f;
+                    multisampling.rasterizationSamples = m_device.getMsaaSamples();
+                } else {
+                    multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+                    multisampling.sampleShadingEnable = VK_FALSE;
+                    multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+                }
+
+                VkViewport viewport{};
+                viewport.x = 0.0f;
+                viewport.y = 0.0f;
+                viewport.width = (float) m_swapChain.getExtent().width;
+                viewport.height = (float) m_swapChain.getExtent().height;
+                viewport.minDepth = 0.0f;
+                viewport.maxDepth = 1.0f;
+
+                VkRect2D scissor{};
+                scissor.offset = {0, 0};
+                scissor.extent = m_swapChain.getExtent();
+
+                VkPipelineViewportStateCreateInfo viewportState{};
+                viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+                viewportState.viewportCount = 1;
+                viewportState.pViewports = &viewport;
+                viewportState.scissorCount = 1;
+                viewportState.pScissors = &scissor;
+
+                const std::vector<VkDynamicState> dynamicStates = {
+                    VK_DYNAMIC_STATE_VIEWPORT,
+                    VK_DYNAMIC_STATE_SCISSOR,
+                    VK_DYNAMIC_STATE_LINE_WIDTH
+                };
+
+                VkPipelineDynamicStateCreateInfo dynamicState{};
+                dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+                dynamicState.pDynamicStates = dynamicStates.data();
+                dynamicState.dynamicStateCount = 3;
+                dynamicState.flags = 0;
+
+                VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
+                pipelineCreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+                pipelineCreateInfo.layout = m_pipelineLayout;
+                pipelineCreateInfo.renderPass = m_renderPass.getRenderPass();
+                pipelineCreateInfo.pVertexInputState = &vertexInputInfo;
+                pipelineCreateInfo.pInputAssemblyState = &inputAssembly;
+                pipelineCreateInfo.pRasterizationState = &rasterizer;
+                pipelineCreateInfo.pColorBlendState = &colorBlending;
+                pipelineCreateInfo.pMultisampleState = &multisampling;
+                pipelineCreateInfo.pViewportState = &viewportState;
+                pipelineCreateInfo.pDepthStencilState = &depthStencil;
+                pipelineCreateInfo.pDynamicState = &dynamicState;
+                pipelineCreateInfo.stageCount = static_cast<uint32_t>(shaderStages.size());
+                pipelineCreateInfo.pStages = shaderStages.data();
+
+                for (auto &material : glTFScene.materials) {
+                    struct MaterialSpecializationData {
+                        bool alphaMask;
+                        float alphaMaskCutOff;
+                    } materialSpecializationData;
+
+                    materialSpecializationData.alphaMask = material.alphaMode == "MASK";
+                    materialSpecializationData.alphaMaskCutOff = material.alphaCutOff;
+
+                    std::vector<VkSpecializationMapEntry> specializationMapEntries(2);
+                    specializationMapEntries[0].constantID = 0;
+                    specializationMapEntries[0].offset = offsetof(MaterialSpecializationData, alphaMask);
+                    specializationMapEntries[0].size = sizeof(MaterialSpecializationData::alphaMask);
+
+                    specializationMapEntries[1].constantID = 1;
+                    specializationMapEntries[1].offset = offsetof(MaterialSpecializationData, alphaMaskCutOff);
+                    specializationMapEntries[1].size = sizeof(MaterialSpecializationData::alphaMaskCutOff);
+                    VkSpecializationInfo specializationInfo = {};
+                    specializationInfo.pMapEntries = specializationMapEntries.data();
+                    specializationInfo.dataSize = sizeof(MaterialSpecializationData);
+                    specializationInfo.mapEntryCount = static_cast<uint32_t>(specializationMapEntries.size());
+                    specializationInfo.pData = &materialSpecializationData;
+
+                    shaderStages[1].pSpecializationInfo = &specializationInfo;
+
+                    rasterizer.cullMode = material.doubleSided ? VK_CULL_MODE_NONE : VK_CULL_MODE_BACK_BIT;
+
+                    VK_CHECK_RESULT(vkCreateGraphicsPipelines(
+                                m_device.getLogicalDevice(), 
+                                nullptr, 
+                                1,
+                                &pipelineCreateInfo, 
+                                nullptr, 
+                                &material.pipeline));
+                }
+
+                //m_graphicsPipeline.create(
+                //        vertShaderModule, 
+                //        fragShaderModule,
+                //        vertexInputInfo, 
+                //        pipelineLayoutInfo, 
+                //        &depthStencil,
+                //        &m_wireframePipeline);
             }
 
             void createFramebuffers() override {
@@ -693,6 +822,7 @@ namespace VulkanLearning {
                 std::string error, warning;
 
                 bool fileLoaded = gltfContext.LoadASCIIFromFile(&glTFInput, &error, &warning, filename);
+                std::cout << fileLoaded << ":   " << error << std::endl;
 
                 glTFScene.device = &m_device;
                 glTFScene.copyQueue = m_device.getGraphicsQueue();

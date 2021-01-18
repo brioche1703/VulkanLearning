@@ -37,5 +37,8 @@ $GLSLC_PATH textureArray.frag -o textureArrayFrag.spv
 $GLSLC_PATH glTFLoading.vert -o glTFLoadingVert.spv
 $GLSLC_PATH glTFLoading.frag -o glTFLoadingFrag.spv
 
+$GLSLC_PATH glTFScene.vert -o glTFSceneVert.spv
+$GLSLC_PATH glTFScene.frag -o glTFSceneFrag.spv
+
 $GLSLC_PATH ui.vert -o uiVert.spv
 $GLSLC_PATH ui.frag -o uiFrag.spv

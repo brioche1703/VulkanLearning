@@ -1,8 +1,6 @@
+#define TINYGLTF_IMPLEMENTATION
 #include "VulkanBase.hpp"
 #include "VulkanglTFModel.hpp"
-
-#define TINYGLTF_NO_STB_IMAGE_WRITE
-#include "tiny_gltf.h"
 
 namespace VulkanLearning {
 
