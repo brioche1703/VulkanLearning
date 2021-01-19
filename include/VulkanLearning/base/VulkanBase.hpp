@@ -176,9 +176,9 @@ namespace VulkanLearning {
                 //ImGui::TextUnformatted(deviceProperties.deviceName);
                 //ImGui::Text("%.2f ms/frame (%.1d fps)", (1000.0f / m_fpsCounter.getLastFrameTime()), m_fpsCounter.getLastFrameTime());
 
-                //ImGui::PushItemWidth(110.0f * m_ui.scale);
+                ImGui::PushItemWidth(110.0f * m_ui.scale);
                 OnUpdateUI(&m_ui);
-                //ImGui::PopItemWidth();
+                ImGui::PopItemWidth();
 
                 ImGui::End();
                 ImGui::Render();
@@ -192,7 +192,6 @@ namespace VulkanLearning {
 
             virtual void drawUI(VkCommandBuffer commandBuffer) {
                 if (m_ui.visible) {
-                    std::cout << "DRAW UI" << std::endl;
                     m_ui.draw(commandBuffer);
                 }
             }

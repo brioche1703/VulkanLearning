@@ -96,9 +96,9 @@ namespace VulkanLearning {
             void loadTextures(tinygltf::Model& input);
             void loadMaterials(tinygltf::Model& input);
             void loadNode(const tinygltf::Node& inputNode, const tinygltf::Model& input, VulkanglTFScene::Node* parent, std::vector<uint32_t>& indexBuffer, std::vector<VulkanglTFScene::Vertex>& vertexBuffer);
-
             void drawNode(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, VulkanglTFScene::Node node);
-
             void draw(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout);
+
+            void cleanup();
     };
 }

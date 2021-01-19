@@ -165,7 +165,6 @@ namespace VulkanLearning {
             void cleanup() override {
                 cleanupSwapChain();
 
-
                 m_descriptorSetLayouts.matrices->cleanup();
                 m_descriptorSetLayouts.textures->cleanup();
 
@@ -205,6 +204,7 @@ namespace VulkanLearning {
                 vkDeviceWaitIdle(m_device.getLogicalDevice());
 
                 cleanupSwapChain();
+                glTFScene.cleanup();
 
                 m_swapChain.create();
 
@@ -227,7 +227,7 @@ namespace VulkanLearning {
                 m_depthImageResource.cleanup();
 
                 m_swapChain.cleanFramebuffers();
-
+                
                 vkFreeCommandBuffers(m_device.getLogicalDevice(), 
                         m_device.getCommandPool(), 
                         static_cast<uint32_t>(
@@ -236,14 +236,14 @@ namespace VulkanLearning {
 
                 vkDestroyPipeline(m_device.getLogicalDevice(), 
                         m_graphicsPipeline.getGraphicsPipeline(), nullptr);
+
                 if (m_wireframePipeline) {
                     vkDestroyPipeline(m_device.getLogicalDevice(), 
                             m_wireframePipeline, nullptr);
                 }
-                vkDestroyPipelineLayout(m_device.getLogicalDevice(), 
-                        m_graphicsPipeline.getPipelineLayout(), nullptr);
-                vkDestroyRenderPass(m_device.getLogicalDevice(), 
-                        m_renderPass.getRenderPass(), nullptr);
+                vkDestroyPipelineLayout(m_device.getLogicalDevice(), m_pipelineLayout, nullptr);
+                vkDestroyPipelineLayout(m_device.getLogicalDevice(), m_graphicsPipeline.getPipelineLayout(), nullptr);
+                vkDestroyRenderPass(m_device.getLogicalDevice(), m_renderPass.getRenderPass(), nullptr);
 
                 m_swapChain.destroyImageViews();
                 vkDestroySwapchainKHR(m_device.getLogicalDevice(), m_swapChain.getSwapChain(), nullptr);
@@ -538,13 +538,13 @@ namespace VulkanLearning {
                                 &material.pipeline));
                 }
 
-                //m_graphicsPipeline.create(
-                //        vertShaderModule, 
-                //        fragShaderModule,
-                //        vertexInputInfo, 
-                //        pipelineLayoutInfo, 
-                //        &depthStencil,
-                //        &m_wireframePipeline);
+                m_graphicsPipeline.create(
+                        vertShaderModule, 
+                        fragShaderModule,
+                        vertexInputInfo, 
+                        pipelineLayoutInfo, 
+                        &depthStencil,
+                        &m_wireframePipeline);
             }
 
             void createFramebuffers() override {
@@ -822,7 +822,6 @@ namespace VulkanLearning {
                 std::string error, warning;
 
                 bool fileLoaded = gltfContext.LoadASCIIFromFile(&glTFInput, &error, &warning, filename);
-                std::cout << fileLoaded << ":   " << error << std::endl;
 
                 glTFScene.device = &m_device;
                 glTFScene.copyQueue = m_device.getGraphicsQueue();
@@ -908,35 +907,24 @@ namespace VulkanLearning {
             }
 
             void OnUpdateUI (UI *ui) override {
-                if (ui->header("Settings")) {
-                    if (ui->checkBox("Wireframe", &m_wireframe)) {
-                        createCommandBuffers();
-                    }
+                if (ui->header("Visibility")) {
 
                     if (ui->button("All")) {
-                        std::for_each(
-                                glTFScene.nodes.begin(), 
-                                glTFScene.nodes.end(),
-                                [](VulkanglTFScene::Node &node) {
-                                    node.visible = true;
-                                });
-                                createCommandBuffers();
+                        std::for_each(glTFScene.nodes.begin(), glTFScene.nodes.end(), 
+                                [](VulkanglTFScene::Node &node) { node.visible = true; });
+                        createCommandBuffers();
                     }
                     ImGui::SameLine();
                     if (ui->button("None")) {
-                        std::for_each(
-                                glTFScene.nodes.begin(), 
-                                glTFScene.nodes.end(),
-                                [](VulkanglTFScene::Node &node) {
-                                    node.visible = false;
-                                });
-                                createCommandBuffers();
+                        std::for_each(glTFScene.nodes.begin(), glTFScene.nodes.end(), 
+                                [](VulkanglTFScene::Node &node) { node.visible = false; });
+                        createCommandBuffers();
                     }
                     ImGui::NewLine();
 
                     ImGui::BeginChild("#nodelist", ImVec2(200.0f, 340.0f), false);
                     for (auto &node : glTFScene.nodes)
-                    {
+                    {		
                         if (ui->checkBox(node.name.c_str(), &node.visible))
                         {
                             createCommandBuffers();

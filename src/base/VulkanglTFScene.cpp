@@ -22,7 +22,7 @@ namespace VulkanLearning {
 
         for (size_t i = 0; i < input.images.size(); i++) {
             tinygltf::Image& glTFImage = input.images[i];
-            images[i].texture.loadFromFile(
+            images[i].texture.loadFromKTXFile(
                     path + "/" + glTFImage.uri, 
                     VK_FORMAT_R8G8B8A8_UNORM, 
                     device, 
@@ -66,6 +66,8 @@ namespace VulkanLearning {
 
     void VulkanglTFScene::loadNode(const tinygltf::Node& inputNode, const tinygltf::Model& input, VulkanglTFScene::Node* parent, std::vector<uint32_t>& indexBuffer, std::vector<VulkanglTFScene::Vertex>& vertexBuffer) {
         VulkanglTFScene::Node node{};
+        node.name = inputNode.name;
+
         node.matrix = glm::mat4(1.0f);
 
         if (inputNode.translation.size() == 3) {
@@ -273,4 +275,15 @@ namespace VulkanLearning {
             drawNode(commandBuffer, pipelineLayout, node);
         }
     }
+
+    void VulkanglTFScene::cleanup() {
+        /* vertices.buffer->cleanup(); */
+        /* indices.buffer->cleanup(); */
+
+        for (Material material : materials) {
+            if (material.pipeline)
+                vkDestroyPipeline(device->getLogicalDevice(), material.pipeline, nullptr);
+        }
+    }
+
 }
