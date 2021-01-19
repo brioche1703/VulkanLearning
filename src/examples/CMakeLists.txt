@@ -69,7 +69,7 @@ set(EXAMPLES
     texture
     textureArray
     gltfloading
-    gltfSkinning
+    gltfScene
 )
 
 buildExamples()

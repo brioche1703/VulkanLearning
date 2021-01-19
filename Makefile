@@ -261,17 +261,17 @@ gltfloading/fast:
 .PHONY : gltfloading/fast
 
 #=============================================================================
-# Target rules for targets named gltfSkinning
+# Target rules for targets named gltfScene
 
 # Build rule for target.
-gltfSkinning: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 gltfSkinning
-.PHONY : gltfSkinning
+gltfScene: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 gltfScene
+.PHONY : gltfScene
 
 # fast build rule for target.
-gltfSkinning/fast:
-	$(MAKE) -f src/examples/CMakeFiles/gltfSkinning.dir/build.make src/examples/CMakeFiles/gltfSkinning.dir/build
-.PHONY : gltfSkinning/fast
+gltfScene/fast:
+	$(MAKE) -f src/examples/CMakeFiles/gltfScene.dir/build.make src/examples/CMakeFiles/gltfScene.dir/build
+.PHONY : gltfScene/fast
 
 #=============================================================================
 # Target rules for targets named simpleTriangle
@@ -332,7 +332,7 @@ help:
 	@echo "... texture"
 	@echo "... textureArray"
 	@echo "... gltfloading"
-	@echo "... gltfSkinning"
+	@echo "... gltfScene"
 	@echo "... simpleTriangle"
 	@echo "... uninstall"
 	@echo "... glfw"
