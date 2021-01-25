@@ -68,6 +68,18 @@ install/local/fast: preinstall/fast
 	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
 .PHONY : install/local/fast
 
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
 # Special rule for the target install/strip
 install/strip: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
@@ -80,16 +92,15 @@ install/strip/fast: preinstall/fast
 	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
 .PHONY : install/strip/fast
 
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
 
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
 
-.PHONY : edit_cache/fast
+.PHONY : list_install_components/fast
 
 # Special rule for the target rebuild_cache
 rebuild_cache:
@@ -102,27 +113,16 @@ rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
 
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
 
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
 
-.PHONY : list_install_components/fast
-
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
+.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -155,6 +155,21 @@ preinstall/fast:
 depend:
 	cd /home/brioche/dev/VulkanLearning && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
+
+# Convenience name for target.
+src/examples/CMakeFiles/simpleTriangle.dir/rule:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/simpleTriangle.dir/rule
+.PHONY : src/examples/CMakeFiles/simpleTriangle.dir/rule
+
+# Convenience name for target.
+simpleTriangle: src/examples/CMakeFiles/simpleTriangle.dir/rule
+
+.PHONY : simpleTriangle
+
+# fast build rule for target.
+simpleTriangle/fast:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/simpleTriangle.dir/build.make src/examples/CMakeFiles/simpleTriangle.dir/build
+.PHONY : simpleTriangle/fast
 
 # Convenience name for target.
 src/examples/CMakeFiles/single3DModel.dir/rule:
@@ -277,19 +292,19 @@ gltfScene/fast:
 .PHONY : gltfScene/fast
 
 # Convenience name for target.
-src/examples/CMakeFiles/simpleTriangle.dir/rule:
-	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/simpleTriangle.dir/rule
-.PHONY : src/examples/CMakeFiles/simpleTriangle.dir/rule
+src/examples/CMakeFiles/gltfCompleteLoader.dir/rule:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/gltfCompleteLoader.dir/rule
+.PHONY : src/examples/CMakeFiles/gltfCompleteLoader.dir/rule
 
 # Convenience name for target.
-simpleTriangle: src/examples/CMakeFiles/simpleTriangle.dir/rule
+gltfCompleteLoader: src/examples/CMakeFiles/gltfCompleteLoader.dir/rule
 
-.PHONY : simpleTriangle
+.PHONY : gltfCompleteLoader
 
 # fast build rule for target.
-simpleTriangle/fast:
-	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/simpleTriangle.dir/build.make src/examples/CMakeFiles/simpleTriangle.dir/build
-.PHONY : simpleTriangle/fast
+gltfCompleteLoader/fast:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfCompleteLoader.dir/build.make src/examples/CMakeFiles/gltfCompleteLoader.dir/build
+.PHONY : gltfCompleteLoader/fast
 
 dynamicUniformBuffers/dynamicUniformBuffers.o: dynamicUniformBuffers/dynamicUniformBuffers.cpp.o
 
@@ -317,6 +332,33 @@ dynamicUniformBuffers/dynamicUniformBuffers.s: dynamicUniformBuffers/dynamicUnif
 dynamicUniformBuffers/dynamicUniformBuffers.cpp.s:
 	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/dynamicUniformBuffers.dir/build.make src/examples/CMakeFiles/dynamicUniformBuffers.dir/dynamicUniformBuffers/dynamicUniformBuffers.cpp.s
 .PHONY : dynamicUniformBuffers/dynamicUniformBuffers.cpp.s
+
+gltfCompleteLoader/gltfCompleteLoader.o: gltfCompleteLoader/gltfCompleteLoader.cpp.o
+
+.PHONY : gltfCompleteLoader/gltfCompleteLoader.o
+
+# target to build an object file
+gltfCompleteLoader/gltfCompleteLoader.cpp.o:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfCompleteLoader.dir/build.make src/examples/CMakeFiles/gltfCompleteLoader.dir/gltfCompleteLoader/gltfCompleteLoader.cpp.o
+.PHONY : gltfCompleteLoader/gltfCompleteLoader.cpp.o
+
+gltfCompleteLoader/gltfCompleteLoader.i: gltfCompleteLoader/gltfCompleteLoader.cpp.i
+
+.PHONY : gltfCompleteLoader/gltfCompleteLoader.i
+
+# target to preprocess a source file
+gltfCompleteLoader/gltfCompleteLoader.cpp.i:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfCompleteLoader.dir/build.make src/examples/CMakeFiles/gltfCompleteLoader.dir/gltfCompleteLoader/gltfCompleteLoader.cpp.i
+.PHONY : gltfCompleteLoader/gltfCompleteLoader.cpp.i
+
+gltfCompleteLoader/gltfCompleteLoader.s: gltfCompleteLoader/gltfCompleteLoader.cpp.s
+
+.PHONY : gltfCompleteLoader/gltfCompleteLoader.s
+
+# target to generate assembly for a file
+gltfCompleteLoader/gltfCompleteLoader.cpp.s:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfCompleteLoader.dir/build.make src/examples/CMakeFiles/gltfCompleteLoader.dir/gltfCompleteLoader/gltfCompleteLoader.cpp.s
+.PHONY : gltfCompleteLoader/gltfCompleteLoader.cpp.s
 
 gltfScene/gltfScene.o: gltfScene/gltfScene.cpp.o
 
@@ -541,6 +583,8 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... install/local"
+	@echo "... install"
+	@echo "... simpleTriangle"
 	@echo "... single3DModel"
 	@echo "... install/strip"
 	@echo "... dynamicUniformBuffers"
@@ -550,14 +594,16 @@ help:
 	@echo "... textureArray"
 	@echo "... gltfloading"
 	@echo "... gltfScene"
-	@echo "... edit_cache"
-	@echo "... rebuild_cache"
+	@echo "... gltfCompleteLoader"
 	@echo "... list_install_components"
-	@echo "... simpleTriangle"
-	@echo "... install"
+	@echo "... rebuild_cache"
+	@echo "... edit_cache"
 	@echo "... dynamicUniformBuffers/dynamicUniformBuffers.o"
 	@echo "... dynamicUniformBuffers/dynamicUniformBuffers.i"
 	@echo "... dynamicUniformBuffers/dynamicUniformBuffers.s"
+	@echo "... gltfCompleteLoader/gltfCompleteLoader.o"
+	@echo "... gltfCompleteLoader/gltfCompleteLoader.i"
+	@echo "... gltfCompleteLoader/gltfCompleteLoader.s"
 	@echo "... gltfScene/gltfScene.o"
 	@echo "... gltfScene/gltfScene.i"
 	@echo "... gltfScene/gltfScene.s"

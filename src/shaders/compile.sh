@@ -40,5 +40,8 @@ $GLSLC_PATH glTFLoading.frag -o glTFLoadingFrag.spv
 $GLSLC_PATH glTFScene.vert -o glTFSceneVert.spv
 $GLSLC_PATH glTFScene.frag -o glTFSceneFrag.spv
 
+$GLSLC_PATH glTFCompleteLoader.vert -o glTFCompleteLoaderVert.spv
+$GLSLC_PATH glTFCompleteLoader.frag -o glTFCompleteLoaderFrag.spv
+
 $GLSLC_PATH ui.vert -o uiVert.spv
 $GLSLC_PATH ui.frag -o uiFrag.spv

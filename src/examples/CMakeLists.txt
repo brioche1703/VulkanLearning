@@ -70,6 +70,7 @@ set(EXAMPLES
     textureArray
     gltfloading
     gltfScene
+    gltfCompleteLoader
 )
 
 buildExamples()

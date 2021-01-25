@@ -18,7 +18,8 @@ namespace VulkanLearning {
     VulkanDescriptorSets::~VulkanDescriptorSets() {}
 
     void VulkanDescriptorSets::create(uint32_t descriptorSetCount) {
-        std::vector<VkDescriptorSetLayout> layouts(descriptorSetCount,
+        std::vector<VkDescriptorSetLayout> layouts(
+                descriptorSetCount,
                 m_descriptorSetLayout.getDescriptorSetLayout());
 
         m_descriptorSets.resize(descriptorSetCount);

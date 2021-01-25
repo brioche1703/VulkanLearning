@@ -170,6 +170,19 @@ base/fast:
 .PHONY : base/fast
 
 #=============================================================================
+# Target rules for targets named simpleTriangle
+
+# Build rule for target.
+simpleTriangle: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 simpleTriangle
+.PHONY : simpleTriangle
+
+# fast build rule for target.
+simpleTriangle/fast:
+	$(MAKE) -f src/examples/CMakeFiles/simpleTriangle.dir/build.make src/examples/CMakeFiles/simpleTriangle.dir/build
+.PHONY : simpleTriangle/fast
+
+#=============================================================================
 # Target rules for targets named single3DModel
 
 # Build rule for target.
@@ -274,17 +287,17 @@ gltfScene/fast:
 .PHONY : gltfScene/fast
 
 #=============================================================================
-# Target rules for targets named simpleTriangle
+# Target rules for targets named gltfCompleteLoader
 
 # Build rule for target.
-simpleTriangle: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 simpleTriangle
-.PHONY : simpleTriangle
+gltfCompleteLoader: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 gltfCompleteLoader
+.PHONY : gltfCompleteLoader
 
 # fast build rule for target.
-simpleTriangle/fast:
-	$(MAKE) -f src/examples/CMakeFiles/simpleTriangle.dir/build.make src/examples/CMakeFiles/simpleTriangle.dir/build
-.PHONY : simpleTriangle/fast
+gltfCompleteLoader/fast:
+	$(MAKE) -f src/examples/CMakeFiles/gltfCompleteLoader.dir/build.make src/examples/CMakeFiles/gltfCompleteLoader.dir/build
+.PHONY : gltfCompleteLoader/fast
 
 #=============================================================================
 # Target rules for targets named uninstall
@@ -325,6 +338,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... base"
+	@echo "... simpleTriangle"
 	@echo "... single3DModel"
 	@echo "... dynamicUniformBuffers"
 	@echo "... pushConstants"
@@ -333,7 +347,7 @@ help:
 	@echo "... textureArray"
 	@echo "... gltfloading"
 	@echo "... gltfScene"
-	@echo "... simpleTriangle"
+	@echo "... gltfCompleteLoader"
 	@echo "... uninstall"
 	@echo "... glfw"
 .PHONY : help
