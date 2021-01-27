@@ -9,6 +9,7 @@ namespace VulkanLearning {
 
     class VulkanExample : public VulkanBase {
         private:
+            VulkanDescriptorSets m_descriptorSets;
 
             VulkanTexture2D m_texture;
 

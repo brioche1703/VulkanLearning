@@ -17,6 +17,7 @@ namespace VulkanLearning {
     class VulkanExample : public VulkanBase {
 
         private:
+            VulkanDescriptorSets m_descriptorSets;
             uint32_t m_msaaSamples = 64;
             VkPipeline m_wireframePipeline = VK_NULL_HANDLE;
 

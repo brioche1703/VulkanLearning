@@ -71,6 +71,7 @@ set(EXAMPLES
     gltfloading
     gltfScene
     gltfCompleteLoader
+    textureCubemap
 )
 
 buildExamples()

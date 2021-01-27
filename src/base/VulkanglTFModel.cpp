@@ -749,10 +749,6 @@ namespace VulkanLearning {
     {
         vertices.buffer.cleanup();
         indices.buffer.cleanup();
-        /* vkDestroyBuffer(device->getLogicalDevice(), vertices.buffer, nullptr); */
-        /* vkFreeMemory(device->getLogicalDevice(), vertices.memory, nullptr); */
-        /* vkDestroyBuffer(device->getLogicalDevice(), indices.buffer, nullptr); */
-        /* vkFreeMemory(device->getLogicalDevice(), indices.memory, nullptr); */
         for (auto texture : textures) {
             texture.destroy();
         }

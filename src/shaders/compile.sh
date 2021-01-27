@@ -45,3 +45,9 @@ $GLSLC_PATH glTFCompleteLoader.frag -o glTFCompleteLoaderFrag.spv
 
 $GLSLC_PATH ui.vert -o uiVert.spv
 $GLSLC_PATH ui.frag -o uiFrag.spv
+
+$GLSLC_PATH textureCubemap/reflect.vert -o textureCubemap/reflectVert.spv
+$GLSLC_PATH textureCubemap/reflect.frag -o textureCubemap/reflectFrag.spv
+
+$GLSLC_PATH textureCubemap/skybox.vert -o textureCubemap/skyboxVert.spv
+$GLSLC_PATH textureCubemap/skybox.frag -o textureCubemap/skyboxFrag.spv

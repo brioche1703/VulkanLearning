@@ -13,6 +13,7 @@ namespace VulkanLearning {
             VkBufferUsageFlags m_usage;
             VkDeviceSize m_size;
             VkDescriptorBufferInfo m_descriptor;
+            VkMemoryRequirements m_memRequirements;
             void* m_mappedMemory = nullptr;
 
             VulkanDevice m_device;
@@ -28,6 +29,7 @@ namespace VulkanLearning {
             inline VkDeviceMemory* getBufferMemoryPointer() { return &m_bufferMemory; }
             inline VkDeviceSize getSize() { return m_size; }
             inline VkDescriptorBufferInfo* getDescriptorPointer() { return &m_descriptor; }
+            inline VkMemoryRequirements* getMemoryRequirements() { return &m_memRequirements; }
             inline void* getMappedMemory() { return m_mappedMemory; }
             inline void** getMappedMemoryPointer() { return &m_mappedMemory; }
 

@@ -10,6 +10,7 @@ namespace VulkanLearning {
             VulkanglTFScene glTFScene;
 
             VkPipelineLayout m_pipelineLayout;
+            VulkanDescriptorSets m_descriptorSets;
 
             uint32_t m_msaaSamples = 64;
             VkPipeline m_wireframePipeline = VK_NULL_HANDLE;

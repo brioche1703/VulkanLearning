@@ -3,9 +3,9 @@
 namespace VulkanLearning {
 
     const std::vector<Vertex> vertices = {
-        {{-0.5f, 0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-        {{ 0.5f, 0.0f, -0.5f}, {0.0f, 1.0f, 0.0f}},
-        {{ 0.0f, 0.0f,  0.5f}, {0.0f, 0.0f, 1.0f}},
+        {{-0.5f, -0.5f, -0.0f}, {1.0f, 0.0f, 0.0f}},
+        {{ 0.5f, -0.5f, -0.0f}, {0.0f, 1.0f, 0.0f}},
+        {{ 0.0f,  0.5f,  0.0f}, {0.0f, 0.0f, 1.0f}},
     };
 
     const std::vector<uint32_t> indices = {
@@ -13,6 +13,8 @@ namespace VulkanLearning {
     };
 
     class VulkanExample : public VulkanBase {
+        private:
+            VulkanDescriptorSets m_descriptorSets;
         public:
             VkPipeline wireframePipeline = VK_NULL_HANDLE;
             VulkanExample() {}
@@ -527,14 +529,11 @@ namespace VulkanLearning {
                 CoordinatesSystemUniformBufferObject ubo{};
 
                 ubo.model = glm::mat4(1.0f);
-                ubo.model = glm::rotate(ubo.model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-
                 ubo.view = m_camera.getViewMatrix();
 
                 ubo.proj = glm::perspective(glm::radians(m_camera.getZoom()), 
                         m_swapChain.getExtent().width / (float) m_swapChain.getExtent().height, 
                         0.1f,  100.0f);
-
                 ubo.proj[1][1] *= -1;
 
                 ubo.camPos = m_camera.position();

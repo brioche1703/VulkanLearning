@@ -60,6 +60,8 @@ namespace VulkanLearning {
             glm::vec3 m_rotations[NUM_OBJ];
             glm::vec3 m_rotationsSpeeds[NUM_OBJ];
 
+            VulkanDescriptorSets m_descriptorSets;
+
             VkPipeline m_wireframePipeline = VK_NULL_HANDLE;
 
         public:

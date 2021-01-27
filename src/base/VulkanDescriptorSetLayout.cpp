@@ -26,7 +26,8 @@ namespace VulkanLearning {
     }
 
     void VulkanDescriptorSetLayout::cleanup() {
-        vkDestroyDescriptorSetLayout(m_device.getLogicalDevice(),
+        vkDestroyDescriptorSetLayout(
+                m_device.getLogicalDevice(),
                 m_descriptorSetLayout, 
                 nullptr);
     }

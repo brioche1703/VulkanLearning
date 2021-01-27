@@ -122,8 +122,6 @@ namespace VulkanLearning {
             VulkanDescriptorSetLayout m_descriptorSetLayout;
             VulkanDescriptorPool m_descriptorPool;
 
-            VulkanDescriptorSets m_descriptorSets;
-
             VulkanGraphicsPipeline m_graphicsPipeline;
 
             ModelObj m_model;

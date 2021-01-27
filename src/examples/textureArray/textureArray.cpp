@@ -15,6 +15,7 @@ namespace VulkanLearning {
 
         private:
             uint32_t m_msaaSamples = 64;
+            VulkanDescriptorSets m_descriptorSets;
             VkPipeline m_wireframePipeline = VK_NULL_HANDLE;
 
             struct UboInstanceData {

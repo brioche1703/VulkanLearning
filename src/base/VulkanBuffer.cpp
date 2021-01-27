@@ -29,13 +29,12 @@ namespace VulkanLearning {
 
         m_size = size;
 
-        VkMemoryRequirements memRequirements;
-        vkGetBufferMemoryRequirements(m_device.getLogicalDevice(), buffer, &memRequirements);
+        vkGetBufferMemoryRequirements(m_device.getLogicalDevice(), buffer, &m_memRequirements);
 
         VkMemoryAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-        allocInfo.allocationSize = memRequirements.size;
-        allocInfo.memoryTypeIndex = m_device.findMemoryType(memRequirements.memoryTypeBits, properties);
+        allocInfo.allocationSize = m_memRequirements.size;
+        allocInfo.memoryTypeIndex = m_device.findMemoryType(m_memRequirements.memoryTypeBits, properties);
 
         if (vkAllocateMemory(m_device.getLogicalDevice(), &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
             throw std::runtime_error("Memory allocation failed!");
@@ -58,13 +57,12 @@ namespace VulkanLearning {
 
         m_size = size;
 
-        VkMemoryRequirements memRequirements;
-        vkGetBufferMemoryRequirements(m_device.getLogicalDevice(), m_buffer, &memRequirements);
+        vkGetBufferMemoryRequirements(m_device.getLogicalDevice(), m_buffer, &m_memRequirements);
 
         VkMemoryAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-        allocInfo.allocationSize = memRequirements.size;
-        allocInfo.memoryTypeIndex = m_device.findMemoryType(memRequirements.memoryTypeBits, properties);
+        allocInfo.allocationSize = m_memRequirements.size;
+        allocInfo.memoryTypeIndex = m_device.findMemoryType(m_memRequirements.memoryTypeBits, properties);
 
         if (vkAllocateMemory(m_device.getLogicalDevice(), &allocInfo, nullptr, &m_bufferMemory) != VK_SUCCESS) {
             throw std::runtime_error("Memory allocation failed!");
@@ -88,13 +86,12 @@ namespace VulkanLearning {
 
         m_size = size;
 
-        VkMemoryRequirements memRequirements;
-        vkGetBufferMemoryRequirements(m_device.getLogicalDevice(), m_buffer, &memRequirements);
+        vkGetBufferMemoryRequirements(m_device.getLogicalDevice(), m_buffer, &m_memRequirements);
 
         VkMemoryAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-        allocInfo.allocationSize = memRequirements.size;
-        allocInfo.memoryTypeIndex = m_device.findMemoryType(memRequirements.memoryTypeBits, properties);
+        allocInfo.allocationSize = m_memRequirements.size;
+        allocInfo.memoryTypeIndex = m_device.findMemoryType(m_memRequirements.memoryTypeBits, properties);
 
         if (vkAllocateMemory(m_device.getLogicalDevice(), &allocInfo, nullptr, &m_bufferMemory) != VK_SUCCESS) {
             throw std::runtime_error("Memory allocation failed!");
