@@ -469,6 +469,7 @@ namespace VulkanLearning {
     {
         ImGuiIO& io = ImGui::GetIO();
         io.DisplaySize = ImVec2((float)width, (float)height);
+        updated = true;
     }
 
     void UI::freeResources()

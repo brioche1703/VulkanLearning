@@ -218,7 +218,10 @@ namespace VulkanLearning {
 
                 m_descriptorSetLayout.cleanup();
 
-                m_models.objects[m_models.index].~VulkanglTFModel();
+                for (size_t i = 0; i < m_models.objects.size(); i++) {
+                    m_models.objects[i].~VulkanglTFModel();
+                }
+
                 m_models.skybox.~VulkanglTFModel();
 
                 m_syncObjects.cleanup();
