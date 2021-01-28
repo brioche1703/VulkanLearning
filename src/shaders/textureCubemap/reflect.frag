@@ -8,6 +8,7 @@ layout (binding = 0) uniform UBO
 	mat4 modelView;
 	mat4 invModelView;
 	float lodBias;
+    int cubeMapIndex;
 } ubo;
 
 layout (location = 0) in vec3 inPos;
@@ -26,7 +27,7 @@ void main()
 	// Convert cubemap coordinates into Vulkan coordinate space
 	//cR.xy *= -1.0;
 
-	vec4 color = texture(samplerColor, cR, ubo.lodBias);
+	vec4 color = textureLod(samplerColor, cR, ubo.lodBias);
 
 	vec3 N = normalize(inNormal);
 	vec3 L = normalize(inLightVec);

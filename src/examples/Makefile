@@ -202,21 +202,6 @@ pushConstants/fast:
 .PHONY : pushConstants/fast
 
 # Convenience name for target.
-src/examples/CMakeFiles/specializationConstant.dir/rule:
-	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/specializationConstant.dir/rule
-.PHONY : src/examples/CMakeFiles/specializationConstant.dir/rule
-
-# Convenience name for target.
-specializationConstant: src/examples/CMakeFiles/specializationConstant.dir/rule
-
-.PHONY : specializationConstant
-
-# fast build rule for target.
-specializationConstant/fast:
-	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/build
-.PHONY : specializationConstant/fast
-
-# Convenience name for target.
 src/examples/CMakeFiles/texture.dir/rule:
 	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/texture.dir/rule
 .PHONY : src/examples/CMakeFiles/texture.dir/rule
@@ -320,6 +305,36 @@ gltfCompleteLoader: src/examples/CMakeFiles/gltfCompleteLoader.dir/rule
 gltfCompleteLoader/fast:
 	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfCompleteLoader.dir/build.make src/examples/CMakeFiles/gltfCompleteLoader.dir/build
 .PHONY : gltfCompleteLoader/fast
+
+# Convenience name for target.
+src/examples/CMakeFiles/specializationConstant.dir/rule:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/specializationConstant.dir/rule
+.PHONY : src/examples/CMakeFiles/specializationConstant.dir/rule
+
+# Convenience name for target.
+specializationConstant: src/examples/CMakeFiles/specializationConstant.dir/rule
+
+.PHONY : specializationConstant
+
+# fast build rule for target.
+specializationConstant/fast:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/build
+.PHONY : specializationConstant/fast
+
+# Convenience name for target.
+src/examples/CMakeFiles/textureCubemapArray.dir/rule:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/textureCubemapArray.dir/rule
+.PHONY : src/examples/CMakeFiles/textureCubemapArray.dir/rule
+
+# Convenience name for target.
+textureCubemapArray: src/examples/CMakeFiles/textureCubemapArray.dir/rule
+
+.PHONY : textureCubemapArray
+
+# fast build rule for target.
+textureCubemapArray/fast:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureCubemapArray.dir/build.make src/examples/CMakeFiles/textureCubemapArray.dir/build
+.PHONY : textureCubemapArray/fast
 
 dynamicUniformBuffers/dynamicUniformBuffers.o: dynamicUniformBuffers/dynamicUniformBuffers.cpp.o
 
@@ -618,6 +633,33 @@ textureCubemap/textureCubemap.cpp.s:
 	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureCubemap.dir/build.make src/examples/CMakeFiles/textureCubemap.dir/textureCubemap/textureCubemap.cpp.s
 .PHONY : textureCubemap/textureCubemap.cpp.s
 
+textureCubemapArray/textureCubemapArray.o: textureCubemapArray/textureCubemapArray.cpp.o
+
+.PHONY : textureCubemapArray/textureCubemapArray.o
+
+# target to build an object file
+textureCubemapArray/textureCubemapArray.cpp.o:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureCubemapArray.dir/build.make src/examples/CMakeFiles/textureCubemapArray.dir/textureCubemapArray/textureCubemapArray.cpp.o
+.PHONY : textureCubemapArray/textureCubemapArray.cpp.o
+
+textureCubemapArray/textureCubemapArray.i: textureCubemapArray/textureCubemapArray.cpp.i
+
+.PHONY : textureCubemapArray/textureCubemapArray.i
+
+# target to preprocess a source file
+textureCubemapArray/textureCubemapArray.cpp.i:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureCubemapArray.dir/build.make src/examples/CMakeFiles/textureCubemapArray.dir/textureCubemapArray/textureCubemapArray.cpp.i
+.PHONY : textureCubemapArray/textureCubemapArray.cpp.i
+
+textureCubemapArray/textureCubemapArray.s: textureCubemapArray/textureCubemapArray.cpp.s
+
+.PHONY : textureCubemapArray/textureCubemapArray.s
+
+# target to generate assembly for a file
+textureCubemapArray/textureCubemapArray.cpp.s:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/textureCubemapArray.dir/build.make src/examples/CMakeFiles/textureCubemapArray.dir/textureCubemapArray/textureCubemapArray.cpp.s
+.PHONY : textureCubemapArray/textureCubemapArray.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -631,7 +673,6 @@ help:
 	@echo "... install/strip"
 	@echo "... dynamicUniformBuffers"
 	@echo "... pushConstants"
-	@echo "... specializationConstant"
 	@echo "... texture"
 	@echo "... textureArray"
 	@echo "... gltfloading"
@@ -639,6 +680,8 @@ help:
 	@echo "... textureCubemap"
 	@echo "... gltfScene"
 	@echo "... gltfCompleteLoader"
+	@echo "... specializationConstant"
+	@echo "... textureCubemapArray"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... dynamicUniformBuffers/dynamicUniformBuffers.o"
@@ -674,6 +717,9 @@ help:
 	@echo "... textureCubemap/textureCubemap.o"
 	@echo "... textureCubemap/textureCubemap.i"
 	@echo "... textureCubemap/textureCubemap.s"
+	@echo "... textureCubemapArray/textureCubemapArray.o"
+	@echo "... textureCubemapArray/textureCubemapArray.i"
+	@echo "... textureCubemapArray/textureCubemapArray.s"
 .PHONY : help
 
 

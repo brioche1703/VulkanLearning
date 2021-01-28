@@ -521,9 +521,8 @@ namespace VulkanLearning {
                 pipelineInfo.subpass = 0;
                 pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
                 pipelineInfo.pDynamicState = &dynamicState;
-                pipelineInfo.pVertexInputState = Vertex::getPipelineVertexInputState({
-                        VertexComponent::Position,
-                        VertexComponent::Normal});
+                pipelineInfo.pVertexInputState = Vertex::getPipelineVertexInputState({VertexComponent::Position});
+                
 
                 rasterizer.cullMode = VK_CULL_MODE_FRONT_BIT;
                 VK_CHECK_RESULT(vkCreateGraphicsPipelines(
@@ -538,6 +537,9 @@ namespace VulkanLearning {
                 depthStencilState.depthWriteEnable = VK_TRUE;
                 depthStencilState.depthTestEnable = VK_TRUE;
                 pipelineInfo.pStages = shaderStagesReflect;
+                pipelineInfo.pVertexInputState = Vertex::getPipelineVertexInputState({
+                        VertexComponent::Position,
+                        VertexComponent::Normal});
 
                 VK_CHECK_RESULT(vkCreateGraphicsPipelines(
                             m_device.getLogicalDevice(), 

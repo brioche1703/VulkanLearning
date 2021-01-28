@@ -47,6 +47,7 @@ namespace VulkanLearning {
 
         public:
             VkPhysicalDeviceFeatures features;
+            VkPhysicalDeviceFeatures enabledFeatures = {};
             VkPhysicalDeviceProperties properties;
 
             VulkanDevice() {};
@@ -56,6 +57,8 @@ namespace VulkanLearning {
                     bool enableValidationLayers,
                     const std::vector<const char*> validationLayers,
                     uint32_t msaaSamplesMax);
+            VulkanDevice(uint32_t msaaSamplesMax);
+
             ~VulkanDevice();
 
             VkPhysicalDevice getPhysicalDevice();

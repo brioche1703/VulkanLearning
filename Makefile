@@ -209,19 +209,6 @@ pushConstants/fast:
 .PHONY : pushConstants/fast
 
 #=============================================================================
-# Target rules for targets named specializationConstant
-
-# Build rule for target.
-specializationConstant: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 specializationConstant
-.PHONY : specializationConstant
-
-# fast build rule for target.
-specializationConstant/fast:
-	$(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/build
-.PHONY : specializationConstant/fast
-
-#=============================================================================
 # Target rules for targets named texture
 
 # Build rule for target.
@@ -313,6 +300,32 @@ gltfCompleteLoader/fast:
 .PHONY : gltfCompleteLoader/fast
 
 #=============================================================================
+# Target rules for targets named specializationConstant
+
+# Build rule for target.
+specializationConstant: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 specializationConstant
+.PHONY : specializationConstant
+
+# fast build rule for target.
+specializationConstant/fast:
+	$(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/build
+.PHONY : specializationConstant/fast
+
+#=============================================================================
+# Target rules for targets named textureCubemapArray
+
+# Build rule for target.
+textureCubemapArray: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 textureCubemapArray
+.PHONY : textureCubemapArray
+
+# fast build rule for target.
+textureCubemapArray/fast:
+	$(MAKE) -f src/examples/CMakeFiles/textureCubemapArray.dir/build.make src/examples/CMakeFiles/textureCubemapArray.dir/build
+.PHONY : textureCubemapArray/fast
+
+#=============================================================================
 # Target rules for targets named uninstall
 
 # Build rule for target.
@@ -354,7 +367,6 @@ help:
 	@echo "... simpleTriangle"
 	@echo "... dynamicUniformBuffers"
 	@echo "... pushConstants"
-	@echo "... specializationConstant"
 	@echo "... texture"
 	@echo "... textureArray"
 	@echo "... gltfloading"
@@ -362,6 +374,8 @@ help:
 	@echo "... textureCubemap"
 	@echo "... gltfScene"
 	@echo "... gltfCompleteLoader"
+	@echo "... specializationConstant"
+	@echo "... textureCubemapArray"
 	@echo "... uninstall"
 	@echo "... glfw"
 .PHONY : help

@@ -72,6 +72,7 @@ set(EXAMPLES
     gltfScene
     gltfCompleteLoader
     textureCubemap
+    textureCubemapArray
 )
 
 buildExamples()

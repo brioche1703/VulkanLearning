@@ -210,6 +210,8 @@ namespace VulkanLearning {
 
             virtual void createDebug() {}
 
+            virtual void checkAndEnableFeatures() {}
+
             virtual void createDevice() {}
 
             virtual void createSwapChain() {}

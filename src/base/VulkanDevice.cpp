@@ -8,13 +8,18 @@
 
 namespace VulkanLearning {
 
-    VulkanDevice::VulkanDevice(VkInstance instance, VkSurfaceKHR surface,
+    VulkanDevice::VulkanDevice(
+            VkInstance instance, 
+            VkSurfaceKHR surface,
             const std::vector<const char*> deviceExtensions,
             bool enableValidationLayers,
             const std::vector<const char*> validationLayers,
             uint32_t msaaSamplesMax) : m_msaaSamplesMax(msaaSamplesMax) {
         pickPhysicalDevice(instance, surface, deviceExtensions);
         createLogicalDevice(surface, enableValidationLayers, validationLayers);
+    }
+
+    VulkanDevice::VulkanDevice(uint32_t msaaSamplesMax) : m_msaaSamplesMax(msaaSamplesMax) {
     }
 
     VulkanDevice::~VulkanDevice() {
@@ -78,10 +83,9 @@ namespace VulkanLearning {
             queueCreateInfos.push_back(queueCreateInfo);
         }
 
-        VkPhysicalDeviceFeatures deviceFeatures{};
-        deviceFeatures.samplerAnisotropy = VK_TRUE;
-        deviceFeatures.sampleRateShading = VK_TRUE;
-        deviceFeatures.fillModeNonSolid = VK_TRUE;
+        enabledFeatures.samplerAnisotropy = VK_TRUE;
+        enabledFeatures.sampleRateShading = VK_TRUE;
+        enabledFeatures.fillModeNonSolid = VK_TRUE;
 
         VkDeviceCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -89,7 +93,7 @@ namespace VulkanLearning {
         createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
         createInfo.pQueueCreateInfos = queueCreateInfos.data();
 
-        createInfo.pEnabledFeatures = &deviceFeatures;
+        createInfo.pEnabledFeatures = &enabledFeatures;
 
         createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
         createInfo.ppEnabledExtensionNames = deviceExtensions.data();
