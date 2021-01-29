@@ -183,6 +183,19 @@ simpleTriangle/fast:
 .PHONY : simpleTriangle/fast
 
 #=============================================================================
+# Target rules for targets named texture3d
+
+# Build rule for target.
+texture3d: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 texture3d
+.PHONY : texture3d
+
+# fast build rule for target.
+texture3d/fast:
+	$(MAKE) -f src/examples/CMakeFiles/texture3d.dir/build.make src/examples/CMakeFiles/texture3d.dir/build
+.PHONY : texture3d/fast
+
+#=============================================================================
 # Target rules for targets named dynamicUniformBuffers
 
 # Build rule for target.
@@ -365,6 +378,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... base"
 	@echo "... simpleTriangle"
+	@echo "... texture3d"
 	@echo "... dynamicUniformBuffers"
 	@echo "... pushConstants"
 	@echo "... texture"

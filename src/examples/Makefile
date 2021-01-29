@@ -78,6 +78,28 @@ list_install_components/fast: list_install_components
 
 .PHONY : list_install_components/fast
 
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
+
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
+
 # Special rule for the target install
 install: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
@@ -101,28 +123,6 @@ install/strip/fast: preinstall/fast
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
 	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
 .PHONY : install/strip/fast
-
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
-
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -170,6 +170,21 @@ simpleTriangle: src/examples/CMakeFiles/simpleTriangle.dir/rule
 simpleTriangle/fast:
 	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/simpleTriangle.dir/build.make src/examples/CMakeFiles/simpleTriangle.dir/build
 .PHONY : simpleTriangle/fast
+
+# Convenience name for target.
+src/examples/CMakeFiles/texture3d.dir/rule:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/texture3d.dir/rule
+.PHONY : src/examples/CMakeFiles/texture3d.dir/rule
+
+# Convenience name for target.
+texture3d: src/examples/CMakeFiles/texture3d.dir/rule
+
+.PHONY : texture3d
+
+# fast build rule for target.
+texture3d/fast:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/texture3d.dir/build.make src/examples/CMakeFiles/texture3d.dir/build
+.PHONY : texture3d/fast
 
 # Convenience name for target.
 src/examples/CMakeFiles/dynamicUniformBuffers.dir/rule:
@@ -579,6 +594,33 @@ texture/texture.cpp.s:
 	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/texture.dir/build.make src/examples/CMakeFiles/texture.dir/texture/texture.cpp.s
 .PHONY : texture/texture.cpp.s
 
+texture3d/texture3d.o: texture3d/texture3d.cpp.o
+
+.PHONY : texture3d/texture3d.o
+
+# target to build an object file
+texture3d/texture3d.cpp.o:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/texture3d.dir/build.make src/examples/CMakeFiles/texture3d.dir/texture3d/texture3d.cpp.o
+.PHONY : texture3d/texture3d.cpp.o
+
+texture3d/texture3d.i: texture3d/texture3d.cpp.i
+
+.PHONY : texture3d/texture3d.i
+
+# target to preprocess a source file
+texture3d/texture3d.cpp.i:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/texture3d.dir/build.make src/examples/CMakeFiles/texture3d.dir/texture3d/texture3d.cpp.i
+.PHONY : texture3d/texture3d.cpp.i
+
+texture3d/texture3d.s: texture3d/texture3d.cpp.s
+
+.PHONY : texture3d/texture3d.s
+
+# target to generate assembly for a file
+texture3d/texture3d.cpp.s:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/texture3d.dir/build.make src/examples/CMakeFiles/texture3d.dir/texture3d/texture3d.cpp.s
+.PHONY : texture3d/texture3d.cpp.s
+
 textureArray/textureArray.o: textureArray/textureArray.cpp.o
 
 .PHONY : textureArray/textureArray.o
@@ -668,8 +710,11 @@ help:
 	@echo "... depend"
 	@echo "... install/local"
 	@echo "... list_install_components"
+	@echo "... rebuild_cache"
+	@echo "... edit_cache"
 	@echo "... install"
 	@echo "... simpleTriangle"
+	@echo "... texture3d"
 	@echo "... install/strip"
 	@echo "... dynamicUniformBuffers"
 	@echo "... pushConstants"
@@ -682,8 +727,6 @@ help:
 	@echo "... gltfCompleteLoader"
 	@echo "... specializationConstant"
 	@echo "... textureCubemapArray"
-	@echo "... rebuild_cache"
-	@echo "... edit_cache"
 	@echo "... dynamicUniformBuffers/dynamicUniformBuffers.o"
 	@echo "... dynamicUniformBuffers/dynamicUniformBuffers.i"
 	@echo "... dynamicUniformBuffers/dynamicUniformBuffers.s"
@@ -711,6 +754,9 @@ help:
 	@echo "... texture/texture.o"
 	@echo "... texture/texture.i"
 	@echo "... texture/texture.s"
+	@echo "... texture3d/texture3d.o"
+	@echo "... texture3d/texture3d.i"
+	@echo "... texture3d/texture3d.s"
 	@echo "... textureArray/textureArray.o"
 	@echo "... textureArray/textureArray.i"
 	@echo "... textureArray/textureArray.s"

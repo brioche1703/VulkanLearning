@@ -57,3 +57,6 @@ $GLSLC_PATH textureCubemapArray/reflect.frag -o textureCubemapArray/reflectFrag.
 
 $GLSLC_PATH textureCubemapArray/skybox.vert -o textureCubemapArray/skyboxVert.spv
 $GLSLC_PATH textureCubemapArray/skybox.frag -o textureCubemapArray/skyboxFrag.spv
+
+$GLSLC_PATH texture3d/texture3d.vert -o texture3d/texture3dVert.spv
+$GLSLC_PATH texture3d/texture3d.frag -o texture3d/texture3dFrag.spv

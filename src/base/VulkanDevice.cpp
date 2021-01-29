@@ -228,7 +228,8 @@ namespace VulkanLearning {
     }
 
     VkFormat VulkanDevice::findSupportedFormat(
-            const std::vector<VkFormat>& candidates, VkImageTiling tiling, 
+            const std::vector<VkFormat>& candidates, 
+            VkImageTiling tiling, 
             VkFormatFeatureFlags features) {
         for (VkFormat format : candidates) {
             VkFormatProperties props;
