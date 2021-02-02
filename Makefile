@@ -170,6 +170,19 @@ base/fast:
 .PHONY : base/fast
 
 #=============================================================================
+# Target rules for targets named inputAttachments
+
+# Build rule for target.
+inputAttachments: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 inputAttachments
+.PHONY : inputAttachments
+
+# fast build rule for target.
+inputAttachments/fast:
+	$(MAKE) -f src/examples/CMakeFiles/inputAttachments.dir/build.make src/examples/CMakeFiles/inputAttachments.dir/build
+.PHONY : inputAttachments/fast
+
+#=============================================================================
 # Target rules for targets named simpleTriangle
 
 # Build rule for target.
@@ -377,6 +390,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... base"
+	@echo "... inputAttachments"
 	@echo "... simpleTriangle"
 	@echo "... texture3d"
 	@echo "... dynamicUniformBuffers"

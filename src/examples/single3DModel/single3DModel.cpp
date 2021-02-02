@@ -83,13 +83,13 @@ namespace VulkanLearning {
 
             void drawFrame() override {
                 vkWaitForFences(m_device.getLogicalDevice(), 1, 
-                        &m_syncObjects.getInFlightFences()[currentFrame], VK_TRUE, UINT64_MAX);
+                        &m_syncObjects.getInFlightFences()[m_currentFrame], VK_TRUE, UINT64_MAX);
 
                 uint32_t imageIndex;
 
                 VkResult result = vkAcquireNextImageKHR(m_device.getLogicalDevice(), 
                         m_swapChain.getSwapChain(), UINT64_MAX, 
-                        m_syncObjects.getImageAvailableSemaphores()[currentFrame], 
+                        m_syncObjects.getImageAvailableSemaphores()[m_currentFrame], 
                         VK_NULL_HANDLE, &imageIndex);
 
                 if (result == VK_ERROR_OUT_OF_DATE_KHR) {
@@ -103,14 +103,14 @@ namespace VulkanLearning {
                     vkWaitForFences(m_device.getLogicalDevice(), 1, &m_syncObjects.getImagesInFlight()[imageIndex], VK_TRUE, UINT64_MAX);
                 }
 
-                m_syncObjects.getImagesInFlight()[imageIndex] = m_syncObjects.getInFlightFences()[currentFrame];
+                m_syncObjects.getImagesInFlight()[imageIndex] = m_syncObjects.getInFlightFences()[m_currentFrame];
 
                 updateCamera(imageIndex);
 
                 VkSubmitInfo submitInfo{};
                 submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-                VkSemaphore waitSemaphore[] = {m_syncObjects.getImageAvailableSemaphores()[currentFrame]};
+                VkSemaphore waitSemaphore[] = {m_syncObjects.getImageAvailableSemaphores()[m_currentFrame]};
                 VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
                 submitInfo.waitSemaphoreCount = 1;
                 submitInfo.pWaitSemaphores = waitSemaphore;
@@ -118,13 +118,13 @@ namespace VulkanLearning {
                 submitInfo.commandBufferCount = 1;
                 submitInfo.pCommandBuffers = m_commandBuffers[imageIndex].getCommandBufferPointer();
 
-                VkSemaphore signalSemaphores[] = {m_syncObjects.getRenderFinishedSemaphores()[currentFrame]};
+                VkSemaphore signalSemaphores[] = {m_syncObjects.getRenderFinishedSemaphores()[m_currentFrame]};
                 submitInfo.signalSemaphoreCount = 1;
                 submitInfo.pSignalSemaphores = signalSemaphores;
 
-                vkResetFences(m_device.getLogicalDevice(), 1, &m_syncObjects.getInFlightFences()[currentFrame]);
+                vkResetFences(m_device.getLogicalDevice(), 1, &m_syncObjects.getInFlightFences()[m_currentFrame]);
 
-                if (vkQueueSubmit(m_device.getGraphicsQueue(), 1, &submitInfo, m_syncObjects.getInFlightFences()[currentFrame]) != VK_SUCCESS) {
+                if (vkQueueSubmit(m_device.getGraphicsQueue(), 1, &submitInfo, m_syncObjects.getInFlightFences()[m_currentFrame]) != VK_SUCCESS) {
                     throw std::runtime_error("Command buffer sending failed!");
                 }
 
@@ -148,7 +148,7 @@ namespace VulkanLearning {
                     throw std::runtime_error("Presentation of one image of the swap chain failed!");
                 }
 
-                currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+                m_currentFrame = (m_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
             }
 
             void cleanup() override {

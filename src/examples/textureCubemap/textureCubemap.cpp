@@ -115,7 +115,7 @@ namespace VulkanLearning {
                 vkWaitForFences(
                         m_device.getLogicalDevice(), 
                         1, 
-                        &m_syncObjects.getInFlightFences()[currentFrame], 
+                        &m_syncObjects.getInFlightFences()[m_currentFrame], 
                         VK_TRUE, 
                         UINT64_MAX);
 
@@ -125,7 +125,7 @@ namespace VulkanLearning {
                         m_device.getLogicalDevice(), 
                         m_swapChain.getSwapChain(), 
                         UINT64_MAX, 
-                        m_syncObjects.getImageAvailableSemaphores()[currentFrame], 
+                        m_syncObjects.getImageAvailableSemaphores()[m_currentFrame], 
                         VK_NULL_HANDLE, 
                         &imageIndex);
 
@@ -146,7 +146,7 @@ namespace VulkanLearning {
                 }
 
                 m_syncObjects.getImagesInFlight()[imageIndex] = 
-                    m_syncObjects.getInFlightFences()[currentFrame];
+                    m_syncObjects.getInFlightFences()[m_currentFrame];
 
                 updateUniformBuffers();
 
@@ -154,7 +154,7 @@ namespace VulkanLearning {
                 submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
                 VkSemaphore waitSemaphore[] = {
-                    m_syncObjects.getImageAvailableSemaphores()[currentFrame]
+                    m_syncObjects.getImageAvailableSemaphores()[m_currentFrame]
                 };
 
                 VkPipelineStageFlags waitStages[] = {
@@ -169,7 +169,7 @@ namespace VulkanLearning {
                     m_commandBuffers[imageIndex].getCommandBufferPointer();
 
                 VkSemaphore signalSemaphores[] = {
-                    m_syncObjects.getRenderFinishedSemaphores()[currentFrame]
+                    m_syncObjects.getRenderFinishedSemaphores()[m_currentFrame]
                 };
 
                 submitInfo.signalSemaphoreCount = 1;
@@ -178,9 +178,9 @@ namespace VulkanLearning {
                 vkResetFences(
                         m_device.getLogicalDevice(), 
                         1, 
-                        &m_syncObjects.getInFlightFences()[currentFrame]);
+                        &m_syncObjects.getInFlightFences()[m_currentFrame]);
 
-                if (vkQueueSubmit(m_device.getGraphicsQueue(), 1, &submitInfo, m_syncObjects.getInFlightFences()[currentFrame]) != VK_SUCCESS) {
+                if (vkQueueSubmit(m_device.getGraphicsQueue(), 1, &submitInfo, m_syncObjects.getInFlightFences()[m_currentFrame]) != VK_SUCCESS) {
                     throw std::runtime_error("Command buffer sending failed!");
                 }
 
@@ -208,7 +208,7 @@ namespace VulkanLearning {
                     throw std::runtime_error("Presentation of one image of the swap chain failed!");
                 }
 
-                currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+                m_currentFrame = (m_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
             }
 
             void cleanup() override {

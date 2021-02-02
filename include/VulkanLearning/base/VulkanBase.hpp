@@ -87,8 +87,26 @@ namespace VulkanLearning {
         public:
 
             bool m_wireframe = false;
+
             VulkanBase() {}
             virtual ~VulkanBase() {
+                m_syncObjects.cleanup();
+                m_ui.freeResources();
+
+                vkDestroyCommandPool(m_device.getLogicalDevice(), m_device.getCommandPool(), nullptr);
+
+                vkDestroyDevice(m_device.getLogicalDevice(), nullptr);
+
+                if (enableValidationLayers) {
+                    m_debug->destroy(m_instance->getInstance(), nullptr);
+                }
+
+                vkDestroySurfaceKHR(m_instance->getInstance(), m_surface.getSurface(), nullptr);
+                vkDestroyInstance(m_instance->getInstance(), nullptr);
+
+                glfwDestroyWindow(m_window.getWindow() );
+
+                glfwTerminate();
             }
 
             void run() {
@@ -113,9 +131,11 @@ namespace VulkanLearning {
             VulkanDebug* m_debug = new VulkanDebug();
 
             VulkanDevice m_device;
+            uint32_t m_msaaSamples = 64;
             VulkanSurface m_surface;
 
             VulkanSwapChain m_swapChain;
+            VkSubmitInfo m_submitInfo;
 
             VulkanRenderPass m_renderPass;
 
@@ -134,18 +154,47 @@ namespace VulkanLearning {
             std::vector<VulkanCommandBuffer> m_commandBuffers;
 
             VulkanSyncObjects m_syncObjects;
+            std::vector<VkSemaphore> m_signalSemaphores;
+            std::vector<VkSemaphore> m_waitSemaphore;
+            VkPipelineStageFlags m_waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
-            size_t currentFrame = 0;
+            size_t m_currentFrame = 0;
             bool framebufferResized = false;
 
             VulkanImageResource m_colorImageResource;
             VulkanImageResource m_depthImageResource;
 
-            virtual void initWindow() {}
+            virtual void initWindow() {
+                m_window = Window("Vulkan", WIDTH, HEIGHT);
+                m_window.init();
+            }
 
-            virtual void initCore() {}
+            virtual void initCore() {
+                m_camera = Camera(glm::vec3(0.0f, 0.0f, 5.0f));
+                
+                m_fpsCounter = FpsCounter();
+                m_input = Inputs(m_window.getWindow(), &m_camera, &m_fpsCounter, &m_ui);
 
-            virtual void initVulkan() {}
+                glfwSetKeyCallback(m_window.getWindow() , m_input.keyboard_callback);
+                glfwSetScrollCallback(m_window.getWindow() , m_input.scroll_callback);
+                glfwSetCursorPosCallback(m_window.getWindow() , m_input.mouse_callback);
+                glfwSetMouseButtonCallback(m_window.getWindow() , m_input.mouse_button_callback);
+
+                glfwSetInputMode(m_window.getWindow() , GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            }
+
+            virtual void initVulkan() {
+                createInstance();
+                createDebug();
+                createSurface();
+                createDevice();
+                createSwapChain();
+                createRenderPass();
+                createColorResources();
+                createDepthResources();
+                createFramebuffers();
+                createSyncObjects();
+            }
 
             virtual void createUI() {
                 ImGuiIO& io = ImGui::GetIO();
@@ -194,41 +243,199 @@ namespace VulkanLearning {
                 }
             }
 
-            virtual void mainLoop() {}
+            virtual void mainLoop() {
+                while (!glfwWindowShouldClose(m_window.getWindow() )) {
+                    glfwPollEvents();
+                    m_input.processKeyboardInput();
+                    m_fpsCounter.update();
+                    updateUI();
+                    drawFrame();
+                }
+
+                vkDeviceWaitIdle(m_device.getLogicalDevice());
+            }
+
+            virtual void acquireFrame(uint32_t *imageIndex) {
+                vkWaitForFences(m_device.getLogicalDevice(), 1, &m_syncObjects.getInFlightFences()[m_currentFrame], VK_TRUE, UINT64_MAX);
+
+                VkResult result = vkAcquireNextImageKHR(m_device.getLogicalDevice(), m_swapChain.getSwapChain(), UINT64_MAX, m_syncObjects.getImageAvailableSemaphores()[m_currentFrame], VK_NULL_HANDLE, imageIndex);
+
+                if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+                    recreateSwapChain();
+                    return;
+                } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+                    throw std::runtime_error("Presentation of one image of the swap chain failed!");
+                }
+
+                if (m_syncObjects.getImagesInFlight()[*imageIndex] != VK_NULL_HANDLE) {
+                    vkWaitForFences(m_device.getLogicalDevice(), 1, &m_syncObjects.getImagesInFlight()[*imageIndex], VK_TRUE, UINT64_MAX);
+                }
+
+                m_syncObjects.getImagesInFlight()[*imageIndex] = m_syncObjects.getInFlightFences()[m_currentFrame];
+
+                m_submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+                m_waitSemaphore = {m_syncObjects.getImageAvailableSemaphores()[m_currentFrame]};
+                m_submitInfo.waitSemaphoreCount = 1;
+                m_submitInfo.pWaitSemaphores = m_waitSemaphore.data();
+                m_submitInfo.pWaitDstStageMask = &m_waitStages;
+                m_submitInfo.commandBufferCount = 1;
+                m_submitInfo.pCommandBuffers = m_commandBuffers[*imageIndex].getCommandBufferPointer();
+
+                m_signalSemaphores = {m_syncObjects.getRenderFinishedSemaphores()[m_currentFrame]};
+                m_submitInfo.signalSemaphoreCount = 1;
+                m_submitInfo.pSignalSemaphores = m_signalSemaphores.data();
+
+                vkResetFences(m_device.getLogicalDevice(), 1, &m_syncObjects.getInFlightFences()[m_currentFrame]);
+            }
+
+            virtual void presentFrame(uint32_t imageIndex) {
+                VkPresentInfoKHR presentInfo{};
+                presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+                presentInfo.waitSemaphoreCount = 1;
+                presentInfo.pWaitSemaphores = m_signalSemaphores.data();
+
+                VkSwapchainKHR swapChains[] = {m_swapChain.getSwapChain()};
+                presentInfo.swapchainCount = 1;
+                presentInfo.pSwapchains = swapChains;
+                presentInfo.pImageIndices = &imageIndex;
+                presentInfo.pResults = nullptr;
+
+                VkResult result = vkQueuePresentKHR(m_device.getPresentQueue(), &presentInfo);
+
+                if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized) {
+                    framebufferResized = false;
+                    recreateSwapChain();
+                } else if (result != VK_SUCCESS) {
+                    throw std::runtime_error("Presentation of one image of the swap chain failed!");
+                }
+
+                m_currentFrame = (m_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+            }
 
             virtual void drawFrame() {}
 
             virtual void cleanup() {}
 
-            virtual void createSurface() {}
+            virtual void createSurface() {
+                m_surface = VulkanSurface();
+                m_surface.create(m_window, *m_instance);
+            }
 
-            virtual void recreateSwapChain() {}
+            virtual void recreateSwapChain() {
+                int width = 0, height = 0;
+                while (width == 0 || height == 0) {
+                    glfwGetFramebufferSize(m_window.getWindow() , &width, &height);
+                    glfwWaitEvents();
+                }
 
-            virtual void cleanupSwapChain() {}
+                vkDeviceWaitIdle(m_device.getLogicalDevice());
 
-            virtual void createInstance() {}
+                cleanupSwapChain();
 
-            virtual void createDebug() {}
+                m_swapChain.create();
+
+                createRenderPass();
+                createColorResources();
+                createDepthResources();
+
+                createFramebuffers();
+
+                createDescriptorPool();
+                createDescriptorSets();
+                createCommandBuffers();
+                m_ui.resize(m_swapChain.getExtent().width, m_swapChain.getExtent().height);
+            }
+
+            virtual void cleanupSwapChain() {
+                m_colorImageResource.cleanup();
+                m_depthImageResource.cleanup();
+
+                m_swapChain.cleanFramebuffers();
+
+                vkFreeCommandBuffers(
+                        m_device.getLogicalDevice(), 
+                        m_device.getCommandPool(), 
+                        static_cast<uint32_t>(m_commandBuffers.size()), 
+                        m_commandBuffers.data()->getCommandBufferPointer());
+
+                vkDestroyRenderPass(m_device.getLogicalDevice(), m_renderPass.getRenderPass(), nullptr);
+
+                m_swapChain.destroyImageViews();
+                vkDestroySwapchainKHR(m_device.getLogicalDevice(), m_swapChain.getSwapChain(), nullptr);
+
+                vkDestroyDescriptorPool(
+                        m_device.getLogicalDevice(), 
+                        m_descriptorPool.getDescriptorPool(), 
+                        nullptr);
+            }
+
+            virtual void createInstance() {
+                m_instance = new VulkanInstance(
+                        "Base",
+                        enableValidationLayers, 
+                        validationLayers, 
+                        m_debug);
+            }
+
+            virtual void createDebug() {
+                m_debug = new VulkanDebug(m_instance->getInstance(), 
+                        enableValidationLayers);
+            }
 
             virtual void checkAndEnableFeatures() {}
 
-            virtual void createDevice() {}
+            virtual void createDevice() {
+                m_device = VulkanDevice(
+                        m_instance->getInstance(), 
+                        m_surface.getSurface(), 
+                        deviceExtensions,
+                        enableValidationLayers, 
+                        validationLayers, 
+                        m_msaaSamples);
+            }
 
-            virtual void createSwapChain() {}
+            virtual void createSwapChain() {
+                m_swapChain = VulkanSwapChain(m_window, m_device, m_surface);
+            }
 
             virtual void createRenderPass() {}
 
             virtual void createGraphicsPipeline() {}
 
-            virtual void createFramebuffers() {}
+            virtual void createFramebuffers() {
+                const std::vector<VkImageView> attachments {
+                    m_colorImageResource.getImageView(),
+                        m_depthImageResource.getImageView()
+                };
+
+                m_swapChain.createFramebuffers(m_renderPass.getRenderPass(), 
+                        attachments);
+            }
 
             virtual void createCommandPool() {}
 
             virtual void createTexture() {}
 
-            virtual void createColorResources() {}
+            virtual void createColorResources() {
+                m_colorImageResource = VulkanImageResource(
+                        m_device, 
+                        m_swapChain, 
+                        m_swapChain.getImageFormat(),  
+                        VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, 
+                        VK_IMAGE_ASPECT_COLOR_BIT);
+                m_colorImageResource.create();
+            }
 
-            virtual void createDepthResources() {}
+            virtual void createDepthResources() {
+                m_depthImageResource = VulkanImageResource(
+                        m_device, 
+                        m_swapChain,
+                        m_device.findDepthFormat(), 
+                        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
+                        VK_IMAGE_ASPECT_DEPTH_BIT);
+                m_depthImageResource.create();
+            }
 
             virtual void createVertexBuffer() {}
 
@@ -237,7 +444,10 @@ namespace VulkanLearning {
             virtual void createCoordinateSystemUniformBuffers() {}
             virtual void createCommandBuffers() {}
 
-            virtual void createSyncObjects() {}
+            virtual void createSyncObjects() {
+                m_syncObjects = VulkanSyncObjects(m_device, m_swapChain, 
+                        MAX_FRAMES_IN_FLIGHT);
+            }
 
             virtual void createDescriptorSetLayout() {}
             virtual void createDescriptorPool() {}

@@ -24,6 +24,10 @@ namespace VulkanLearning {
 
             inline GLFWwindow* getWindow() { return m_window; }
             inline std::string getTitle() { return m_title; }
+            inline void setTitle(std::string title) { 
+                m_title = title;
+                glfwSetWindowTitle(m_window, title.c_str());
+            }
 
             void init() {
                 glfwInit();

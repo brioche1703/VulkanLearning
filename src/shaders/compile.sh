@@ -60,3 +60,6 @@ $GLSLC_PATH textureCubemapArray/skybox.frag -o textureCubemapArray/skyboxFrag.sp
 
 $GLSLC_PATH texture3d/texture3d.vert -o texture3d/texture3dVert.spv
 $GLSLC_PATH texture3d/texture3d.frag -o texture3d/texture3dFrag.spv
+
+$GLSLC_PATH inputAttachments/inputAttachments.vert -o inputAttachments/inputAttachmentsVert.spv
+$GLSLC_PATH inputAttachments/inputAttachments.frag -o inputAttachments/inputAttachmentsFrag.spv

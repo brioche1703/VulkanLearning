@@ -157,6 +157,21 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
+src/examples/CMakeFiles/inputAttachments.dir/rule:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/inputAttachments.dir/rule
+.PHONY : src/examples/CMakeFiles/inputAttachments.dir/rule
+
+# Convenience name for target.
+inputAttachments: src/examples/CMakeFiles/inputAttachments.dir/rule
+
+.PHONY : inputAttachments
+
+# fast build rule for target.
+inputAttachments/fast:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/inputAttachments.dir/build.make src/examples/CMakeFiles/inputAttachments.dir/build
+.PHONY : inputAttachments/fast
+
+# Convenience name for target.
 src/examples/CMakeFiles/simpleTriangle.dir/rule:
 	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/simpleTriangle.dir/rule
 .PHONY : src/examples/CMakeFiles/simpleTriangle.dir/rule
@@ -459,6 +474,33 @@ gltfloading/gltfloading.cpp.s:
 	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/gltfloading.dir/build.make src/examples/CMakeFiles/gltfloading.dir/gltfloading/gltfloading.cpp.s
 .PHONY : gltfloading/gltfloading.cpp.s
 
+inputAttachments/inputAttachments.o: inputAttachments/inputAttachments.cpp.o
+
+.PHONY : inputAttachments/inputAttachments.o
+
+# target to build an object file
+inputAttachments/inputAttachments.cpp.o:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/inputAttachments.dir/build.make src/examples/CMakeFiles/inputAttachments.dir/inputAttachments/inputAttachments.cpp.o
+.PHONY : inputAttachments/inputAttachments.cpp.o
+
+inputAttachments/inputAttachments.i: inputAttachments/inputAttachments.cpp.i
+
+.PHONY : inputAttachments/inputAttachments.i
+
+# target to preprocess a source file
+inputAttachments/inputAttachments.cpp.i:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/inputAttachments.dir/build.make src/examples/CMakeFiles/inputAttachments.dir/inputAttachments/inputAttachments.cpp.i
+.PHONY : inputAttachments/inputAttachments.cpp.i
+
+inputAttachments/inputAttachments.s: inputAttachments/inputAttachments.cpp.s
+
+.PHONY : inputAttachments/inputAttachments.s
+
+# target to generate assembly for a file
+inputAttachments/inputAttachments.cpp.s:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/inputAttachments.dir/build.make src/examples/CMakeFiles/inputAttachments.dir/inputAttachments/inputAttachments.cpp.s
+.PHONY : inputAttachments/inputAttachments.cpp.s
+
 pushConstants/pushConstants.o: pushConstants/pushConstants.cpp.o
 
 .PHONY : pushConstants/pushConstants.o
@@ -712,6 +754,7 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
+	@echo "... inputAttachments"
 	@echo "... install"
 	@echo "... simpleTriangle"
 	@echo "... texture3d"
@@ -739,6 +782,9 @@ help:
 	@echo "... gltfloading/gltfloading.o"
 	@echo "... gltfloading/gltfloading.i"
 	@echo "... gltfloading/gltfloading.s"
+	@echo "... inputAttachments/inputAttachments.o"
+	@echo "... inputAttachments/inputAttachments.i"
+	@echo "... inputAttachments/inputAttachments.s"
 	@echo "... pushConstants/pushConstants.o"
 	@echo "... pushConstants/pushConstants.i"
 	@echo "... pushConstants/pushConstants.s"
