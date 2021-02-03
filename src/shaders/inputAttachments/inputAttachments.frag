@@ -2,14 +2,6 @@
 
 //layout (binding = 1) uniform samplerCube samplerColor;
 
-layout (binding = 0) uniform UBO
-{
-	mat4 projection;
-	mat4 model;
-	mat4 invModel;
-	float lodBias;
-} ubo;
-
 layout (location = 0) in vec3 inPos;
 layout (location = 1) in vec3 inNormal;
 layout (location = 2) in vec3 inViewVec;
@@ -19,13 +11,6 @@ layout (location = 0) out vec4 outFragColor;
 
 void main()
 {
-	vec3 cI = normalize (inPos);
-	vec3 cR = reflect (cI, normalize(inNormal));
-
-	cR = vec3(ubo.invModel * vec4(cR, 0.0));
-	// Convert cubemap coordinates into Vulkan coordinate space
-	cR.xy *= -1.0;
-
 	vec4 color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
 	vec3 N = normalize(inNormal);

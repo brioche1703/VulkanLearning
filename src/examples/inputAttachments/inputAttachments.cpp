@@ -9,14 +9,10 @@ namespace VulkanLearning {
     class VulkanExample : public VulkanBase {
 
         private:
-            VkPipelineLayout m_pipelineLayout;
 
             VulkanglTFModel m_model;
 
-            struct {
-                VulkanBuffer skybox;
-                VulkanBuffer object;
-            } m_uniformBuffers;
+            VulkanBuffer m_modelUbo;
 
             struct UBOVS {
                 glm::mat4 projection;
@@ -25,17 +21,11 @@ namespace VulkanLearning {
                 float lodBias = 0.0f;
             } m_uboVS;
 
-            struct {
-                VkPipeline skybox;
-                VkPipeline reflect;
-            } m_pipelines;
-
-            struct {
-                VkDescriptorSet object;
-                VkDescriptorSet skybox;
-            } m_descriptorSets;
+            VkPipelineLayout m_pipelineLayout;
+            VkPipeline m_pipeline;
 
             VulkanDescriptorSetLayout m_descriptorSetLayout;
+            VkDescriptorSet m_descriptorSet;
 
         public:
             VulkanExample() {}
@@ -43,11 +33,9 @@ namespace VulkanLearning {
             ~VulkanExample() {
                 cleanupSwapChain();
 
-                m_uniformBuffers.object.cleanup();
-                m_uniformBuffers.skybox.cleanup();
+                m_modelUbo.cleanup();
 
-                vkDestroyPipeline(m_device.getLogicalDevice(), m_pipelines.reflect, nullptr);
-                vkDestroyPipeline(m_device.getLogicalDevice(), m_pipelines.skybox, nullptr);
+                vkDestroyPipeline(m_device.getLogicalDevice(), m_pipeline, nullptr);
 
                 vkDestroyPipelineLayout(m_device.getLogicalDevice(), m_pipelineLayout, nullptr);
 
@@ -237,12 +225,12 @@ namespace VulkanLearning {
 
                 VulkanShaderModule vertShaderModuleReflect = 
                     VulkanShaderModule(
-                            "src/shaders/textureCubemap/reflectVert.spv", 
+                            "src/shaders/inputAttachments/inputAttachmentsVert.spv", 
                             &m_device, 
                             VK_SHADER_STAGE_VERTEX_BIT);
                 VulkanShaderModule fragShaderModuleReflect = 
                     VulkanShaderModule(
-                            "src/shaders/textureCubemap/reflectFrag.spv", 
+                            "src/shaders/inputAttachments/inputAttachmentsFrag.spv", 
                             &m_device, 
                             VK_SHADER_STAGE_FRAGMENT_BIT);
 
@@ -276,7 +264,7 @@ namespace VulkanLearning {
                             1, 
                             &pipelineInfo, 
                             nullptr, 
-                            &m_pipelines.reflect));
+                            &m_pipeline));
 
                 vkDestroyShaderModule(
                         m_device.getLogicalDevice(), 
@@ -289,21 +277,15 @@ namespace VulkanLearning {
             }
 
             void createUniformBuffers() {
-                m_uniformBuffers.object = VulkanBuffer(m_device);
-                m_uniformBuffers.skybox = VulkanBuffer(m_device);
+                m_modelUbo = VulkanBuffer(m_device);
 
-                m_uniformBuffers.object.createBuffer(
+
+                m_modelUbo.createBuffer(
                         sizeof(m_uboVS), 
                         VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
                         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-                m_uniformBuffers.skybox.createBuffer(
-                        sizeof(m_uboVS), 
-                        VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-
-                m_uniformBuffers.object.map();
-                m_uniformBuffers.skybox.map();
+                m_modelUbo.map();
 
                 updateUniformBuffers();
             }
@@ -372,17 +354,17 @@ namespace VulkanLearning {
                             m_pipelineLayout,
                             0, 
                             1, 
-                            &m_descriptorSets.object,
+                            &m_descriptorSet,
                             0, 
                             nullptr);
 
                     vkCmdBindPipeline(
                             m_commandBuffers[i].getCommandBuffer(), 
                             VK_PIPELINE_BIND_POINT_GRAPHICS, 
-                            m_pipelines.reflect);
+                            m_pipeline);
 
                     m_model.draw(m_commandBuffers[i].getCommandBuffer());
-                    
+
                     drawUI(m_commandBuffers[i].getCommandBuffer());
 
                     vkCmdEndRenderPass(m_commandBuffers[i].getCommandBuffer());
@@ -399,7 +381,7 @@ namespace VulkanLearning {
                 descriptorSetLayoutBindings[0].binding = 0;
                 descriptorSetLayoutBindings[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
                 descriptorSetLayoutBindings[0].descriptorCount = 1;
-                descriptorSetLayoutBindings[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+                descriptorSetLayoutBindings[0].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
                 descriptorSetLayoutBindings[0].pImmutableSamplers = nullptr;
 
                 m_descriptorSetLayout.create(descriptorSetLayoutBindings);
@@ -426,7 +408,7 @@ namespace VulkanLearning {
                 VK_CHECK_RESULT(vkAllocateDescriptorSets(
                             m_device.getLogicalDevice(), 
                             &allocInfo, 
-                            &m_descriptorSets.object));
+                            &m_descriptorSet));
 
                 std::vector<VkWriteDescriptorSet> descriptorWrites(1);
 
@@ -435,8 +417,8 @@ namespace VulkanLearning {
                 descriptorWrites[0].dstArrayElement = 0;
                 descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
                 descriptorWrites[0].descriptorCount = 1;
-                descriptorWrites[0].pBufferInfo = m_uniformBuffers.object.getDescriptorPointer();
-                descriptorWrites[0].dstSet = m_descriptorSets.object;
+                descriptorWrites[0].pBufferInfo = m_modelUbo.getDescriptorPointer();
+                descriptorWrites[0].dstSet = m_descriptorSet;
 
                 vkUpdateDescriptorSets(m_device.getLogicalDevice(), descriptorWrites.size(), descriptorWrites.data(), 0, NULL);
             }
@@ -451,10 +433,7 @@ namespace VulkanLearning {
                 m_uboVS.modelView = m_camera.getViewMatrix();
                 m_uboVS.inverseModelView = glm::inverse(m_camera.getViewMatrix());
 
-                memcpy(m_uniformBuffers.object.getMappedMemory(), &m_uboVS, sizeof(m_uboVS));
-
-                m_uboVS.modelView[3] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-                memcpy(m_uniformBuffers.skybox.getMappedMemory(), &m_uboVS, sizeof(m_uboVS));
+                memcpy(m_modelUbo.getMappedMemory(), &m_uboVS, sizeof(m_uboVS));
             }
 
             void loadAssets() {
