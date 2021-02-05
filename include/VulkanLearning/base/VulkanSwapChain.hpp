@@ -12,17 +12,12 @@
 
 namespace VulkanLearning {
 
-    struct FramebufferAttachment {
-        VkImageView imageView;
-    };
-
     class VulkanSwapChain {
         private:
             VkSwapchainKHR m_swapChain;
 
             std::vector<VkImage> m_images;
             std::vector<VkImageView> m_imagesViews;
-            std::vector<VkFramebuffer> m_framebuffers;
 
             VkFormat m_imageFormat;
             VkExtent2D m_extent;
@@ -40,15 +35,11 @@ namespace VulkanLearning {
             VkSwapchainKHR getSwapChain();
             std::vector<VkImage> getImages();
             std::vector<VkImageView> getImagesViews();
-            std::vector<VkFramebuffer> getFramebuffers();
             VkFormat getImageFormat();
             VkExtent2D getExtent();
 
             void create();
 
-            void createFramebuffers(VkRenderPass renderPass, const std::vector<VkImageView> attachments);
-
-            void cleanFramebuffers();
             void destroyImageViews();
         private:
 

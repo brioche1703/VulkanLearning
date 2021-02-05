@@ -16,9 +16,11 @@ namespace VulkanLearning {
 
             struct UBOVS {
                 glm::mat4 projection;
-                glm::mat4 modelView;
-                glm::mat4 inverseModelView;
-                float lodBias = 0.0f;
+                glm::mat4 model;
+                glm::mat4 view;
+                glm::vec2 brightnessContrast = glm::vec2(0.5f, 1.8f);
+                glm::vec2 range = glm::vec2(0.6f, 1.0f);
+                int32_t attachmentIndex = 1;
             } m_uboVS;
 
             VkPipelineLayout m_pipelineLayout;
@@ -26,6 +28,19 @@ namespace VulkanLearning {
 
             VulkanDescriptorSetLayout m_descriptorSetLayout;
             VkDescriptorSet m_descriptorSet;
+
+            struct FramebufferAttachment {
+                VkImage image;
+                VkDeviceMemory memory;
+                VkImageView view;
+                VkFormat format;
+            };
+
+            struct Attachments {
+                FramebufferAttachment color, depth;
+            };
+
+            std::vector<Attachments> m_attachments;
 
         public:
             VulkanExample() {}
@@ -52,7 +67,9 @@ namespace VulkanLearning {
 
             void initVulkan() override {
                 VulkanBase::initVulkan();
+
                 m_window.setTitle("Input Attachments");
+                m_camera.setPosition(glm::vec3(0.0f, 2.5f, 15.0f));
 
                 loadAssets();
 
@@ -71,14 +88,6 @@ namespace VulkanLearning {
                 updateUniformBuffers();
                 VK_CHECK_RESULT(vkQueueSubmit(m_device.getGraphicsQueue(), 1, &m_submitInfo, m_syncObjects.getInFlightFences()[m_currentFrame]));
                 VulkanBase::presentFrame(imageIndex);
-            }
-
-            void  createInstance() override {
-                m_instance = new VulkanInstance(
-                        "Texture Cubemap",
-                        enableValidationLayers, 
-                        validationLayers, 
-                        m_debug);
             }
 
             void createRenderPass() override {
@@ -175,8 +184,8 @@ namespace VulkanLearning {
 
                 VkPipelineDepthStencilStateCreateInfo depthStencilState = {};
                 depthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-                depthStencilState.depthTestEnable = VK_FALSE;
-                depthStencilState.depthWriteEnable = VK_FALSE;
+                depthStencilState.depthTestEnable = VK_TRUE;
+                depthStencilState.depthWriteEnable = VK_TRUE;
                 depthStencilState.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
                 depthStencilState.back.compareOp = VK_COMPARE_OP_ALWAYS;
 
@@ -256,6 +265,7 @@ namespace VulkanLearning {
                 pipelineInfo.pDynamicState = &dynamicState;
                 pipelineInfo.pVertexInputState = Vertex::getPipelineVertexInputState({
                         VertexComponent::Position,
+                        VertexComponent::Color,
                         VertexComponent::Normal});
 
                 VK_CHECK_RESULT(vkCreateGraphicsPipelines(
@@ -342,7 +352,7 @@ namespace VulkanLearning {
                     renderPassBeginInfo.renderArea.extent.height = m_swapChain.getExtent().height;
                     renderPassBeginInfo.clearValueCount = 2;
                     renderPassBeginInfo.pClearValues = clearValues;
-                    renderPassBeginInfo.framebuffer = m_swapChain.getFramebuffers()[i];
+                    renderPassBeginInfo.framebuffer = m_framebuffers[i];
 
                     vkCmdBeginRenderPass(m_commandBuffers[i].getCommandBuffer(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
                     vkCmdSetViewport(m_commandBuffers[i].getCommandBuffer(), 0, 1, &viewport);
@@ -430,14 +440,14 @@ namespace VulkanLearning {
                         0.1f,  100.0f);
                 m_uboVS.projection[1][1] *= -1;
 
-                m_uboVS.modelView = m_camera.getViewMatrix();
-                m_uboVS.inverseModelView = glm::inverse(m_camera.getViewMatrix());
+                m_uboVS.view = m_camera.getViewMatrix();
+                m_uboVS.model = glm::mat4(1.0f);
 
                 memcpy(m_modelUbo.getMappedMemory(), &m_uboVS, sizeof(m_uboVS));
             }
 
             void loadAssets() {
-                uint32_t glTFLoadingFlags = FileLoadingFlags::PreTransformVertices;
+                uint32_t glTFLoadingFlags = FileLoadingFlags::PreTransformVertices | FileLoadingFlags::PreMultiplyVertexColors;
                 m_model.loadFromFile("src/models/treasure_smooth.gltf", &m_device, m_device.getGraphicsQueue(), glTFLoadingFlags);
             }
 
@@ -446,6 +456,7 @@ namespace VulkanLearning {
                 if (ui->header("Settings")) {
                 }
             }
+
 
     };
 }

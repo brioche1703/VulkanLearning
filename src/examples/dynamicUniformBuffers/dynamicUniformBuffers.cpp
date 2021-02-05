@@ -55,6 +55,8 @@ namespace VulkanLearning {
 
     class VulkanExample : public VulkanBase {
         private:
+
+
             std::vector<VulkanBuffer> m_dynUbos;
             size_t m_dynamicAlignment;
             glm::vec3 m_rotations[NUM_OBJ];
@@ -62,62 +64,59 @@ namespace VulkanLearning {
 
             VulkanDescriptorSets m_descriptorSets;
 
-            VkPipeline m_wireframePipeline = VK_NULL_HANDLE;
+            VkPipeline m_pipeline;
+            VkPipelineLayout m_pipelineLayout;
 
         public:
             VulkanExample() {
             }
-            ~VulkanExample() {}
+            ~VulkanExample() {
+                m_descriptorSetLayout.cleanup();
+
+                m_vertexBuffer.cleanup();
+                m_indexBuffer.cleanup();
+
+                for (size_t i = 0; i < m_swapChain.getImages().size(); i++) {
+                    vkDestroyBuffer(m_device.getLogicalDevice(), 
+                            m_coordinateSystemUniformBuffers[i].getBuffer(), 
+                            nullptr);
+                    vkFreeMemory(m_device.getLogicalDevice(), 
+                            m_coordinateSystemUniformBuffers[i].getBufferMemory(), 
+                            nullptr);
+                    vkDestroyBuffer(m_device.getLogicalDevice(), 
+                            m_dynUbos[i].getBuffer(), 
+                            nullptr);
+                    vkFreeMemory(m_device.getLogicalDevice(), 
+                            m_dynUbos[i].getBufferMemory(), 
+                            nullptr);
+                }
+
+                vkDestroyDescriptorPool(m_device.getLogicalDevice(), 
+                        m_descriptorPool.getDescriptorPool(), nullptr);
+            }
 
             void run() {
                 VulkanBase::run();
             }
         private:
 
-            void initWindow() override {
-                m_window = Window("Dynamic Uniform Buffers", WIDTH, HEIGHT);
-                m_window.init();
-            }
-
-            void initCore() override {
-                m_camera = Camera(glm::vec3(0.0f, 0.0f, 20.0f));
-                m_fpsCounter = FpsCounter();
-                m_input = Inputs(m_window.getWindow(), &m_camera, &m_fpsCounter, &m_ui);
-
-                glfwSetKeyCallback(m_window.getWindow() , m_input.keyboard_callback);
-                glfwSetScrollCallback(m_window.getWindow() , m_input.scroll_callback);
-                glfwSetCursorPosCallback(m_window.getWindow() , m_input.mouse_callback);
-                glfwSetMouseButtonCallback(m_window.getWindow() , m_input.mouse_button_callback);
-
-                glfwSetInputMode(m_window.getWindow() , GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            }
-
             void initVulkan() override {
-                createInstance();
-                createDebug();
-                createSurface();
-                createDevice();
-                createSwapChain();
-                createRenderPass();
+                VulkanBase::initVulkan();
 
-                createDescriptorSetLayout();
-
-                createGraphicsPipeline();
-
-                createDepthResources();
-                createFramebuffers();
+                m_window.setTitle("Dynamic Uniform Buffers");
+                m_camera.setPosition(glm::vec3(0.0f, 0.0f, 20.0f));
 
                 createVertexBuffer();
                 createIndexBuffer();
 
-                createCoordinateSystemUniformBuffers();
                 createDynamicUniformBuffers();
+                createDescriptorSetLayout();
+                createGraphicsPipeline();
 
+                createCoordinateSystemUniformBuffers();
                 createDescriptorPool();
                 createDescriptorSets();
-                
                 createCommandBuffers();
-                createSyncObjects();
             }
 
             void mainLoop() override {
@@ -157,7 +156,7 @@ namespace VulkanLearning {
 
                 m_syncObjects.getImagesInFlight()[imageIndex] = m_syncObjects.getInFlightFences()[m_currentFrame];
 
-                updateCamera(imageIndex);
+                updateUniformBuffers(imageIndex);
                 updateDynUbos(imageIndex);
 
                 VkSubmitInfo submitInfo{};
@@ -204,129 +203,6 @@ namespace VulkanLearning {
                 m_currentFrame = (m_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
             }
 
-            void cleanup() override {
-                cleanupSwapChain();
-
-                m_descriptorSetLayout.cleanup();
-
-                m_vertexBuffer.cleanup();
-                m_indexBuffer.cleanup();
-
-                m_syncObjects.cleanup();
-                m_ui.freeResources();
-                
-                vkDestroyCommandPool(m_device.getLogicalDevice(), m_device.getCommandPool(), nullptr);
-
-                vkDestroyDevice(m_device.getLogicalDevice(), nullptr);
-
-                if (enableValidationLayers) {
-                    m_debug->destroy(m_instance->getInstance(), nullptr);
-                }
-
-                vkDestroySurfaceKHR(m_instance->getInstance(), m_surface.getSurface(), nullptr);
-                vkDestroyInstance(m_instance->getInstance(), nullptr);
-
-                glfwDestroyWindow(m_window.getWindow() );
-
-                glfwTerminate();
-            }
-
-            void createSurface() override {
-                m_surface = VulkanSurface();
-                m_surface.create(m_window, *m_instance);
-            }
-
-            void recreateSwapChain() override {
-                int width = 0, height = 0;
-                while (width == 0 || height == 0) {
-                    glfwGetFramebufferSize(m_window.getWindow() , &width, &height);
-                    glfwWaitEvents();
-                }
-
-                vkDeviceWaitIdle(m_device.getLogicalDevice());
-
-                cleanupSwapChain();
-
-                m_swapChain.create();
-
-                createRenderPass();
-                createGraphicsPipeline();
-                createDepthResources();
-
-                createFramebuffers();
-
-                createCoordinateSystemUniformBuffers();
-                createDynamicUniformBuffers();
-                createDescriptorPool();
-                createDescriptorSets();
-                createCommandBuffers();
-                m_ui.resize(m_swapChain.getExtent().width, m_swapChain.getExtent().height);
-            }
-
-            void cleanupSwapChain() override {
-                m_depthImageResource.cleanup();
-
-                m_swapChain.cleanFramebuffers();
-
-                vkFreeCommandBuffers(m_device.getLogicalDevice(), 
-                        m_device.getCommandPool(), 
-                        static_cast<uint32_t>(
-                            m_commandBuffers.size()), 
-                        m_commandBuffers.data()->getCommandBufferPointer());
-
-                vkDestroyPipeline(m_device.getLogicalDevice(), 
-                        m_graphicsPipeline.getGraphicsPipeline(), nullptr);
-
-                vkDestroyPipelineLayout(m_device.getLogicalDevice(), 
-                        m_graphicsPipeline.getPipelineLayout(), nullptr);
-
-                vkDestroyRenderPass(m_device.getLogicalDevice(), 
-                        m_renderPass.getRenderPass(), nullptr);
-
-                m_swapChain.destroyImageViews();
-
-                vkDestroySwapchainKHR(m_device.getLogicalDevice(), m_swapChain.getSwapChain(), nullptr);
-
-                for (size_t i = 0; i < m_swapChain.getImages().size(); i++) {
-                    vkDestroyBuffer(m_device.getLogicalDevice(), 
-                            m_coordinateSystemUniformBuffers[i].getBuffer(), 
-                            nullptr);
-                    vkFreeMemory(m_device.getLogicalDevice(), 
-                            m_coordinateSystemUniformBuffers[i].getBufferMemory(), 
-                            nullptr);
-                    vkDestroyBuffer(m_device.getLogicalDevice(), 
-                            m_dynUbos[i].getBuffer(), 
-                            nullptr);
-                    vkFreeMemory(m_device.getLogicalDevice(), 
-                            m_dynUbos[i].getBufferMemory(), 
-                            nullptr);
-                }
-
-                vkDestroyDescriptorPool(m_device.getLogicalDevice(), 
-                        m_descriptorPool.getDescriptorPool(), nullptr);
-            }
-
-            void  createInstance() override {
-                m_instance = new VulkanInstance("Dynamic Uniform Buffers", 
-                        enableValidationLayers, 
-                        validationLayers, m_debug);
-            }
-
-            void  createDebug() override {
-                m_debug = new VulkanDebug(m_instance->getInstance(), 
-                        enableValidationLayers);
-            }
-
-            void  createDevice() override {
-                m_device = VulkanDevice(m_instance->getInstance(), m_surface.getSurface(), 
-                        deviceExtensions,
-                        enableValidationLayers, validationLayers, 1);
-            }
-
-            void  createSwapChain() override {
-                m_swapChain =  VulkanSwapChain(m_window, m_device, m_surface);
-            }
-
             void createRenderPass() override {
                 VkAttachmentDescription colorAttachment{};
                 colorAttachment.format = m_swapChain.getImageFormat();
@@ -349,11 +225,11 @@ namespace VulkanLearning {
                 depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
                 VkAttachmentReference colorAttachmentRef{};
-                colorAttachmentRef.attachment = 1;
+                colorAttachmentRef.attachment = 0;
                 colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
                 VkAttachmentReference depthAttachmentRef{};
-                depthAttachmentRef.attachment = 0;
+                depthAttachmentRef.attachment = 1;
                 depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
                 VkSubpassDescription subpass{};
@@ -363,72 +239,157 @@ namespace VulkanLearning {
                 subpass.pDepthStencilAttachment = &depthAttachmentRef;
 
                 const std::vector<VkAttachmentDescription> attachments = 
-                    { depthAttachment, colorAttachment };
+                    { colorAttachment, depthAttachment };
 
                 m_renderPass = VulkanRenderPass(m_swapChain, m_device);
                 m_renderPass.create(attachments, subpass);
             }
 
             void createGraphicsPipeline() override {
-                m_graphicsPipeline =  VulkanGraphicsPipeline(m_device,
-                        m_swapChain, m_renderPass);
+                VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+                pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+                pipelineLayoutInfo.setLayoutCount = 1;
+                pipelineLayoutInfo.pSetLayouts = m_descriptorSetLayout.getDescriptorSetLayoutPointer();
+                vkCreatePipelineLayout(
+                        m_device.getLogicalDevice(), 
+                        &pipelineLayoutInfo, 
+                        nullptr, 
+                        &m_pipelineLayout);
+
+                VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
+                inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+                inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+                inputAssembly.flags = 0;
+                inputAssembly.primitiveRestartEnable = VK_FALSE;
+
+                VkPipelineRasterizationStateCreateInfo rasterizer = {};
+                rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+                rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+                rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+                rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+                rasterizer.flags = 0;
+                rasterizer.depthClampEnable = VK_FALSE;
+                rasterizer.lineWidth = 1.0f;
+
+                VkPipelineColorBlendAttachmentState colorBlendAttachment = {};
+                colorBlendAttachment.colorWriteMask = 0xf;
+                colorBlendAttachment.blendEnable = VK_FALSE;
+
+                VkPipelineColorBlendStateCreateInfo colorBlending{};
+                colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+                colorBlending.attachmentCount = 1;
+                colorBlending.pAttachments = &colorBlendAttachment;
+
+                VkPipelineDepthStencilStateCreateInfo depthStencilState = {};
+                depthStencilState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+                depthStencilState.depthTestEnable = VK_FALSE;
+                depthStencilState.depthWriteEnable = VK_FALSE;
+                depthStencilState.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+                depthStencilState.back.compareOp = VK_COMPARE_OP_ALWAYS;
+
+                VkViewport viewport{};
+                viewport.x = 0.0f;
+                viewport.y = 0.0f;
+                viewport.width = (float) m_swapChain.getExtent().width;
+                viewport.height = (float) m_swapChain.getExtent().height;
+                viewport.minDepth = 0.0f;
+                viewport.maxDepth = 1.0f;
+
+                VkRect2D scissor{};
+                scissor.offset = {0, 0};
+                scissor.extent = m_swapChain.getExtent();
+
+                VkPipelineViewportStateCreateInfo viewportState{};
+                viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+                viewportState.viewportCount = 1;
+                viewportState.pViewports = &viewport;
+                viewportState.scissorCount = 1;
+                viewportState.pScissors = &scissor;
+
+                const std::vector<VkDynamicState> dynamicStates = {
+                    VK_DYNAMIC_STATE_VIEWPORT,
+                    VK_DYNAMIC_STATE_SCISSOR,
+                    VK_DYNAMIC_STATE_LINE_WIDTH
+                };
+
+                VkPipelineDynamicStateCreateInfo dynamicState{};
+                dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+                dynamicState.pDynamicStates = dynamicStates.data();
+                dynamicState.dynamicStateCount = 3;
+                dynamicState.flags = 0;
+
+                VkPipelineMultisampleStateCreateInfo multisampling{};
+                if (m_device.getMsaaSamples() > 1) {
+                    multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+                    multisampling.sampleShadingEnable = VK_TRUE;
+                    multisampling.minSampleShading = 0.2f;
+                    multisampling.rasterizationSamples = m_device.getMsaaSamples();
+                } else {
+                    multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+                    multisampling.sampleShadingEnable = VK_FALSE;
+                    multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+                }
 
                 VulkanShaderModule vertShaderModule = 
-                    VulkanShaderModule("src/shaders/dynamicUniformBuffersVert.spv", &m_device, VK_SHADER_STAGE_VERTEX_BIT);
+                    VulkanShaderModule(
+                            "src/shaders/dynamicUniformBuffersVert.spv", 
+                            &m_device, 
+                            VK_SHADER_STAGE_VERTEX_BIT);
                 VulkanShaderModule fragShaderModule = 
-                    VulkanShaderModule("src/shaders/dynamicUniformBuffersFrag.spv", &m_device, VK_SHADER_STAGE_FRAGMENT_BIT);
+                    VulkanShaderModule(
+                            "src/shaders/dynamicUniformBuffersFrag.spv", 
+                            &m_device, 
+                            VK_SHADER_STAGE_FRAGMENT_BIT);
 
-                VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
-                vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+                VkPipelineShaderStageCreateInfo shaderStages[] = {
+                    vertShaderModule.getStageCreateInfo(), 
+                    fragShaderModule.getStageCreateInfo()
+                };
 
                 auto bindingDescription = Vertex::getBindingDescription();
                 auto attributeDescriptions = Vertex::getAttributeDescriptions();
 
+                VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+                vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
                 vertexInputInfo.vertexBindingDescriptionCount = 1;
                 vertexInputInfo.vertexAttributeDescriptionCount = 
                     static_cast<uint32_t>(attributeDescriptions.size());
                 vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
                 vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
-                VkPipelineDepthStencilStateCreateInfo depthStencil{};
-                depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-                depthStencil.depthTestEnable = VK_TRUE;
-                depthStencil.depthWriteEnable = VK_TRUE;
-                depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
-                depthStencil.depthBoundsTestEnable = VK_FALSE;
-                depthStencil.stencilTestEnable = VK_FALSE;
+                VkGraphicsPipelineCreateInfo pipelineInfo{};
+                pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+                pipelineInfo.stageCount = 2;
+                pipelineInfo.pStages = shaderStages;
+                pipelineInfo.pInputAssemblyState = &inputAssembly;
+                pipelineInfo.pViewportState = &viewportState;
+                pipelineInfo.pRasterizationState = &rasterizer;
+                pipelineInfo.pMultisampleState = &multisampling;
+                pipelineInfo.pDepthStencilState = &depthStencilState;
+                pipelineInfo.pColorBlendState = &colorBlending;
+                pipelineInfo.layout = m_pipelineLayout;
+                pipelineInfo.renderPass = m_renderPass.getRenderPass();
+                pipelineInfo.subpass = 0;
+                pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+                pipelineInfo.pDynamicState = &dynamicState;
+                pipelineInfo.pVertexInputState = &vertexInputInfo;
+                
+                VK_CHECK_RESULT(vkCreateGraphicsPipelines(
+                            m_device.getLogicalDevice(), 
+                            VK_NULL_HANDLE, 
+                            1, 
+                            &pipelineInfo, 
+                            nullptr, 
+                            &m_pipeline));
 
-                VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
-                pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-                pipelineLayoutInfo.setLayoutCount = 1;
-                pipelineLayoutInfo.pSetLayouts = 
-                    m_descriptorSetLayout.getDescriptorSetLayoutPointer();
-
-                m_graphicsPipeline.create(
-                        vertShaderModule, 
-                        fragShaderModule,
-                        vertexInputInfo, 
-                        pipelineLayoutInfo, 
-                        &depthStencil,
-                        &m_wireframePipeline);
-            }
-
-            void createFramebuffers() override {
-                const std::vector<VkImageView> attachments {
-                    m_depthImageResource.getImageView()
-                };
-
-                m_swapChain.createFramebuffers(m_renderPass.getRenderPass(),
-                    attachments);
-            }
-
-            void createDepthResources() override {
-                m_depthImageResource = VulkanImageResource(m_device, 
-                        m_swapChain,
-                        m_device.findDepthFormat(), 
-                        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
-                        VK_IMAGE_ASPECT_DEPTH_BIT);
-                m_depthImageResource.create();
+                vkDestroyShaderModule(
+                        m_device.getLogicalDevice(), 
+                        vertShaderModule.getModule(), 
+                        nullptr);
+                vkDestroyShaderModule(
+                        m_device.getLogicalDevice(), 
+                        fragShaderModule.getModule(), 
+                        nullptr);
             }
 
             void createVertexBuffer() override {
@@ -502,7 +463,7 @@ namespace VulkanLearning {
 
             void createCommandBuffers() override {
 
-                m_commandBuffers.resize(m_swapChain.getFramebuffers().size());
+                m_commandBuffers.resize(m_swapChain.getImages().size());
 
                 VkCommandBufferAllocateInfo allocInfo{};
                 allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -543,7 +504,7 @@ namespace VulkanLearning {
                     VkRenderPassBeginInfo renderPassInfo{};
                     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
                     renderPassInfo.renderPass = m_renderPass.getRenderPass(); 
-                    renderPassInfo.framebuffer = m_swapChain.getFramebuffers()[i];
+                    renderPassInfo.framebuffer = m_framebuffers[i]; 
                     renderPassInfo.renderArea.offset = {0, 0};
                     renderPassInfo.renderArea.extent = m_swapChain.getExtent();
 
@@ -561,7 +522,7 @@ namespace VulkanLearning {
                     vkCmdBindPipeline(
                             m_commandBuffers[i].getCommandBuffer(), 
                             VK_PIPELINE_BIND_POINT_GRAPHICS, 
-                            m_graphicsPipeline.getGraphicsPipeline());
+                            m_pipeline);
 
                     VkBuffer vertexBuffers[] = {m_vertexBuffer.getBuffer()};
                     VkDeviceSize offsets[] = {0};
@@ -579,14 +540,14 @@ namespace VulkanLearning {
                     vkCmdBindPipeline(
                             m_commandBuffers[i].getCommandBuffer(), 
                             VK_PIPELINE_BIND_POINT_GRAPHICS, 
-                            m_wireframe ? m_wireframePipeline : m_graphicsPipeline.getGraphicsPipeline());
+                            m_pipeline); 
 
                     for (uint32_t j = 0; j < NUM_OBJ; j++) {
                         uint32_t dynamicOffset = j * static_cast<uint32_t>(m_dynamicAlignment);
                         vkCmdBindDescriptorSets(
                                 m_commandBuffers[i].getCommandBuffer(), 
                                 VK_PIPELINE_BIND_POINT_GRAPHICS,
-                                m_graphicsPipeline.getPipelineLayout(),
+                                m_pipelineLayout,
                                 0, 
                                 1, 
                                 &m_descriptorSets.getDescriptorSets()[i], 
@@ -610,11 +571,6 @@ namespace VulkanLearning {
                         throw std::runtime_error("Recording of a command buffer failed!");
                     }
                 }
-            }
-
-            void createSyncObjects() override {
-                m_syncObjects = VulkanSyncObjects(m_device, m_swapChain, 
-                        MAX_FRAMES_IN_FLIGHT);
             }
 
             void createDescriptorSetLayout() override {
@@ -701,7 +657,7 @@ namespace VulkanLearning {
                 }
             }
 
-            void updateCamera(uint32_t currentImage) override {
+            void updateUniformBuffers(uint32_t currentImage) {
                 CoordinatesSystemUniformBufferObject ubo{};
 
                 ubo.model = glm::mat4(1.0f);
@@ -760,11 +716,6 @@ namespace VulkanLearning {
             }
                         
             void OnUpdateUI (UI *ui) override {
-                if (ui->header("Settings")) {
-                    if (ui->checkBox("Wireframe", &m_wireframe)) {
-                        createCommandBuffers();
-                    }
-                }
             }
     };
 

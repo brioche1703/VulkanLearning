@@ -55,6 +55,14 @@ namespace VulkanLearning {
                     float yaw, float pitch);
 
             inline glm::vec3 position() { return m_Position; }
+            inline void setPosition(glm::vec3 position) { 
+                m_Position = position; 
+                updateCameraVectors();
+            }
+            inline void setYaw(float yaw) {
+                m_Yaw = yaw; 
+                updateCameraVectors();
+            }
 
             glm::mat4 getViewMatrix();
             float getZoom();

@@ -14,7 +14,6 @@ namespace VulkanLearning {
     VkSwapchainKHR VulkanSwapChain::getSwapChain() { return m_swapChain; }
     std::vector<VkImage> VulkanSwapChain::getImages() { return m_images; }
     std::vector<VkImageView> VulkanSwapChain::getImagesViews() { return m_imagesViews; }
-    std::vector<VkFramebuffer> VulkanSwapChain::getFramebuffers() { return m_framebuffers; }
     VkFormat VulkanSwapChain::getImageFormat() { return m_imageFormat; }
     VkExtent2D VulkanSwapChain::getExtent() { return m_extent; }
 
@@ -80,8 +79,11 @@ namespace VulkanLearning {
         m_imagesViews.resize(m_images.size());
 
         for (size_t i = 0; i < m_images.size(); i++) {
-            m_imagesViews[i] = createImageView(m_images[i], m_imageFormat, 
-                    VK_IMAGE_ASPECT_COLOR_BIT, 1);
+            m_imagesViews[i] = createImageView(
+                    m_images[i], 
+                    m_imageFormat, 
+                    VK_IMAGE_ASPECT_COLOR_BIT, 
+                    1);
         }
     }
 
@@ -105,30 +107,6 @@ namespace VulkanLearning {
         }
 
         return imageView;
-    }
-
-    void VulkanSwapChain::createFramebuffers(VkRenderPass renderPass,
-            const std::vector<VkImageView> attachments) {
-        m_framebuffers.resize(m_imagesViews.size());
-
-        for (size_t i = 0; i < m_imagesViews.size(); i++) {
-            std::vector<VkImageView> attachmentsAux = attachments;
-            attachmentsAux.push_back(m_imagesViews[i]);
-            VkFramebufferCreateInfo framebufferInfo{};
-            framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-            framebufferInfo.renderPass = renderPass;
-            framebufferInfo.attachmentCount = static_cast<uint32_t>(attachmentsAux.size());
-            framebufferInfo.pAttachments = attachmentsAux.data();
-            framebufferInfo.width = m_extent.width;
-            framebufferInfo.height = m_extent.height;
-            framebufferInfo.layers = 1;
-
-            if (vkCreateFramebuffer(m_device.getLogicalDevice(), 
-                        &framebufferInfo, nullptr, &m_framebuffers[i]) 
-                    != VK_SUCCESS) {;
-                throw std::runtime_error("A framebuffer creation failed!");
-            }
-        }
     }
 
     VkSurfaceFormatKHR VulkanSwapChain::chooseSwapSurfaceFormat(
@@ -175,12 +153,6 @@ namespace VulkanLearning {
     }
 
     void VulkanSwapChain::cleanup() {
-    }
-
-    void VulkanSwapChain::cleanFramebuffers() {
-        for (auto framebuffer : m_framebuffers) {
-            vkDestroyFramebuffer(m_device.getLogicalDevice(), framebuffer, nullptr);
-        }
     }
 
     void VulkanSwapChain::destroyImageViews() {

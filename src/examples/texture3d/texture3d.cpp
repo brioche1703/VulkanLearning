@@ -183,7 +183,19 @@ namespace VulkanLearning {
             VulkanExample() {
                 srand((unsigned int)time(NULL));
             }
-            ~VulkanExample() {}
+            ~VulkanExample() {
+                m_descriptorSetLayout.cleanup();
+
+                m_vertexBuffer.cleanup();
+                m_indexBuffer.cleanup();
+                m_texture.destroy();
+
+                vkDestroyPipeline(m_device.getLogicalDevice(), m_pipeline, nullptr);
+
+                vkDestroyPipelineLayout(m_device.getLogicalDevice(), m_pipelineLayout, nullptr);
+
+                m_uniformBufferVS.cleanup();
+            }
 
             void run() {
                 VulkanBase::run();
@@ -348,34 +360,6 @@ namespace VulkanLearning {
                 m_currentFrame = (m_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
             }
 
-            void cleanup() override {
-                cleanupSwapChain();
-
-                m_descriptorSetLayout.cleanup();
-
-                m_vertexBuffer.cleanup();
-                m_indexBuffer.cleanup();
-                m_texture.destroy();
-
-                m_syncObjects.cleanup();
-                m_ui.freeResources();
-
-                vkDestroyCommandPool(m_device.getLogicalDevice(), m_device.getCommandPool(), nullptr);
-
-                vkDestroyDevice(m_device.getLogicalDevice(), nullptr);
-
-                if (enableValidationLayers) {
-                    m_debug->destroy(m_instance->getInstance(), nullptr);
-                }
-
-                vkDestroySurfaceKHR(m_instance->getInstance(), m_surface.getSurface(), nullptr);
-                vkDestroyInstance(m_instance->getInstance(), nullptr);
-
-                glfwDestroyWindow(m_window.getWindow() );
-
-                glfwTerminate();
-            }
-
             void createSurface() override {
                 m_surface = VulkanSurface();
                 m_surface.create(m_window, *m_instance);
@@ -409,31 +393,6 @@ namespace VulkanLearning {
             }
 
             void cleanupSwapChain() override {
-                m_colorImageResource.cleanup();
-                m_depthImageResource.cleanup();
-
-                m_swapChain.cleanFramebuffers();
-
-                vkFreeCommandBuffers(
-                        m_device.getLogicalDevice(), 
-                        m_device.getCommandPool(), 
-                        static_cast<uint32_t>(m_commandBuffers.size()), 
-                        m_commandBuffers.data()->getCommandBufferPointer());
-
-                vkDestroyPipeline(m_device.getLogicalDevice(), m_pipeline, nullptr);
-
-                vkDestroyPipelineLayout(m_device.getLogicalDevice(), m_pipelineLayout, nullptr);
-                vkDestroyRenderPass(m_device.getLogicalDevice(), m_renderPass.getRenderPass(), nullptr);
-
-                m_swapChain.destroyImageViews();
-                vkDestroySwapchainKHR(m_device.getLogicalDevice(), m_swapChain.getSwapChain(), nullptr);
-
-                m_uniformBufferVS.cleanup();
-
-                vkDestroyDescriptorPool(
-                        m_device.getLogicalDevice(), 
-                        m_descriptorPool.getDescriptorPool(), 
-                        nullptr);
             }
 
             void  createInstance() override {
@@ -656,36 +615,6 @@ namespace VulkanLearning {
                         nullptr);
             }
 
-            void createFramebuffers() override {
-                const std::vector<VkImageView> attachments {
-                    m_colorImageResource.getImageView(),
-                        m_depthImageResource.getImageView()
-                };
-
-                m_swapChain.createFramebuffers(m_renderPass.getRenderPass(), 
-                        attachments);
-            }
-
-            void createColorResources() override {
-                m_colorImageResource = VulkanImageResource(
-                        m_device, 
-                        m_swapChain, 
-                        m_swapChain.getImageFormat(),  
-                        VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, 
-                        VK_IMAGE_ASPECT_COLOR_BIT);
-                m_colorImageResource.create();
-            }
-
-            void createDepthResources() override {
-                m_depthImageResource = VulkanImageResource(
-                        m_device, 
-                        m_swapChain,
-                        m_device.findDepthFormat(), 
-                        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
-                        VK_IMAGE_ASPECT_DEPTH_BIT);
-                m_depthImageResource.create();
-            }
-
             void createUniformBuffers() {
                 m_uniformBufferVS= VulkanBuffer(m_device);
 
@@ -751,7 +680,7 @@ namespace VulkanLearning {
                     renderPassBeginInfo.renderArea.extent.height = m_swapChain.getExtent().height;
                     renderPassBeginInfo.clearValueCount = 2;
                     renderPassBeginInfo.pClearValues = clearValues;
-                    renderPassBeginInfo.framebuffer = m_swapChain.getFramebuffers()[i];
+                    renderPassBeginInfo.framebuffer = m_framebuffers[i];
 
                     vkCmdBeginRenderPass(m_commandBuffers[i].getCommandBuffer(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
                     vkCmdSetViewport(m_commandBuffers[i].getCommandBuffer(), 0, 1, &viewport);

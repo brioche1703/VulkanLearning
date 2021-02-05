@@ -12,10 +12,13 @@ namespace VulkanLearning {
 
     VulkanImageResource::~VulkanImageResource() {}
 
-    void VulkanImageResource::create() {
-        createImage(m_swapChain.getExtent().width, 
-                m_swapChain.getExtent().height, 1, 
-                m_device.getMsaaSamples(), m_format, 
+    void VulkanImageResource::create(uint32_t mipLevels) {
+        createImage(
+                m_swapChain.getExtent().width, 
+                m_swapChain.getExtent().height, 
+                m_device.getMsaaSamples() > 1 ? 1 : mipLevels, 
+                m_device.getMsaaSamples(), 
+                m_format, 
                 VK_IMAGE_TILING_OPTIMAL, 
                 m_usage,
                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
@@ -23,16 +26,21 @@ namespace VulkanLearning {
         m_imageView = createImageView(m_image, m_format, m_aspect, 1);
     }
 
+
     void VulkanImageResource::cleanup() {
         vkDestroyImageView(m_device.getLogicalDevice(), m_imageView, nullptr);
         vkDestroyImage(m_device.getLogicalDevice(), m_image, nullptr);
         vkFreeMemory(m_device.getLogicalDevice(), m_imageMemory, nullptr);
     }
 
-    void VulkanImageResource::createImage(uint32_t width, 
-            uint32_t height, uint32_t mipLevels, 
-            VkSampleCountFlagBits numSamples, VkFormat format, 
-            VkImageTiling tiling, VkImageUsageFlags usage, 
+    void VulkanImageResource::createImage(
+            uint32_t width, 
+            uint32_t height, 
+            uint32_t mipLevels, 
+            VkSampleCountFlagBits numSamples, 
+            VkFormat format, 
+            VkImageTiling tiling, 
+            VkImageUsageFlags usage, 
             VkMemoryPropertyFlags properties) {
         VkImageCreateInfo imageInfo{};
         imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -40,7 +48,7 @@ namespace VulkanLearning {
         imageInfo.extent.width = width;
         imageInfo.extent.height = height;
         imageInfo.extent.depth = 1;
-        imageInfo.mipLevels = mipLevels;
+        imageInfo.mipLevels = numSamples > 1 ? 1 : mipLevels;
         imageInfo.samples = numSamples;
         imageInfo.arrayLayers = 1;
         imageInfo.format = format;

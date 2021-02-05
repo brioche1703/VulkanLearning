@@ -78,22 +78,18 @@ namespace VulkanLearning {
             static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
                 if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
                     glfwGetCursorPos(window, &m_mousePos->x, &m_mousePos->y);
-                    std::cout << "Left mouse pressed : " << m_mousePos->x << "  :  "<< m_mousePos->y << std::endl;
                     m_mouseButtons->left = true;
                 }
                  if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
                     glfwGetCursorPos(window, &m_mousePos->x, &m_mousePos->y);
-                    std::cout << "Left mouse released : " << m_mousePos->x << "  :  "<< m_mousePos->y << std::endl;
                     m_mouseButtons->left = false;
                 }
                 if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
                     glfwGetCursorPos(window, &m_mousePos->x, &m_mousePos->y);
-                    std::cout << "Right mouse pressed : " << m_mousePos->x << "  :  "<< m_mousePos->y << std::endl;
                     m_mouseButtons->right = true;
                 }
                 if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS) {
                     glfwGetCursorPos(window, &m_mousePos->x, &m_mousePos->y);
-                    std::cout << "Middle mouse pressed : " << m_mousePos->x << "  :  "<< m_mousePos->y << std::endl;
                     m_mouseButtons->middle = true;
                 }
             }

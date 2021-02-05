@@ -54,7 +54,6 @@
 #include "VulkanDescriptorSets.hpp"
 #include "VulkanSyncObjects.hpp"
 #include "VulkanCommandBuffer.hpp"
-#include "VulkanGraphicsPipeline.hpp"
 #include "VulkanImageResource.hpp"
 #include "VulkanTexture.hpp"
 
@@ -84,12 +83,57 @@ namespace VulkanLearning {
 #endif
 
     class VulkanBase {
+        protected:
+            Window m_window;
+            Camera m_camera;
+            FpsCounter m_fpsCounter;
+            Inputs m_input;
+            UI m_ui;
+
+            VulkanInstance *m_instance;
+            VulkanDebug* m_debug = new VulkanDebug();
+
+            VulkanDevice m_device;
+            uint32_t m_msaaSamples = 1;
+            VulkanSurface m_surface;
+
+            VulkanSwapChain m_swapChain;
+            VkSubmitInfo m_submitInfo;
+
+            std::vector<VkFramebuffer> m_framebuffers;
+
+            VulkanRenderPass m_renderPass;
+
+            VulkanDescriptorSetLayout m_descriptorSetLayout;
+            VulkanDescriptorPool m_descriptorPool;
+
+            ModelObj m_model;
+
+            VulkanBuffer m_vertexBuffer;
+            VulkanBuffer m_indexBuffer;
+
+            std::vector<VulkanBuffer> m_coordinateSystemUniformBuffers;
+
+            std::vector<VulkanCommandBuffer> m_commandBuffers;
+
+            VulkanSyncObjects m_syncObjects;
+            std::vector<VkSemaphore> m_signalSemaphores;
+            std::vector<VkSemaphore> m_waitSemaphore;
+            VkPipelineStageFlags m_waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+
+            size_t m_currentFrame = 0;
+            bool framebufferResized = false;
+
+            VulkanImageResource m_colorImageResource;
+            VulkanImageResource m_depthImageResource;
+
         public:
-
-            bool m_wireframe = false;
-
             VulkanBase() {}
             virtual ~VulkanBase() {
+                for (auto i = 0; i < m_framebuffers.size(); i++) {
+                    vkDestroyFramebuffer(m_device.getLogicalDevice(), m_framebuffers[i], nullptr);
+                }
+
                 m_syncObjects.cleanup();
                 m_ui.freeResources();
 
@@ -120,50 +164,8 @@ namespace VulkanLearning {
 
             static std::vector<const char*> args;
 
+
         protected:
-            Window m_window;
-            Camera m_camera;
-            FpsCounter m_fpsCounter;
-            Inputs m_input;
-            UI m_ui;
-
-            VulkanInstance *m_instance;
-            VulkanDebug* m_debug = new VulkanDebug();
-
-            VulkanDevice m_device;
-            uint32_t m_msaaSamples = 64;
-            VulkanSurface m_surface;
-
-            VulkanSwapChain m_swapChain;
-            VkSubmitInfo m_submitInfo;
-
-            VulkanRenderPass m_renderPass;
-
-            VulkanDescriptorSetLayout m_descriptorSetLayout;
-            VulkanDescriptorPool m_descriptorPool;
-
-            VulkanGraphicsPipeline m_graphicsPipeline;
-
-            ModelObj m_model;
-
-            VulkanBuffer m_vertexBuffer;
-            VulkanBuffer m_indexBuffer;
-
-            std::vector<VulkanBuffer> m_coordinateSystemUniformBuffers;
-
-            std::vector<VulkanCommandBuffer> m_commandBuffers;
-
-            VulkanSyncObjects m_syncObjects;
-            std::vector<VkSemaphore> m_signalSemaphores;
-            std::vector<VkSemaphore> m_waitSemaphore;
-            VkPipelineStageFlags m_waitStages = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-
-            size_t m_currentFrame = 0;
-            bool framebufferResized = false;
-
-            VulkanImageResource m_colorImageResource;
-            VulkanImageResource m_depthImageResource;
-
             virtual void initWindow() {
                 m_window = Window("Vulkan", WIDTH, HEIGHT);
                 m_window.init();
@@ -351,7 +353,9 @@ namespace VulkanLearning {
                 m_colorImageResource.cleanup();
                 m_depthImageResource.cleanup();
 
-                m_swapChain.cleanFramebuffers();
+                for (uint32_t i = 0; i < m_framebuffers.size(); i++) {
+                    vkDestroyFramebuffer(m_device.getLogicalDevice(), m_framebuffers[i], nullptr);
+                }
 
                 vkFreeCommandBuffers(
                         m_device.getLogicalDevice(), 
@@ -386,13 +390,18 @@ namespace VulkanLearning {
             virtual void checkAndEnableFeatures() {}
 
             virtual void createDevice() {
-                m_device = VulkanDevice(
+                m_device = VulkanDevice(m_msaaSamples);
+                m_device.pickPhysicalDevice(
                         m_instance->getInstance(), 
                         m_surface.getSurface(), 
-                        deviceExtensions,
+                        deviceExtensions);
+
+                checkAndEnableFeatures();
+
+                m_device.createLogicalDevice(
+                        m_surface.getSurface(), 
                         enableValidationLayers, 
-                        validationLayers, 
-                        m_msaaSamples);
+                        validationLayers);
             }
 
             virtual void createSwapChain() {
@@ -401,16 +410,62 @@ namespace VulkanLearning {
 
             virtual void createRenderPass() {}
 
-            virtual void createGraphicsPipeline() {}
+            virtual void createGraphicsPipeline() = 0;
 
             virtual void createFramebuffers() {
-                const std::vector<VkImageView> attachments {
-                    m_colorImageResource.getImageView(),
-                        m_depthImageResource.getImageView()
-                };
+                if (m_device.getMsaaSamples() > 1) {
+                    VkImageView attachments[3];
 
-                m_swapChain.createFramebuffers(m_renderPass.getRenderPass(), 
-                        attachments);
+                    attachments[0] = m_colorImageResource.getImageView();
+                    attachments[1] = m_depthImageResource.getImageView();
+
+                    VkFramebufferCreateInfo framebufferCreateInfo = {};
+                    framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+                    framebufferCreateInfo.pNext = nullptr;
+                    framebufferCreateInfo.renderPass = m_renderPass.getRenderPass();
+                    framebufferCreateInfo.attachmentCount = 3;
+                    framebufferCreateInfo.pAttachments = attachments;
+                    framebufferCreateInfo.width = m_swapChain.getExtent().width;
+                    framebufferCreateInfo.height = m_swapChain.getExtent().height;
+                    framebufferCreateInfo.layers = 1;
+
+                    m_framebuffers.resize(m_swapChain.getImagesViews().size());
+
+                    for (size_t i = 0; i < m_framebuffers.size(); i++) {
+                        attachments[2] = m_swapChain.getImagesViews()[i];
+                        VK_CHECK_RESULT(vkCreateFramebuffer(
+                                    m_device.getLogicalDevice(), 
+                                    &framebufferCreateInfo, 
+                                    nullptr, 
+                                    &m_framebuffers[i]));
+                    }
+
+                } else {
+                    VkImageView attachments[2];
+
+                    attachments[1] = m_depthImageResource.getImageView();
+
+                    VkFramebufferCreateInfo framebufferCreateInfo = {};
+                    framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+                    framebufferCreateInfo.pNext = nullptr;
+                    framebufferCreateInfo.renderPass = m_renderPass.getRenderPass();
+                    framebufferCreateInfo.attachmentCount = 2;
+                    framebufferCreateInfo.pAttachments = attachments;
+                    framebufferCreateInfo.width = m_swapChain.getExtent().width;
+                    framebufferCreateInfo.height = m_swapChain.getExtent().height;
+                    framebufferCreateInfo.layers = 1;
+
+                    m_framebuffers.resize(m_swapChain.getImagesViews().size());
+
+                    for (size_t i = 0; i < m_framebuffers.size(); i++) {
+                        attachments[0] = m_swapChain.getImagesViews()[i];
+                        VK_CHECK_RESULT(vkCreateFramebuffer(
+                                    m_device.getLogicalDevice(), 
+                                    &framebufferCreateInfo, 
+                                    nullptr, 
+                                    &m_framebuffers[i]));
+                    }
+                }
             }
 
             virtual void createCommandPool() {}
@@ -422,9 +477,10 @@ namespace VulkanLearning {
                         m_device, 
                         m_swapChain, 
                         m_swapChain.getImageFormat(),  
-                        VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, 
+                        VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT 
+                        | VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT, 
                         VK_IMAGE_ASPECT_COLOR_BIT);
-                m_colorImageResource.create();
+                m_colorImageResource.create(m_device.getMsaaSamples());
             }
 
             virtual void createDepthResources() {
@@ -434,7 +490,7 @@ namespace VulkanLearning {
                         m_device.findDepthFormat(), 
                         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, 
                         VK_IMAGE_ASPECT_DEPTH_BIT);
-                m_depthImageResource.create();
+                m_depthImageResource.create(m_device.getMsaaSamples());
             }
 
             virtual void createVertexBuffer() {}
@@ -452,7 +508,6 @@ namespace VulkanLearning {
             virtual void createDescriptorSetLayout() {}
             virtual void createDescriptorPool() {}
             virtual void createDescriptorSets() {}
-            virtual void updateCamera(uint32_t currentImage) {}
             virtual void loadModel() {}
 
             virtual void OnUpdateUI(UI *ui) {}
