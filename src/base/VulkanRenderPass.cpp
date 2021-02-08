@@ -13,7 +13,7 @@ namespace VulkanLearning {
     VkRenderPass VulkanRenderPass::getRenderPass() const { return m_renderPass; }
 
     void VulkanRenderPass::create(
-            const std::vector<VkAttachmentDescription> attachments,
+            const std::vector<VkAttachmentDescription> attachment,
             VkSubpassDescription subpass) {
         VkSubpassDependency dependency{};
         dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
@@ -25,12 +25,30 @@ namespace VulkanLearning {
 
         VkRenderPassCreateInfo renderPassInfo{};
         renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-        renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-        renderPassInfo.pAttachments = attachments.data();
+        renderPassInfo.attachmentCount = static_cast<uint32_t>(attachment.size());
+        renderPassInfo.pAttachments = attachment.data();
         renderPassInfo.subpassCount = 1;
         renderPassInfo.pSubpasses = &subpass;
         renderPassInfo.dependencyCount = 1;
         renderPassInfo.pDependencies = &dependency;
+
+        if (vkCreateRenderPass(m_device.getLogicalDevice(), &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS) {
+            throw std::runtime_error("Render pass creation failed!");
+        }
+    }
+
+    void VulkanRenderPass::create(
+            const std::vector<VkSubpassDependency> dependency,
+            const std::vector<VkAttachmentDescription> attachment,
+            const std::vector<VkSubpassDescription> subpass) {
+        VkRenderPassCreateInfo renderPassInfo{};
+        renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+        renderPassInfo.attachmentCount = static_cast<uint32_t>(attachment.size());
+        renderPassInfo.pAttachments = attachment.data();
+        renderPassInfo.subpassCount = static_cast<uint32_t>(subpass.size());
+        renderPassInfo.pSubpasses = subpass.data();
+        renderPassInfo.dependencyCount = static_cast<uint32_t>(dependency.size());
+        renderPassInfo.pDependencies = dependency.data();
 
         if (vkCreateRenderPass(m_device.getLogicalDevice(), &renderPassInfo, nullptr, &m_renderPass) != VK_SUCCESS) {
             throw std::runtime_error("Render pass creation failed!");

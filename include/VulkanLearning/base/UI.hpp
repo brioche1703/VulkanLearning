@@ -56,6 +56,8 @@ namespace VulkanLearning {
             UI();
             ~UI();
 
+            inline void setSubpass(uint32_t subpass) { m_subpass = subpass; }
+
             void create(VulkanDevice device, VulkanRenderPass renderPass);
 
             void preparePipeline(const VkPipelineCache pipelineCache, const VulkanRenderPass renderPass);
