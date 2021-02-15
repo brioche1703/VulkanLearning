@@ -170,6 +170,19 @@ base/fast:
 .PHONY : base/fast
 
 #=============================================================================
+# Target rules for targets named subpasses
+
+# Build rule for target.
+subpasses: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 subpasses
+.PHONY : subpasses
+
+# fast build rule for target.
+subpasses/fast:
+	$(MAKE) -f src/examples/CMakeFiles/subpasses.dir/build.make src/examples/CMakeFiles/subpasses.dir/build
+.PHONY : subpasses/fast
+
+#=============================================================================
 # Target rules for targets named inputAttachments
 
 # Build rule for target.
@@ -390,6 +403,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... base"
+	@echo "... subpasses"
 	@echo "... inputAttachments"
 	@echo "... simpleTriangle"
 	@echo "... texture3d"

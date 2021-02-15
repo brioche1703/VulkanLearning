@@ -157,6 +157,21 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
+src/examples/CMakeFiles/subpasses.dir/rule:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/subpasses.dir/rule
+.PHONY : src/examples/CMakeFiles/subpasses.dir/rule
+
+# Convenience name for target.
+subpasses: src/examples/CMakeFiles/subpasses.dir/rule
+
+.PHONY : subpasses
+
+# fast build rule for target.
+subpasses/fast:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/subpasses.dir/build.make src/examples/CMakeFiles/subpasses.dir/build
+.PHONY : subpasses/fast
+
+# Convenience name for target.
 src/examples/CMakeFiles/inputAttachments.dir/rule:
 	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/inputAttachments.dir/rule
 .PHONY : src/examples/CMakeFiles/inputAttachments.dir/rule
@@ -609,6 +624,33 @@ specializationConstant/specializationConstant.cpp.s:
 	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/specializationConstant.dir/build.make src/examples/CMakeFiles/specializationConstant.dir/specializationConstant/specializationConstant.cpp.s
 .PHONY : specializationConstant/specializationConstant.cpp.s
 
+subpasses/subpasses.o: subpasses/subpasses.cpp.o
+
+.PHONY : subpasses/subpasses.o
+
+# target to build an object file
+subpasses/subpasses.cpp.o:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/subpasses.dir/build.make src/examples/CMakeFiles/subpasses.dir/subpasses/subpasses.cpp.o
+.PHONY : subpasses/subpasses.cpp.o
+
+subpasses/subpasses.i: subpasses/subpasses.cpp.i
+
+.PHONY : subpasses/subpasses.i
+
+# target to preprocess a source file
+subpasses/subpasses.cpp.i:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/subpasses.dir/build.make src/examples/CMakeFiles/subpasses.dir/subpasses/subpasses.cpp.i
+.PHONY : subpasses/subpasses.cpp.i
+
+subpasses/subpasses.s: subpasses/subpasses.cpp.s
+
+.PHONY : subpasses/subpasses.s
+
+# target to generate assembly for a file
+subpasses/subpasses.cpp.s:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/subpasses.dir/build.make src/examples/CMakeFiles/subpasses.dir/subpasses/subpasses.cpp.s
+.PHONY : subpasses/subpasses.cpp.s
+
 texture/texture.o: texture/texture.cpp.o
 
 .PHONY : texture/texture.o
@@ -754,6 +796,7 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
+	@echo "... subpasses"
 	@echo "... inputAttachments"
 	@echo "... install"
 	@echo "... simpleTriangle"
@@ -797,6 +840,9 @@ help:
 	@echo "... specializationConstant/specializationConstant.o"
 	@echo "... specializationConstant/specializationConstant.i"
 	@echo "... specializationConstant/specializationConstant.s"
+	@echo "... subpasses/subpasses.o"
+	@echo "... subpasses/subpasses.i"
+	@echo "... subpasses/subpasses.s"
 	@echo "... texture/texture.o"
 	@echo "... texture/texture.i"
 	@echo "... texture/texture.s"

@@ -32,6 +32,7 @@
 #include <chrono>
 #include <functional>
 #include <cstring>
+#include <random>
 
 #include "Vertex.hpp"
 #include "Camera.hpp"

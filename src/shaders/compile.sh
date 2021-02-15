@@ -65,3 +65,10 @@ $GLSLC_PATH inputAttachments/inputAttachmentsWrite.vert -o inputAttachments/inpu
 $GLSLC_PATH inputAttachments/inputAttachmentsWrite.frag -o inputAttachments/inputAttachmentsWriteFrag.spv
 $GLSLC_PATH inputAttachments/inputAttachmentsRead.vert -o inputAttachments/inputAttachmentsReadVert.spv
 $GLSLC_PATH inputAttachments/inputAttachmentsRead.frag -o inputAttachments/inputAttachmentsReadFrag.spv
+
+$GLSLC_PATH subpasses/gbuffer.vert -o subpasses/gbufferVert.spv
+$GLSLC_PATH subpasses/gbuffer.frag -o subpasses/gbufferFrag.spv
+$GLSLC_PATH subpasses/composition.vert -o subpasses/compositionVert.spv
+$GLSLC_PATH subpasses/composition.frag -o subpasses/compositionFrag.spv
+$GLSLC_PATH subpasses/transparent.vert -o subpasses/transparentVert.spv
+$GLSLC_PATH subpasses/transparent.frag -o subpasses/transparentFrag.spv

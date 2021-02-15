@@ -75,6 +75,7 @@ set(EXAMPLES
     textureCubemapArray
     texture3d
     inputAttachments
+    subpasses
 )
 
 buildExamples()
