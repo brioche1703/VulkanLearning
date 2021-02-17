@@ -47,7 +47,7 @@ namespace VulkanLearning {
                 createIndexBuffer();
 
                 createDescriptorSetLayout();
-                createGraphicsPipeline();
+                createPipelines();
 
                 createCoordinateSystemUniformBuffers();
                 createDescriptorPool();
@@ -116,7 +116,7 @@ namespace VulkanLearning {
                 m_renderPass.create(attachments, subpass);
             }
 
-            void createGraphicsPipeline() override {
+            void createPipelines() override {
                 VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
                 pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
                 pipelineLayoutInfo.setLayoutCount = 1;

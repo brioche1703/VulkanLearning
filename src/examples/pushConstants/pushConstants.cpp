@@ -56,7 +56,7 @@ namespace VulkanLearning {
                 createIndexBuffer();
 
                 createDescriptorSetLayout();
-                createGraphicsPipeline();
+                createPipelines();
 
                 createCoordinateSystemUniformBuffers();
                 createDescriptorPool();
@@ -130,7 +130,7 @@ namespace VulkanLearning {
                 m_renderPass.create(attachments, subpass);
             }
 
-            void createGraphicsPipeline() override {
+            void createPipelines() override {
                 VkPushConstantRange pushConstantRange{};
                 pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
                 pushConstantRange.offset = 0;

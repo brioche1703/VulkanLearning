@@ -157,6 +157,21 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
+src/examples/CMakeFiles/offscreen.dir/rule:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/offscreen.dir/rule
+.PHONY : src/examples/CMakeFiles/offscreen.dir/rule
+
+# Convenience name for target.
+offscreen: src/examples/CMakeFiles/offscreen.dir/rule
+
+.PHONY : offscreen
+
+# fast build rule for target.
+offscreen/fast:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/offscreen.dir/build.make src/examples/CMakeFiles/offscreen.dir/build
+.PHONY : offscreen/fast
+
+# Convenience name for target.
 src/examples/CMakeFiles/subpasses.dir/rule:
 	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f CMakeFiles/Makefile2 src/examples/CMakeFiles/subpasses.dir/rule
 .PHONY : src/examples/CMakeFiles/subpasses.dir/rule
@@ -516,6 +531,33 @@ inputAttachments/inputAttachments.cpp.s:
 	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/inputAttachments.dir/build.make src/examples/CMakeFiles/inputAttachments.dir/inputAttachments/inputAttachments.cpp.s
 .PHONY : inputAttachments/inputAttachments.cpp.s
 
+offscreen/offscreen.o: offscreen/offscreen.cpp.o
+
+.PHONY : offscreen/offscreen.o
+
+# target to build an object file
+offscreen/offscreen.cpp.o:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/offscreen.dir/build.make src/examples/CMakeFiles/offscreen.dir/offscreen/offscreen.cpp.o
+.PHONY : offscreen/offscreen.cpp.o
+
+offscreen/offscreen.i: offscreen/offscreen.cpp.i
+
+.PHONY : offscreen/offscreen.i
+
+# target to preprocess a source file
+offscreen/offscreen.cpp.i:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/offscreen.dir/build.make src/examples/CMakeFiles/offscreen.dir/offscreen/offscreen.cpp.i
+.PHONY : offscreen/offscreen.cpp.i
+
+offscreen/offscreen.s: offscreen/offscreen.cpp.s
+
+.PHONY : offscreen/offscreen.s
+
+# target to generate assembly for a file
+offscreen/offscreen.cpp.s:
+	cd /home/brioche/dev/VulkanLearning && $(MAKE) -f src/examples/CMakeFiles/offscreen.dir/build.make src/examples/CMakeFiles/offscreen.dir/offscreen/offscreen.cpp.s
+.PHONY : offscreen/offscreen.cpp.s
+
 pushConstants/pushConstants.o: pushConstants/pushConstants.cpp.o
 
 .PHONY : pushConstants/pushConstants.o
@@ -796,6 +838,7 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
+	@echo "... offscreen"
 	@echo "... subpasses"
 	@echo "... inputAttachments"
 	@echo "... install"
@@ -828,6 +871,9 @@ help:
 	@echo "... inputAttachments/inputAttachments.o"
 	@echo "... inputAttachments/inputAttachments.i"
 	@echo "... inputAttachments/inputAttachments.s"
+	@echo "... offscreen/offscreen.o"
+	@echo "... offscreen/offscreen.i"
+	@echo "... offscreen/offscreen.s"
 	@echo "... pushConstants/pushConstants.o"
 	@echo "... pushConstants/pushConstants.i"
 	@echo "... pushConstants/pushConstants.s"

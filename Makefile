@@ -170,6 +170,19 @@ base/fast:
 .PHONY : base/fast
 
 #=============================================================================
+# Target rules for targets named offscreen
+
+# Build rule for target.
+offscreen: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 offscreen
+.PHONY : offscreen
+
+# fast build rule for target.
+offscreen/fast:
+	$(MAKE) -f src/examples/CMakeFiles/offscreen.dir/build.make src/examples/CMakeFiles/offscreen.dir/build
+.PHONY : offscreen/fast
+
+#=============================================================================
 # Target rules for targets named subpasses
 
 # Build rule for target.
@@ -403,6 +416,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... base"
+	@echo "... offscreen"
 	@echo "... subpasses"
 	@echo "... inputAttachments"
 	@echo "... simpleTriangle"

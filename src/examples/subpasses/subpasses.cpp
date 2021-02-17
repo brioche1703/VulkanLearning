@@ -111,7 +111,7 @@ namespace VulkanLearning {
                 loadAssets();
 
                 createDescriptorSetLayout();
-                createGraphicsPipeline();
+                createPipelines();
 
                 createUniformBuffers();
 
@@ -268,7 +268,7 @@ namespace VulkanLearning {
                 m_renderPass.create(dependencies, attachments, subpassDescriptions);
             }
 
-            void createGraphicsPipeline() override {
+            void createPipelines() override {
                 VkPipelineLayoutCreateInfo pipelineLayoutOffscreenCI{};
                 pipelineLayoutOffscreenCI.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
                 pipelineLayoutOffscreenCI.setLayoutCount = 1;

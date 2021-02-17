@@ -55,7 +55,7 @@ namespace VulkanLearning {
 
                 loadAssets();
                 createDescriptorSetLayout();
-                createGraphicsPipeline();
+                createPipelines();
 
                 createUniformBuffers();
                 createDescriptorPool();
@@ -128,7 +128,7 @@ namespace VulkanLearning {
                 m_renderPass.create(attachments, subpass);
             }
 
-            void createGraphicsPipeline() override {
+            void createPipelines() override {
                 VulkanShaderModule vertShaderModule = 
                     VulkanShaderModule("src/shaders/glTFSceneVert.spv", &m_device, VK_SHADER_STAGE_VERTEX_BIT);
                 VulkanShaderModule fragShaderModule = 

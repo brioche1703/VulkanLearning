@@ -72,3 +72,8 @@ $GLSLC_PATH subpasses/composition.vert -o subpasses/compositionVert.spv
 $GLSLC_PATH subpasses/composition.frag -o subpasses/compositionFrag.spv
 $GLSLC_PATH subpasses/transparent.vert -o subpasses/transparentVert.spv
 $GLSLC_PATH subpasses/transparent.frag -o subpasses/transparentFrag.spv
+
+$GLSLC_PATH offscreen/mirror.vert -o offscreen/mirrorVert.spv
+$GLSLC_PATH offscreen/mirror.frag -o offscreen/mirrorFrag.spv
+$GLSLC_PATH offscreen/phong.vert -o offscreen/phongVert.spv
+$GLSLC_PATH offscreen/phong.frag -o offscreen/phongFrag.spv

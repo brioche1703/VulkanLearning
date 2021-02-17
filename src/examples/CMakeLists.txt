@@ -76,6 +76,7 @@ set(EXAMPLES
     texture3d
     inputAttachments
     subpasses
+    offscreen
 )
 
 buildExamples()

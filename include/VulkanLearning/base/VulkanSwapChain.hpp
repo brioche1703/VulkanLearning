@@ -8,7 +8,7 @@
 
 #include "VulkanDevice.hpp"
 #include "VulkanSurface.hpp"
-#include "window/Window.hpp"
+#include "Window.hpp"
 
 namespace VulkanLearning {
 
